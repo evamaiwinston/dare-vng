@@ -1,0 +1,308 @@
+# Diagnostic Answer Inspection tool for RAG bot - Reading Survey
+
+This survey covers the literature read during Week 1 (03/06 - 05/06)  
+
+For this tool, ContextCite is the primary method. It powers chunk attribution in both Explain and Debug modes. The same mechanic applied to system prompt sentences gives instruction ablation for Debug mode when retrieval is not the cause of failure.
+
+Evaluation frameworks sit upstream as failure detectors for attribution methods to then tell the tool where. The hallucination survey provides more vocabulary for what can go wrong; retrieval failure or generation bottleneck. 
+
+
+# LIME - foundational
+[Why Should I Trust You? paper link](https://arxiv.org/abs/1602.04938)
+
+## Keywords
+* Local surrogate model
+* Feature perturbation
+* Sparse linear model
+* Model-agnostic interpretability
+
+## Review
+### Main idea
+LIME explains any model's prediction by perturbing the input features, observing how the output changes, and fitting a sparse linear model locally around that prediction. The weights of that model become the explanation.
+
+> ContextCite is the core idea of LIME applied to RAG, inheriting the key assumption of local linearity
+
+### How it works
+1. Perturb input features — randomly mask or alter parts of the input
+2. Observe output changes for each perturbation
+3. Fit a sparse linear surrogate model over those perturbations
+4. Surrogate weights = feature importance scores
+
+### Notes and usage
+LIME is the conceptual foundation for ContextCite, AttriBoT, and KG-SMILE. Understanding LIME makes the mechanics of all three methods intuitive — applied to different input types (text chunks, KV-cached contexts, graph triples).
+
+### Limitations
+Assumes local linearity — the surrogate is only accurate in the neighborhood of the specific prediction being explained  
+
+# ContextCite: Attributing Model Generation to Context
+[Paper link](https://arxiv.org/abs/2409.00729)
+## Keywords
+* Context ablation
+* Surrogate model
+* Contributive vs. corroborative attribution
+* LASSO
+* Log-prob and logit-scaled prob
+* Sparsity
+
+## Review
+### Main idea
+Addresses the problem: existing context attribution methods are   
+* computationally expensive 
+* token level (low interpretability)
+* not model agnostic
+  
+ContextCite proposes a model-agnostic attribution framework that learns a sparse linear surrogate model to indentify which context sources contributed (context is *causal* to output) to any generated response.
+
+Applications of ContextCite:
+* Identify context to verify generated statements (explainability)
+* Pruning context to improve response quality
+* Detecting retrieval poisoning attacks
+
+For our project, attribution scores can be used for explainability and trust, and also can serve as input signals to the failure taxonomy classifier (e.g. low attribution score for the highest ranked chunk is suggestive of a stale-retrieval or retrieval-miss)
+<br> 
+
+> **Contributive attribution**: Evaluating efficacy under the intution that if part of the context *causes* a particular generated response, then removing it should substantially affect the response
+
+
+### How it works
+1. Context is split into sources (desired granularity)
+2. Random ablation masks are generated
+3. For each ablation, the model re-generates the response and the log-prob of the original response is recorded
+4. Log-probs are logit-scaled
+5. LASSO linear regression model is fitted (masks are the input, logit-scaled prob is the target)
+6. Coefficients are the attribution scores
+
+Usually, generated responses only depend on a few sources. Can capitalize on this sparsity using LASSO to push coefficients to 0-- fitting the surrogate with as few as 32 ablation passes.
+
+#### Evaluation Metrics
+* Top-k log-prob drop: how much original response probability falls after removing highest-scoring sources
+* Linear datamodeling score (LDS): checks if attribution scores can predict the probability drop across many random subsets
+
+### Difference from other systems
+Existing methods like ALCE (covered next) are corroborative only
+
+Compared to other baselines:
+* Gradient- requires weight access, expensive
+* Attention- attention != causation
+* Leave one out (LOO)- Golden standard. Requires a full pass per source
+
+### Limitations
+Deterministic pipeline needed for ablation passes   
+Errors upstream of generation can only be inferrred, not directly observed  
+Not corroborative   
+
+For the project:  
+Does API endpoint support `logprobs`  
+32+ ablation passes- cost + latency
+
+
+# ALCE: Automatic LLM's Citation Evaluation
+[Enabling Large Language Models to Generate Text with Citations
+paper link](https://arxiv.org/abs/2305.14627)
+
+## Keywords
+* Corroborative attribution
+* Fluency, correctness, citation quality
+* Citation recall
+* Citation precision
+
+## Review
+### Main idea
+ALCE proposes a reproducible benchmark for automatically evaluating LLM generations with citations, replacing expensive human evaluation.
+
+Evaluates across three dimensions:
+* Fluency
+* Correctness
+* Citation quality (recall + precision)
+
+LLM citation quality is highly dependent on retrieval quality, and current LLMs struggle to synthesize multiple documents without being distracted by irrelevant ones.
+
+> **Corroborative attribution**: identifies sources that *support* or *imply* a statement, but did not necessarily cause it
+
+### How it works
+Citation quality is measured along two dimensions:
+* **Citation recall** — is the output entirely supported by the cited passages?
+* **Citation precision** — are the citations relevant, or do they include noise?
+
+Map to DeepEval's Contextual Recall and Contextual Precision metrics.
+
+
+### Notes and usage
+Helpful failure detectors
+* Low citation recall -->  retrieval miss
+* Low citation precision --> retrieval noise
+
+This paper highlights current LLM's challenges:
+* struggle to synthesize multiple documents in context without being distracted by irrelevant ones (could see attribution breakdown with ContextCite)
+* dependency on retrieval quality upstream
+* limited context window 
+
+# AttriBoT: A Bag of Tricks for Efficiently Approximating Leave-One-Out Context Attribution
+[Paper link](https://arxiv.org/abs/2411.15102)
+
+## Keywords
+* Leave-one-out (LOO)
+* KV caching
+* Hierarchical attribution
+* Proxy modeling
+* Pruning
+
+## Review
+### Main idea
+AttriBoT makes LOO itself cheap at scale. Achieves a 300× speedup over exact LOO and is 30× faster than generating the response itself, while remaining closer to exact LOO than ContextCite's surrogate approximation.
+
+### How it works
+Three tricks combined:
+
+**1. KV Caching**  
+Standard LOO re-encodes the entire context for each ablation. AttriBoT caches the key-value activations of unmodified prefixes and reuses them across ablations, avoiding redundant computation.
+
+**2. Hierarchical Attribution**  
+Attributes at paragraph level first (cheap), then drills down to sentence level only for paragraphs that scored high. Paragraph LOO attribution correlates strongly with the sum of its sentence attributions (Pearson r = 0.971), making this a reliable shortcut.
+
+**3. Proxy Modeling and Pruning**  
+Uses a small proxy model (e.g. Llama 8B) to approximate attribution scores of a large target model (e.g. Llama 70B), Pearson r = 0.94. Only runs the expensive target model on the top sources the proxy flagged as influential.
+
+### Difference from other systems
+ContextCite approximates LOO via a surrogate model. AttriBoT makes LOO itself cheap instead of approximating it-- resulting in attribution scores that are more faithful to the gold standard.
+
+### Limitations
+Requires KV cache access, less compatible with closed source APIs (more invasive than ContextCite)  
+Proxy modeling assumes models from the same family-- a Llama proxy approximates a Llama target well, but may not generalise across model families
+
+# KG-SMILE: Explainable Knowledge Graph Retrieval-Augmented Generation
+[Paper link](https://arxiv.org/abs/2509.03626)  
+
+## Keywords
+* Graph perturbation
+* Triple-level attribution
+* Surrogate regression
+* Fidelity, faithfulness, consistency, stability
+* Wasserstein distance
+
+## Review
+### Main idea
+KG-SMILE asks the same question as ContextCite but for graph-structured retrieval: given a GraphRAG answer, which entities and relations in the knowledge graph were actually responsible for it?
+
+### How it works
+1. Perturbation:  
+Triples are selectively removed from the KG to produce perturbed subgraphs (like the ablation masking in ContextCite)
+2. Similarity scoring:  
+A response is generated for each perturbed subgraph and compared to the original using
+    * Cosine similarity — standard embedding comparison
+    * Inverse Wasserstein distance — more sensitive to subtle shifts in the full output distribution
+3. Surrogate regression:  
+A lightweight linear surrogate model is fitted on perturbation vectors and similarity scores
+4. Coefficients map to attribution scores per triple
+5. Visualization:  
+Results are visualized as a heatmap on the graph 
+
+#### Evaluation metrics
+* **Fidelity** — does the explanation faithfully reflect what drove the model?
+* **Faithfulness** — is the answer grounded in the attributed subgraph?
+* **Consistency** — are attributions stable across similar queries?
+* **Stability** — are attributions robust to minor input perturbations?
+* **Accuracy** — does the tool correctly identify the most influential triples?
+
+### Difference from other systems
+KG-SMILE attributes over graph triples, giving graph-native attribution that can identify beyond which source was influential by identifying which specific edge in the graph was the decisive hop.
+
+### Limitations
+Static KG assumption — does not account for dynamically constructed or updated graphs  
+Does not report how many perturbation samples are needed for stable regression  
+Not as widely validated as ContextCite  
+
+# RAGAS: Retrieval Augmented Generation Assessment
+[Paper link](https://arxiv.org/abs/2309.15217)
+
+## Keywords
+* Faithfulness
+* Answer relevance
+* Context relevance
+* Reference-free evaluation
+* LLM as judge
+
+## Review
+### Main idea
+RAGAS provides an automated, reference-free way to evaluate RAG pipelines across multiple dimensions without human annotation. It can run beyond the test set since it does not require ground truth labels.
+
+Three core metrics:
+* **Faithfulness** — how well the answer can be inferred from the retrieved context
+* **Answer relevance** — how closely the answer aligns with the question
+* **Context relevance** — to what extent the context contains only what is needed to answer the question
+
+### How it works
+
+**Faithfulness**  
+Extracts atomic statements from the answer, then checks what proportion can be inferred from the retrieved context using an LLM verifier.  
+Score = supported statements / total statements
+
+**Answer relevance**  
+Generates a set of questions from the answer, embeds them, and measures cosine similarity with the original question.  
+Penalizes incomplete or redundant answers (not a factuality check)
+
+**Context relevance**  
+Extracts sentences from the context that are crucial to answering the question.  
+Score = extracted sentences / total sentences  
+Too much irrelevant context, this score suffers —  more expensive and slow.
+
+
+DeepEval implements a superset of RAGAS metrics.
+
+### Limitations
+LLM-as-judge — quality depends on the judge model  
+Answer relevance penalizes incompleteness but does not check factuality  
+Context relevance can be gamed by short contexts that happen to be on-topic
+
+# Survey on Hallucination in Large Language Models
+[Paper link](https://arxiv.org/abs/2311.05232)
+
+## Keywords
+* Retrieval failure
+* Generation bottleneck
+* Contextual awareness
+* Contextual alignment
+* Parametric memory conflict
+
+## Review
+### Main idea
+Proposes a taxonomy of RAG hallucinations organized into two high-level categories: retrieval failures and generation bottlenecks. Helps inform failure taxonomy this tool needs to classify and detect.
+
+### Retrieval failures
+* **Bad query** — blind retrieval, ambiguous queries, complex multi-hop queries where the retriever only gets part of the answer
+* **Bad source** — outdated or factually incorrect documents, LLM-generated content polluting the corpus
+* **Bad retriever** — wrong chunking granularity, weak embedding model that fails to match query to chunk
+
+### Generation bottlenecks
+* **Contextual awareness** — model receives the right context but fails to use it
+    * Noisy context distracts the model
+    * Parametric memory conflicts with retrieved context (model trusts its own weights over the document)
+    * Lost in the middle — relevant information in the middle of a long context gets ignored
+* **Contextual alignment** — model doesn't faithfully ground its output in retrieved sources
+    * Source attribution fails
+    * Decoding drifts from context during generation even when context is good
+
+
+# Additional Reading
+
+**Lost in the Middle: How Language Models Use Long Contexts** — Documents a positional bias where models perform worst when relevant information is in the middle of a long context. Relevant as a known generation failure pattern.
+
+**Mindful RAG** — Identifies 8 failure points in KG-RAG systems stemming from LLMs' inability to discern question intent and align with KG structure. Relevant given the graph traversal path in the MAGMA pipeline, though the proposed framework is proof-of-concept stage.
+
+Other potentially helpful reading
+
+- **SelfCite** — Self-supervised approach for fine-grained sentence-level citation generation. 
+
+- **FActScore** — Breaks generation into atomic facts and checks what proportion are supported by a reliable source. 
+
+- **Exploring the Sensitivity of LLMs' Decision-Making Capabilities: Insights from Prompt Variation and Hyperparameters** — Relevant to instruction ablation, understanding how sensitive the model is to prompt variation informs how many ablation passes are needed and how stable the surrogate weights will be
+
+
+
+
+
+
+
+
+
+
