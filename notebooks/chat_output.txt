@@ -1,0 +1,125 @@
+{
+  "answer": "Theo tài liệu chính sách nội bộ VNG, số ngày phép năm được quy định như sau:\n\n| Cấp bậc | Số ngày phép năm |\n|---------|:----------------:|\n| Cấp bậc 2, 3, 4, 5 | **16 ngày** |\n| Cấp bậc 1 | **14 ngày** |\n\nNgoài ra, nhân viên làm việc tại VNG trên 03 năm sẽ được **cộng thêm 01 ngày Phép thâm niên** cứ mỗi 03 năm.\n\n**Một số lưu ý:**\n- Phép năm được tính từ ngày 01/01 đến 31/12 hằng năm.\n- Phép năm chưa sử dụng hết được bảo lưu sang năm tiếp theo (tối đa 5 ngày) và phải sử dụng trước 31/03 năm đó, sau thời điểm này sẽ bị hủy bỏ.\n- Nhân viên có thể đăng ký nghỉ tối đa bằng số ngày phép còn lại cộng thêm tối đa 5 ngày tạm ứng phép năm.",
+  "knowledge_sources": [
+    {
+      "chunk_id": "95db9dc3ed9e7da16c86bee3c54ae3bedb46fd3c27bb8fb1a248d692a7009e17",
+      "document_id": "HR/Thoi gian lam viec va thoi gio nghi ngoi/CS-HR.CB-002-11-2Morebits_Chinh sach Thoi gian lam viec va nghi ngoi_VI_2026.01.md",
+      "score": 0.869562,
+      "content": "### 3.1.2. Quy định cách sử dụng\n\n- Số ngày nghỉ tối đa Nhân viên có thể đăng ký nghỉ = Số ngày còn lại của Phép năm thực tế tính đến thời điểm đăng ký + tối đa 05 ngày tạm ứng Phép năm của năm (trong còn lại tính đến ngày 31/12 hoặc ngày hết hiệu lực của HĐLĐ hiện tại nếu trước ngày nào đến trước).\n- Quy định ứng trước phép không áp dụng cho Nhân viên đã thông báo nghỉ việc và trong thời gian chờ nghỉ việc.\n- Công ty khuyến khích Nhân viên có kế hoạch sử dụng phép năm hợp lý trong từng năm. Số phép năm chưa sử dụng hết được bảo lưu sang tháng hai (theo dõi tối đa 2 ngày) và phải được sử dụng không muộn hơn 31/03 năm đó. Vượt quá thời điểm này, số ngày phép bảo lưu không sử dụng hết mặc nhiên sẽ bị hủy bỏ. Các ngày phép bảo lưu không được chuyển đổi thành tiền ở bất cứ trường hợp nào.\n- Các trường hợp nghỉ hưởng lương dài ngày theo Thỏa thuận tạm hoãn HĐLĐ sẽ không được hưởng Phép năm kể từ tháng nghỉ thứ 02 trở đi cho đến khi đi làm trở lại.\n- Trường hợp Nhân viên nghỉ việc, số ngày còn lại của Phép năm hiện tại được hưởng tính đến thời điểm nghỉ việc nếu chưa sử dụng hết sẽ được tất toán trong Quyết toán thôi việc.\n\n|  | Tổng lương cơ bản và mức thưởng V_Bonus |\n| :---------------- | :---------------------------------- |\n| Tất toán phép năm | tối đa của tháng trên HĐLĐ |\n\n- Ngày phép lẻ được làm tròn theo nguyên tắc sau:\n  - Từ 0.5 ngày trở xuống: làm tròn thành 0.5 ngày\n  - Trên 0.5 ngày: làm tròn thành 01 ngày\n- Nhân viên cấp bậc 5 thuộc nhóm có thời gian làm việc linh động, không áp dụng việc chuyển Phép năm chưa sử dụng hết thành tiền.\n- Việc sử dụng Phép năm bù vào thời gian bảo trước (nếu có) phải có sự phê duyệt của DH trước thời gian thực nghỉ."
+    },
+    {
+      "chunk_id": "62f1b43e906738659f33899593000928797fc4d781464e26073c122ba52d7489",
+      "document_id": "HR/Thoi gian lam viec va thoi gio nghi ngoi/CS-HR.CB-002-11-Zingplay_Chinh sach Thoi gian lam viec va nghi ngoi_VI_2026.01.md",
+      "score": 0.855285,
+      "content": "### 3.1.2. Quy định cách sử dụng\n\n- Số ngày nghỉ tối đa Nhân viên có thể đăng ký nghỉ = Số ngày còn lại của Phép năm thực tế tính đến thời điểm đăng ký + tối đa 5 ngày nghỉ tồn Phép năm của các tháng còn lại tính đến ngày 31/12 hoặc ngày hết hiệu lực của HĐLĐ hiện tại (01/01 của năm) nào đến trước.\n- Quy định ứng trước phép không áp dụng cho Nhân viên đã thông báo nghỉ việc và trong thời gian chờ nghỉ việc.\n- Công ty khuyến khích Nhân viên có kế hoạch sử dụng phép năm hợp lý trong từng năm. Số phép năm chưa sử dụng hết được bảo lưu và mang sang năm tiếp theo (tối đa 5 ngày) và phải được sử dụng không muộn hơn 31/03 năm đó. Sau khoảng thời điểm này, số ngày phép bảo lưu không sử dụng hết mặc nhiên sẽ bị hủy bỏ. Các ngày phép bảo lưu không được chuyển đổi thành tiền ở bất cứ trường hợp nào.\n- Các trường hợp nghỉ không hưởng lương dài ngày theo Thỏa thuận tạm hoãn HĐLĐ sẽ không được hưởng Phép năm kể từ tháng nghỉ thứ 02 trở đi cho đến khi đi làm trở lại.\n- Trường hợp Nhân viên nghỉ việc, số ngày còn lại của Phép năm hiện tại được hưởng tính đến thời điểm nghỉ việc nếu chưa sử dụng hết sẽ được tất toán trong Quyết toán thôi việc.\n\n| Tổng lương cơ bản và mức thưởng V_Bonus tối đa của tháng trên HĐLĐ | x | Số ngày phép năm chưa sử dụng hết |\n| :------------------------------------------------------------------ | :- | :-------------------------------- |\n| Tất toán phép năm | = | Số ngày công chuẩn của chu kỳ lương tháng trước liền kề tháng Nhân viên thôi việc |\n\n- Ngày phép lẻ được làm tròn theo nguyên tắc sau:\n  - Từ 0.5 ngày trở xuống: làm tròn thành 0.5 ngày\n  - Trên 0.5 ngày: làm tròn thành 01 ngày\n- Nhân viên cấp bậc 5 thuộc nhóm có thời gian làm việc linh động, không áp dụng việc chuyển Phép năm chưa sử dụng hết thành tiền.\n- Việc sử dụng Phép năm bù vào thời gian báo trước (nếu có) phải có sự phê duyệt của DH trước thời gian thực nghỉ."
+    },
+    {
+      "chunk_id": "ca2176580d50f87097b675ba733ca5cbaa0373920f35baeb75572181512dca5b",
+      "document_id": "HR/Chinh sach tam ung thu nhap/CS-HR.CB-003-05_Chinh sach Tam ung thu nhap_VI_2026.01.md",
+      "score": 0.854661,
+      "content": "## 1.2. Phạm vi\n\nChính sách này áp dụng cho Nhân viên thuộc Công ty Cổ phần Tập đoàn VNG (\"VNG Group\" hoặc \"VNG\") và các Công ty thuộc nhóm VNG tại Việt Nam."
+    },
+    {
+      "chunk_id": "c021600bfe37a3628dc97debda2945a14cb47602ffafdc9f0f7eed96b151fe34",
+      "document_id": "HR/Thoi gian lam viec va thoi gio nghi ngoi/CS-HR.CB-002-11-2Morebits_Chinh sach Thoi gian lam viec va nghi ngoi_VI_2026.01.md",
+      "score": 0.854661,
+      "content": "## 1.2. Phạm vi\n\nChính sách này áp dụng cho Nhân viên thuộc Công ty Cổ phần Tập đoàn VNG (\"VNG Group\" hoặc \"VNG\") và các Công ty thuộc nhóm VNG tại Việt Nam."
+    },
+    {
+      "chunk_id": "12a0a15c1a76892ec346a224bb1f94be6d74a563d8afc2cf61ed6136e9475eac",
+      "document_id": "CS Phuc loi/CS Thoi gian lam viec va nghi ngoi_2026.01.md",
+      "score": 0.851576,
+      "content": "### 1.2. Phạm vi\n\n- Chính sách này áp dụng cho Nhân viên thuộc Công ty Cổ phần Tập đoàn VNG (\"VNG Group\" hoặc \"VNG\") và các Công ty thuộc nhóm VNG tại Việt Nam."
+    },
+    {
+      "chunk_id": "74bebee0931725c04a1eaad64b04de232c4c64cdabe76110e10eaf0391f9cd33",
+      "document_id": "HR/Cong doan/3. Quy che su dung ngan sach Cong Doan_01.2025.md",
+      "score": 0.836871,
+      "content": "### Điều 1. Phạm vi áp dụng\n\nQuy chế này quy định về thu, chi, quản lý tài chính và sử dụng ngân sách tại Công đoàn Công ty Cổ phần VNG (\"Công đoàn Công ty VNG\")."
+    },
+    {
+      "chunk_id": "69d590306e25a0df0249ee1b5bb81f2ba083886804d595d50f7ce143ebf6b56f",
+      "document_id": "HR/Thoi gian lam viec va thoi gio nghi ngoi/CS-HR.CB-002-11-Zingplay_Chinh sach Thoi gian lam viec va nghi ngoi_VI_2026.01.md",
+      "score": 0.834037,
+      "content": "## 1.2. Phạm vi\n\n- Chính sách này áp dụng cho Nhân viên thuộc Công ty Cổ phần Tập đoàn VNG (\"VNG Group\" hoặc \"VNG\") và các Công ty thuộc nhóm VNG tại Việt Nam."
+    },
+    {
+      "chunk_id": "dbdc3a048dbfafdb8800e14f505271f48d7ee92698cd2171edd08e5d2cd03b03",
+      "document_id": "HR/Thoa uoc lao dong tap the/2MoreBits_Thoa uoc LD tap the.md",
+      "score": 0.807624,
+      "content": "### Điều 10. Nghỉ phép năm\n\nCông ty thực hiện chế độ nghỉ Phép năm, quy trình đăng ký/phê duyệt nghỉ phép theo quy định tại Chính sách thời gian làm việc và nghỉ ngơi.\n\nNgoài ra, Công ty có chế độ:\n\n1. Cứ mỗi ba (03) năm làm việc tại Công ty, NLĐ được cộng thêm một (01) ngày Phép thâm niên.\n2. Nhân viên có thể đăng ký nghỉ theo số ngày của quỹ Phép năm thực tế tính đến thời điểm đăng ký, cộng với tối đa 5 ngày tạm ứng Phép năm của các tháng còn lại tính đến ngày 31/12 mỗi năm hoặc ngày hết hiệu lực của HĐLĐ hiện tại tùy thuộc ngày nào đến trước.\n3. Nhân viên cần lên kế hoạch sử dụng Phép năm hợp lý trong từng năm. Số Phép năm chưa sử dụng hết được bảo lưu và mang sang năm tiếp theo (tối đa 5 ngày) và phải được sử dụng trước 31/03 năm đó. Vượt qua thời điểm này, số ngày phép bảo lưu không sử dụng hết mặc nhiên sẽ bị hủy bỏ.\n4. Các trường hợp nghỉ không lương dưới dài ngày theo Thỏa thuận tạm hoãn HĐLĐ sẽ không được hưởng Phép năm kể từ tháng nghỉ thứ 02 trở đi cho đến khi đi làm trở lại.\n5. Số Phép năm của năm hiện tại được hưởng thực tế tính đến thời điểm nghỉ việc nếu chưa sử dụng hết sẽ được tất toán:\n   - Quy đổi thành tiền theo tỉ lệ 1:1 và được thanh toán trong Quyết toán thôi việc.\n   - Ngày phép lẻ làm tròn: từ 0.5 ngày trở xuống thành 0.5 ngày; trên 0.5 ngày thành 01 ngày.\n   - Nhân viên cấp bậc 5 thuộc nhóm Quản lý cấp cao có thời gian làm việc linh động, không áp dụng việc chuyển Phép năm chưa sử dụng hết thành tiền."
+    },
+    {
+      "chunk_id": "22b417574a3a569e164aec1e0d24e8cbb38100dc98ad20bcb494cec3e0c634f1",
+      "document_id": "HR/Thoi gian lam viec va thoi gio nghi ngoi/CS-HR.CB-002-11-2Morebits_Chinh sach Thoi gian lam viec va nghi ngoi_VI_2026.01.md",
+      "score": 0.778469,
+      "content": "### 3.1.1. Quyền lợi và định mức\n\n- Phép năm là phép nghỉ hưởng nguyên lương, được tính từ ngày 01/01 đến ngày 31/12 của năm, cụ thể như sau:\n\n| Cấp bậc | Quy phép năm |\n| :------ | :----------- |\n| Cấp bậc 2, 3, 4, 5 | 16 ngày |\n| Cấp bậc 1 | 14 ngày |\n\n- Quy phép năm Thực tế được tính theo tỷ lệ số tháng làm việc thực tế trong năm.\n- Phép năm của tháng gia nhập Công ty và tháng nghỉ việc không được tính hưởng nếu:\n  - Nhân viên nhận việc sau ngày 20 của tháng;\n  - Nhân viên nghỉ việc trước ngày 10 của tháng.\n- Nhân viên thay đổi cấp bậc nếu có thay đổi định mức, Phép năm theo cấp bậc mới được áp dụng theo nguyên tắc:\n  - Ngày hiệu lực thay đổi cấp bậc từ ngày 01 đến ngày 20: định mức Phép năm theo cấp bậc mới được áp dụng từ tháng hiệu lực thay đổi cấp bậc;\n  - Ngày hiệu lực thay đổi cấp bậc từ ngày 21 đến cuối tháng: định mức Phép năm theo cấp bậc mới được áp dụng từ tháng kế tiếp tháng hiệu lực thay đổi cấp bậc.\n- Nhân viên làm việc tại Công ty trên 03 năm thì cứ mỗi 03 năm sẽ được cộng thêm 01 ngày Phép thâm niên."
+    },
+    {
+      "chunk_id": "926f047c8bb8ef96d3aa6c5830f405ccae0adb88ed939db192135d6fd2368eed",
+      "document_id": "HR/Thoi gian lam viec va thoi gio nghi ngoi/CS-HR.CB-002-11-Zingplay_Chinh sach Thoi gian lam viec va nghi ngoi_VI_2026.01.md",
+      "score": 0.777882,
+      "content": "### 3.1.1. Quyền lợi và định mức\n\n- Phép năm là phép nghỉ hưởng niên hưởng nguyên lương, được tính từ ngày 01/01 đến ngày 31/12 của năm, cụ thể như sau:\n\n| Cấp bậc | Quy phép năm |\n| :------ | :----------- |\n| Cấp bậc 2, 3, 4, 5 | 16 ngày |\n| Cấp bậc 1 | 14 ngày |\n\n- Quy phép năm Thực tế được tính theo tỷ lệ số tháng làm việc thực tế trong năm.\n- Nhân viên thay đổi cấp bậc nếu có thay đổi định mức, Phép năm theo cấp bậc mới được áp dụng theo nguyên tắc:\n  - Ngày hiệu lực thay đổi cấp bậc từ ngày 01 đến ngày 20: định mức Phép năm theo cấp bậc mới được áp dụng từ tháng hiệu lực thay đổi cấp bậc.\n  - Ngày hiệu lực thay đổi cấp bậc từ ngày 21 đến cuối tháng: định mức Phép năm theo cấp bậc mới được áp dụng từ tháng kế tiếp tháng hiệu lực thay đổi cấp bậc.\n- Nhân viên làm việc tại Công ty trên 03 năm thì cứ mỗi 03 năm sẽ được cộng thêm 01 ngày Phép thâm niên."
+    }
+  ],
+  "memory_sources": [],
+  "reasoning_trace": [
+    {
+      "step": 1,
+      "tool": "search_knowledge",
+      "args": { "query": "số ngày nghỉ phép năm nhân viên VNG" },
+      "result": "[1] (chunk_id=95db9dc3ed9e7da16c86bee3c54ae3bedb46fd3c27bb8fb1a248d692a7009e17)\n### 3.1.2. Quy định cách sử dụng\n\n- Số ngày nghỉ tối đa Nhân viên có thể đăng ký nghỉ = Số ngày còn lại của Phép năm thự...",
+      "thought": "Người dùng hỏi về số ngày nghỉ phép của nhân viên VNG. Tôi cần tra cứu trong tài liệu chính sách nội bộ."
+    },
+    {
+      "step": 2,
+      "tool": "search_knowledge",
+      "args": { "query": "phép năm tổng số ngày nghỉ phép năm mỗi năm VNG" },
+      "result": "[1] (chunk_id=ca2176580d50f87097b675ba733ca5cbaa0373920f35baeb75572181512dca5b)\n## 1.2. Phạm vi\n\nChính sách này áp dụng cho Nhân viên thuộc Công ty Cổ phần Tập đoàn VNG...",
+      "thought": "Kết quả tìm kiếm cho thấy thông tin về cách sử dụng phép năm nhưng chưa có thông tin cụ thể về tổng số ngày phép năm mỗi năm. Tôi cần tìm thêm thông tin về số ngày phép năm cụ thể."
+    },
+    {
+      "step": 3,
+      "tool": "search_knowledge",
+      "args": { "query": "phép năm 12 ngày 14 ngày 15 ngày VNG chính sách nghỉ phép" },
+      "result": "[1] (chunk_id=dbdc3a048dbfafdb8800e14f505271f48d7ee92698cd2171edd08e5d2cd03b03)\n### Điều 10. Nghỉ phép năm\n\nCông ty thực hiện chế độ nghỉ Phép năm...",
+      "thought": "Kết quả vẫn chưa cho thấy số ngày phép năm cụ thể. Tôi cần tìm kiếm thêm với từ khóa khác."
+    },
+    {
+      "step": 4,
+      "tool": null,
+      "thought": "Tôi đã tìm được thông tin cần thiết. Theo tài liệu, số ngày phép năm của nhân viên VNG như sau:\n\n- Cấp bậc 2, 3, 4, 5: 16 ngày\n- Cấp bậc 1: 14 ngày\n\nNgoài ra, cứ mỗi 03 năm làm việc tại Công ty, nhân viên được cộng thêm 01 ngày Phép thâm niên.",
+      "type": "conclusion"
+    }
+  ],
+  "tools_used": ["search_knowledge", "search_knowledge", "search_knowledge"],
+  "session_id": null,
+  "usage": {
+    "llm_calls": 10,
+    "input_tokens": 31190,
+    "output_tokens": 2912,
+    "total_tokens": 34102
+  },
+  "mode": "agent",
+  "ablation": {
+    "use_memory": true,
+    "use_graph_rag": true,
+    "memory": {
+      "save_turns": true,
+      "use_session_memory": true,
+      "use_long_term_memory": true,
+      "use_graph_expand": true,
+      "use_rerank": true
+    },
+    "retrieval": {
+      "use_chunk_vectors": true,
+      "use_node_vectors": true,
+      "use_triplet_vectors": true,
+      "use_community_vectors": true,
+      "use_graph_expand": true,
+      "use_graph_boost": true,
+      "use_decompose": true,
+      "use_ircot": true
+    }
+  }
+}
