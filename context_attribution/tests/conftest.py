@@ -4,7 +4,9 @@ from pathlib import Path
 import pytest
 from dotenv import load_dotenv
 
-load_dotenv(dotenv_path=Path(__file__).parent.parent.parent / ".env")
+_env_path = Path(__file__).parent.parent.parent / ".env"
+load_dotenv(dotenv_path=_env_path, override=True)
+print(f"Loaded environment variables from {_env_path}")
 
 
 @pytest.fixture(scope="session")
