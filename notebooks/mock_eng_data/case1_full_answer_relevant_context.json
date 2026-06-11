@@ -1,0 +1,110 @@
+{
+    "answer": "Aim for 1.6–2.2 g of protein per kg of bodyweight each day. Spread it across 3–5 meals of 20–40 g each.",
+    "knowledge_sources": [
+        {
+            "chunk_id": "3a1f9c847e2d6b05f4e8a7c3d9b2e1f0a5c8d7e6b3f2a1d0c9e8b7a6f5e4d3c",
+            "document_id": "Sports Nutrition/protein_recommendations.md",
+            "score": 1.923455,
+            "content": "### Daily Protein Target\n\nResearch supports 1.6–2.2 g of protein per kg of bodyweight per day for muscle hypertrophy. Intakes above 2.2 g/kg show diminishing returns."
+        },
+        {
+            "chunk_id": "b7d4e2a1f9c3b8e0d5a7f6c2e4b1d9a0f3c8b5e2d7a4f1c9e6b3d0a7f4c1e8",
+            "document_id": "Sports Nutrition/protein_recommendations.md",
+            "score": 1.521088,
+            "content": "### Meal Frequency and Dose\n\nSpreading protein across 3–5 meals of 20–40 g each produces more muscle protein synthesis than the same total consumed in fewer large servings."
+        },
+        {
+            "chunk_id": "e2c9a4f7b1d6e3c8a0b5d2f9e4c1b8a5d3f0c7e2b9a6d4f1c8e5b2a9d7f4c1",
+            "document_id": "Sports Nutrition/protein_recommendations.md",
+            "score": 1.204711,
+            "content": "### Post-Workout Timing\n\nEating 20–40 g of protein within two hours of training significantly boosts muscle protein synthesis. Leucine-rich sources such as eggs and whey are ideal."
+        },
+        {
+            "chunk_id": "a5b8d1e4f7c2a9b6d3e0f5c2a8b5d1e8f3c0a7b4d1e6f3c9a2b7d4e1f6c3a0",
+            "document_id": "Sports Nutrition/protein_sources.md",
+            "score": 0.889034,
+            "content": "### Protein Sources\n\nChicken breast, eggs, Greek yogurt, and tuna are high-quality sources rich in all essential amino acids. Well-planned plant diets can meet the same targets."
+        },
+        {
+            "chunk_id": "f3a6c9e2b5d8a1f4c7e0b3a6d9f2c5e8b1d4a7f0c3e6b9d2a5f8c1e4b7d0a3",
+            "document_id": "Sports Nutrition/caloric_context.md",
+            "score": 0.712299,
+            "content": "### Protein While Cutting\n\nDuring a caloric deficit, targeting 2.0–2.2 g/kg preserves lean muscle and reduces hunger. Higher protein intake also improves dietary adherence."
+        }
+    ],
+    "memory_sources": [],
+    "reasoning_trace": [
+        {
+            "step": 1,
+            "tool": "search_knowledge",
+            "args": {
+                "query": "daily protein intake muscle building grams per kilogram"
+            },
+            "result": "[1] (chunk_id=3a1f9c847e2d6b05f4e8a7c3d9b2e1f0a5c8d7e6b3f2a1d0c9e8b7a6f5e4d3c)\n### Daily Protein Target\n\nResearch supports 1.6–2.2 g of protein per kg of bodyweight per day..."
+        }
+    ],
+    "tools_used": [
+        "search_knowledge"
+    ],
+    "session_id": null,
+    "usage": {
+        "llm_calls": 5,
+        "input_tokens": 3874,
+        "output_tokens": 8102,
+        "total_tokens": 11976
+    },
+    "mode": "agent",
+    "sources": [
+        {
+            "chunk_id": "3a1f9c847e2d6b05f4e8a7c3d9b2e1f0a5c8d7e6b3f2a1d0c9e8b7a6f5e4d3c",
+            "document_id": "Sports Nutrition/protein_recommendations.md",
+            "score": 1.923455,
+            "content": "### Daily Protein Target\n\nResearch supports 1.6–2.2 g of protein per kg of bodyweight per day for muscle hypertrophy. Intakes above 2.2 g/kg show diminishing returns."
+        },
+        {
+            "chunk_id": "b7d4e2a1f9c3b8e0d5a7f6c2e4b1d9a0f3c8b5e2d7a4f1c9e6b3d0a7f4c1e8",
+            "document_id": "Sports Nutrition/protein_recommendations.md",
+            "score": 1.521088,
+            "content": "### Meal Frequency and Dose\n\nSpreading protein across 3–5 meals of 20–40 g each produces more muscle protein synthesis than the same total consumed in fewer large servings."
+        },
+        {
+            "chunk_id": "e2c9a4f7b1d6e3c8a0b5d2f9e4c1b8a5d3f0c7e2b9a6d4f1c8e5b2a9d7f4c1",
+            "document_id": "Sports Nutrition/protein_recommendations.md",
+            "score": 1.204711,
+            "content": "### Post-Workout Timing\n\nEating 20–40 g of protein within two hours of training significantly boosts muscle protein synthesis. Leucine-rich sources such as eggs and whey are ideal."
+        },
+        {
+            "chunk_id": "a5b8d1e4f7c2a9b6d3e0f5c2a8b5d1e8f3c0a7b4d1e6f3c9a2b7d4e1f6c3a0",
+            "document_id": "Sports Nutrition/protein_sources.md",
+            "score": 0.889034,
+            "content": "### Protein Sources\n\nChicken breast, eggs, Greek yogurt, and tuna are high-quality sources rich in all essential amino acids. Well-planned plant diets can meet the same targets."
+        },
+        {
+            "chunk_id": "f3a6c9e2b5d8a1f4c7e0b3a6d9f2c5e8b1d4a7f0c3e6b9d2a5f8c1e4b7d0a3",
+            "document_id": "Sports Nutrition/caloric_context.md",
+            "score": 0.712299,
+            "content": "### Protein While Cutting\n\nDuring a caloric deficit, targeting 2.0–2.2 g/kg preserves lean muscle and reduces hunger. Higher protein intake also improves dietary adherence."
+        }
+    ],
+    "ablation": {
+        "use_memory": true,
+        "use_graph_rag": true,
+        "memory": {
+            "save_turns": true,
+            "use_session_memory": true,
+            "use_long_term_memory": true,
+            "use_graph_expand": true,
+            "use_rerank": true
+        },
+        "retrieval": {
+            "use_chunk_vectors": true,
+            "use_node_vectors": true,
+            "use_triplet_vectors": true,
+            "use_community_vectors": true,
+            "use_graph_expand": true,
+            "use_graph_boost": true,
+            "use_decompose": true,
+            "use_ircot": true
+        }
+    }
+}

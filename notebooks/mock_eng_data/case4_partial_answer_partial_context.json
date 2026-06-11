@@ -1,0 +1,110 @@
+{
+    "answer": "Plant in full sun with well-drained soil at pH 6.0–6.8. Water 2–3 times weekly and watch for insects or leaf damage.",
+    "knowledge_sources": [
+        {
+            "chunk_id": "7e3b6a9f2c5d8e1b4a7d0c3f6e9b2a5d8f1c4e7b0a3d6f9c2e5b8a1d4f7c0e3",
+            "document_id": "Home Gardening/growing_tomatoes.md",
+            "score": 1.788234,
+            "content": "### Sunlight and Soil\n\nTomatoes need at least 6–8 hours of direct sun per day. Plant in well-drained soil with a pH of 6.0–6.8 enriched with compost before planting."
+        },
+        {
+            "chunk_id": "4a8d1e5b9c2f6a0d3e7b4c8f1a5d9e2b6c0f3a7d1e4b8c2f5a9d3e6b0c4f7a1",
+            "document_id": "Home Gardening/growing_tomatoes.md",
+            "score": 1.543019,
+            "content": "### Watering and Support\n\nWater deeply 2–3 times per week rather than lightly every day to encourage deep root growth. Stake or cage plants once they reach 30 cm tall."
+        },
+        {
+            "chunk_id": "b2e5a8d1f4c7e0b3d6a9f2c5e8b1d4a7f0c3e6b9d2a5f8c1e4b7d0a3f6c9e2b5",
+            "document_id": "Home Gardening/growing_tomatoes.md",
+            "score": 0.934801,
+            "content": "### Fertilizing\n\nTomatoes are heavy feeders. Add compost before planting and switch to a low-nitrogen fertilizer once flowering begins to favour fruit over leaf growth."
+        },
+        {
+            "chunk_id": "d6f9c2e5b8a1d4f7c0e3b6a9f2c5d8e1b4a7d0c3f6e9b2a5d8f1c4e7b0a3d6f9",
+            "document_id": "Home Gardening/soil_preparation.md",
+            "score": 0.621477,
+            "content": "### Raised Beds\n\nRaised beds with a mix of topsoil, compost, and perlite offer excellent drainage and warm up faster in spring. Aim for at least 30 cm depth for root development."
+        },
+        {
+            "chunk_id": "c0f3a7d1e4b8c2f5a9d3e6b0c4f7a1d5e8b2c6f9a3d7e0b4c8f1a5d9e2b6c0f3",
+            "document_id": "Home Gardening/companion_planting.md",
+            "score": 0.412556,
+            "content": "### Companion Planting\n\nBasil near tomatoes may deter aphids. Marigolds along bed edges help repel whiteflies and nematodes. Avoid planting near fennel or brassicas, which inhibit growth."
+        }
+    ],
+    "memory_sources": [],
+    "reasoning_trace": [
+        {
+            "step": 1,
+            "tool": "search_knowledge",
+            "args": {
+                "query": "how to grow tomatoes pests insects common problems"
+            },
+            "result": "[1] (chunk_id=7e3b6a9f2c5d8e1b4a7d0c3f6e9b2a5d8f1c4e7b0a3d6f9c2e5b8a1d4f7c0e3)\n### Sunlight and Soil\n\nTomatoes need at least 6–8 hours of direct sun per day..."
+        }
+    ],
+    "tools_used": [
+        "search_knowledge"
+    ],
+    "session_id": null,
+    "usage": {
+        "llm_calls": 5,
+        "input_tokens": 3688,
+        "output_tokens": 7253,
+        "total_tokens": 10941
+    },
+    "mode": "agent",
+    "sources": [
+        {
+            "chunk_id": "7e3b6a9f2c5d8e1b4a7d0c3f6e9b2a5d8f1c4e7b0a3d6f9c2e5b8a1d4f7c0e3",
+            "document_id": "Home Gardening/growing_tomatoes.md",
+            "score": 1.788234,
+            "content": "### Sunlight and Soil\n\nTomatoes need at least 6–8 hours of direct sun per day. Plant in well-drained soil with a pH of 6.0–6.8 enriched with compost before planting."
+        },
+        {
+            "chunk_id": "4a8d1e5b9c2f6a0d3e7b4c8f1a5d9e2b6c0f3a7d1e4b8c2f5a9d3e6b0c4f7a1",
+            "document_id": "Home Gardening/growing_tomatoes.md",
+            "score": 1.543019,
+            "content": "### Watering and Support\n\nWater deeply 2–3 times per week rather than lightly every day to encourage deep root growth. Stake or cage plants once they reach 30 cm tall."
+        },
+        {
+            "chunk_id": "b2e5a8d1f4c7e0b3d6a9f2c5e8b1d4a7f0c3e6b9d2a5f8c1e4b7d0a3f6c9e2b5",
+            "document_id": "Home Gardening/growing_tomatoes.md",
+            "score": 0.934801,
+            "content": "### Fertilizing\n\nTomatoes are heavy feeders. Add compost before planting and switch to a low-nitrogen fertilizer once flowering begins to favour fruit over leaf growth."
+        },
+        {
+            "chunk_id": "d6f9c2e5b8a1d4f7c0e3b6a9f2c5d8e1b4a7d0c3f6e9b2a5d8f1c4e7b0a3d6f9",
+            "document_id": "Home Gardening/soil_preparation.md",
+            "score": 0.621477,
+            "content": "### Raised Beds\n\nRaised beds with a mix of topsoil, compost, and perlite offer excellent drainage and warm up faster in spring. Aim for at least 30 cm depth for root development."
+        },
+        {
+            "chunk_id": "c0f3a7d1e4b8c2f5a9d3e6b0c4f7a1d5e8b2c6f9a3d7e0b4c8f1a5d9e2b6c0f3",
+            "document_id": "Home Gardening/companion_planting.md",
+            "score": 0.412556,
+            "content": "### Companion Planting\n\nBasil near tomatoes may deter aphids. Marigolds along bed edges help repel whiteflies and nematodes. Avoid planting near fennel or brassicas, which inhibit growth."
+        }
+    ],
+    "ablation": {
+        "use_memory": true,
+        "use_graph_rag": true,
+        "memory": {
+            "save_turns": true,
+            "use_session_memory": true,
+            "use_long_term_memory": true,
+            "use_graph_expand": true,
+            "use_rerank": true
+        },
+        "retrieval": {
+            "use_chunk_vectors": true,
+            "use_node_vectors": true,
+            "use_triplet_vectors": true,
+            "use_community_vectors": true,
+            "use_graph_expand": true,
+            "use_graph_boost": true,
+            "use_decompose": true,
+            "use_ircot": true
+        }
+    }
+}

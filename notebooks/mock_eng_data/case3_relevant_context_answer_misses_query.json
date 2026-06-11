@@ -1,0 +1,110 @@
+{
+    "answer": "Sleep supports memory, immune function, and emotional wellbeing. Most adults need 7–9 hours of sleep per night.",
+    "knowledge_sources": [
+        {
+            "chunk_id": "1b4e7a2f5c8d3e6b9a0f3c7e1d4b8a5f2e9c6b3d0a7f4c1e8b5d2a9f6c3e0b7",
+            "document_id": "Sleep Science/circadian_rhythms.md",
+            "score": 1.834901,
+            "content": "### Optimal Bedtime\n\nFor most adults, the ideal sleep window is 10:00–11:30 PM, when melatonin secretion peaks naturally. Going to bed consistently each night anchors the circadian clock."
+        },
+        {
+            "chunk_id": "9d2a5f8c1e4b7d0a3f6c9e2b5d8a1f4c7e0b3d6a9f2c5e8b1d4a7f0c3e6b9d2",
+            "document_id": "Sleep Science/sleep_cycles.md",
+            "score": 1.612744,
+            "content": "### Sleep Cycle Maths\n\nOne sleep cycle is 90 minutes. To wake at 6:30 AM refreshed, go to sleep at 9:00 PM, 10:30 PM, or midnight to complete a whole number of cycles."
+        },
+        {
+            "chunk_id": "5e8b1d4a7f0c3e6b9d2a5f8c1e4b7d0a3f6c9e2b5d8a1f4c7e0b3d6a9f2c5e8",
+            "document_id": "Sleep Science/sleep_duration.md",
+            "score": 1.400318,
+            "content": "### Recommended Duration\n\nAdults aged 18–60 need at least 7 hours nightly; adults 61–64 should target 7–9 hours. Regularly sleeping fewer than 7 hours is associated with health risks."
+        },
+        {
+            "chunk_id": "2c7f4a9e6b1d8c3f0a5e2b9d6c1f8a3e0b7d4c9f2a5e8b3d0c7f4a1e6b9d2c5",
+            "document_id": "Sleep Science/chronotypes.md",
+            "score": 1.188522,
+            "content": "### Chronotypes\n\nEarly chronotypes prefer to sleep and wake earlier; night owls prefer later schedules. Chronotype is partly genetic and tends to shift later during the teenage years."
+        },
+        {
+            "chunk_id": "8a3d0c7f4a1e6b9d2c5f8a3e0b7d4c9f2a5e8b3d0c7f4a1e6b9d2c5f8a3e0b7",
+            "document_id": "Sleep Science/sleep_hygiene.md",
+            "score": 0.821093,
+            "content": "### Evening Routine\n\nDimming lights 1–2 hours before bed and avoiding screens after 9 PM reduces sleep onset time. A cool bedroom of 16–19 °C also improves sleep quality."
+        }
+    ],
+    "memory_sources": [],
+    "reasoning_trace": [
+        {
+            "step": 1,
+            "tool": "search_knowledge",
+            "args": {
+                "query": "optimal bedtime what time sleep wake up rested"
+            },
+            "result": "[1] (chunk_id=1b4e7a2f5c8d3e6b9a0f3c7e1d4b8a5f2e9c6b3d0a7f4c1e8b5d2a9f6c3e0b7)\n### Optimal Bedtime\n\nFor most adults, the ideal sleep window is 10:00–11:30 PM..."
+        }
+    ],
+    "tools_used": [
+        "search_knowledge"
+    ],
+    "session_id": null,
+    "usage": {
+        "llm_calls": 5,
+        "input_tokens": 4201,
+        "output_tokens": 7814,
+        "total_tokens": 12015
+    },
+    "mode": "agent",
+    "sources": [
+        {
+            "chunk_id": "1b4e7a2f5c8d3e6b9a0f3c7e1d4b8a5f2e9c6b3d0a7f4c1e8b5d2a9f6c3e0b7",
+            "document_id": "Sleep Science/circadian_rhythms.md",
+            "score": 1.834901,
+            "content": "### Optimal Bedtime\n\nFor most adults, the ideal sleep window is 10:00–11:30 PM, when melatonin secretion peaks naturally. Going to bed consistently each night anchors the circadian clock."
+        },
+        {
+            "chunk_id": "9d2a5f8c1e4b7d0a3f6c9e2b5d8a1f4c7e0b3d6a9f2c5e8b1d4a7f0c3e6b9d2",
+            "document_id": "Sleep Science/sleep_cycles.md",
+            "score": 1.612744,
+            "content": "### Sleep Cycle Maths\n\nOne sleep cycle is 90 minutes. To wake at 6:30 AM refreshed, go to sleep at 9:00 PM, 10:30 PM, or midnight to complete a whole number of cycles."
+        },
+        {
+            "chunk_id": "5e8b1d4a7f0c3e6b9d2a5f8c1e4b7d0a3f6c9e2b5d8a1f4c7e0b3d6a9f2c5e8",
+            "document_id": "Sleep Science/sleep_duration.md",
+            "score": 1.400318,
+            "content": "### Recommended Duration\n\nAdults aged 18–60 need at least 7 hours nightly; adults 61–64 should target 7–9 hours. Regularly sleeping fewer than 7 hours is associated with health risks."
+        },
+        {
+            "chunk_id": "2c7f4a9e6b1d8c3f0a5e2b9d6c1f8a3e0b7d4c9f2a5e8b3d0c7f4a1e6b9d2c5",
+            "document_id": "Sleep Science/chronotypes.md",
+            "score": 1.188522,
+            "content": "### Chronotypes\n\nEarly chronotypes prefer to sleep and wake earlier; night owls prefer later schedules. Chronotype is partly genetic and tends to shift later during the teenage years."
+        },
+        {
+            "chunk_id": "8a3d0c7f4a1e6b9d2c5f8a3e0b7d4c9f2a5e8b3d0c7f4a1e6b9d2c5f8a3e0b7",
+            "document_id": "Sleep Science/sleep_hygiene.md",
+            "score": 0.821093,
+            "content": "### Evening Routine\n\nDimming lights 1–2 hours before bed and avoiding screens after 9 PM reduces sleep onset time. A cool bedroom of 16–19 °C also improves sleep quality."
+        }
+    ],
+    "ablation": {
+        "use_memory": true,
+        "use_graph_rag": true,
+        "memory": {
+            "save_turns": true,
+            "use_session_memory": true,
+            "use_long_term_memory": true,
+            "use_graph_expand": true,
+            "use_rerank": true
+        },
+        "retrieval": {
+            "use_chunk_vectors": true,
+            "use_node_vectors": true,
+            "use_triplet_vectors": true,
+            "use_community_vectors": true,
+            "use_graph_expand": true,
+            "use_graph_boost": true,
+            "use_decompose": true,
+            "use_ircot": true
+        }
+    }
+}
