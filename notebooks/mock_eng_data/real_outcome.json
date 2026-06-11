@@ -1,0 +1,110 @@
+{
+    "answer": "Dựa trên chính sách trợ cấp taxi của VNG:\n\n**Nhân viên sẽ bắt đầu được nhận trợ cấp taxi theo định mức cấp bậc mới từ tháng 9.**\n\nLý do: Theo quy định, khi nhân viên được thăng cấp, trợ cấp taxi sẽ có hiệu lực từ **tháng kế tiếp** tháng hiệu lực của việc thăng cấp. Vì ngày hiệu lực điều chỉnh cấp bậc là 22/08 (tháng 8), nên trợ cấp mới sẽ bắt đầu từ tháng 9.",
+    "knowledge_sources": [
+        {
+            "chunk_id": "e70a52f22b9383b50ed4ff2bfd5bf403513c5fbbc26643b1215e2342efedcc05",
+            "document_id": "CS Phu╠üc lo╠¢╠úi/CS Phu╠üc lo╠¢╠úi ca╠ån ba╠ën (chung).md",
+            "score": 1.749962,
+            "content": "### 4.2. Trợ cấp taxi\n\nTùy theo cấp bậc hoặc yêu cầu công việc đang đảm nhận, Công ty hỗ trợ Trợ cấp taxi cho Nhân viên kể từ tháng gia nhập Công ty. Chi tiết liên quan được qui định trong Chính sách hỗ trợ taxi do phòng AF ban hành.\n\nTrường hợp Nhân viên được thăng cấp, trợ cấp taxi sẽ hiệu lực từ tháng kế tiếp tháng hiệu lực thăng cấp.\n\nNhân viên được cung cấp thẻ taxi hoặc tài khoản sử dụng app taxi đã liên kết sẵn tài khoản thanh toán của Công ty."
+        },
+        {
+            "chunk_id": "ea73eb11a653e13008ab7f7c6bf96916287471f72fe41e64bae8ecf4e6a0b683",
+            "document_id": "",
+            "score": 0.898472,
+            "content": ""
+        },
+        {
+            "chunk_id": "496649ba46bd5c92a2e54296fce86a96cce18c98db85691f8741e7c28cd11a40",
+            "document_id": "CS Phu╠üc lo╠¢╠úi/CS Phu╠üc lo╠¢╠úi ca╠ån ba╠ën (chung).md",
+            "score": 0.839325,
+            "content": "### 4.3. Trợ cấp xe ôtô riêng\n\nĐối với các Nhân viên thuộc cấp bậc từ 4.3 trở lên, Công ty cung cấp phúc lợi xe ôtô riêng theo định mức, theo nhu cầu đi lại phục vụ công việc.\n\nChi tiết liên quan được qui định trong Chính sách xe ô tô riêng."
+        },
+        {
+            "chunk_id": "d67da758c634ae8c91c35487d545808eac01859e69e8ea599568915c1d4b7085",
+            "document_id": "CS Phu╠üc lo╠¢╠úi/CS Phu╠üc lo╠¢╠úi ca╠ån ba╠ën (chung).md",
+            "score": 0.82353,
+            "content": "### 4.1. Trợ cấp điện thoại\n\nTùy theo cấp bậc hoặc yêu cầu công việc đang đảm nhận, Công ty hỗ trợ Trợ cấp điện thoại cho Nhân viên kể từ tháng gia nhập Công ty. Chi tiết liên quan được qui định trong Chính sách hỗ trợ điện thoại do phòng AF ban hành.\n\nTrường hợp Nhân viên được thăng cấp, Trợ cấp điện thoại sẽ hiệu lực từ tháng kế tiếp tháng hiệu lực thăng cấp.\n\nTrợ cấp điện thoại được chuyển trực tiếp qua tài khoản ZaloPay (ví điện tử) hoặc Công ty thanh toán trực tiếp vào sau cho số điện thoại Nhân viên đăng ký."
+        },
+        {
+            "chunk_id": "77f46320edc5946f9da8005bf7c794e784cb3f43379ee3259d9b1ec6da834120",
+            "document_id": "CS Phu╠üc lo╠¢╠úi/CS Phu╠üc lo╠¢╠úi ca╠ån ba╠ën (chung).md",
+            "score": 0.768574,
+            "content": "### 2.2. Hỗ trợ tiền gửi xe\n\nCông ty cung cấp chỗ gửi xe máy cho toàn bộ Nhân viên làm việc tại văn phòng.\n\nĐối với các văn phòng không sắp xếp được chỗ gửi xe, Công ty hỗ trợ tiền gửi xe với định mức từ 180,000 đồng/ tháng – 300,000 đồng/ tháng tùy thuộc chi phí gửi xe thực tế phát sinh của từng văn phòng.\n\nMức hỗ trợ hằng tháng được tính như sau:\n\n| Tổng số ngày công đi làm thực tế trong tháng | Mức hỗ trợ tiền ăn trưa trong tháng |\n| :-- | :-- |\n| Từ đủ 15 ngày trở lên | Hưởng trọn định mức trong tháng |\n| Dưới 15 ngày | Số ngày làm việc thực tế trong tháng x định mức tháng của từng văn phòng |\n\nThông tin ngày công đi làm được căn cứ vào dữ liệu chấm công."
+        }
+    ],
+    "memory_sources": [],
+    "reasoning_trace": [
+        {
+            "step": 1,
+            "tool": "search_knowledge",
+            "args": {
+                "query": "trợ cấp taxi điều chỉnh cấp bậc ngày hiệu lực 22/08"
+            },
+            "result": "[1] (chunk_id=e70a52f22b9383b50ed4ff2bfd5bf403513c5fbbc26643b1215e2342efedcc05)\n### 4.2. Trợ cấp taxi\n\nTùy theo cấp bậc hoặc yêu cầu công việc đang đảm nhận, Công ty hỗ trợ Trợ cấp taxi cho Nhân viên ..."
+        }
+    ],
+    "tools_used": [
+        "search_knowledge"
+    ],
+    "session_id": null,
+    "usage": {
+        "llm_calls": 6,
+        "input_tokens": 4123,
+        "output_tokens": 9565,
+        "total_tokens": 13688
+    },
+    "mode": "agent",
+    "sources": [
+        {
+            "chunk_id": "e70a52f22b9383b50ed4ff2bfd5bf403513c5fbbc26643b1215e2342efedcc05",
+            "document_id": "CS Phu╠üc lo╠¢╠úi/CS Phu╠üc lo╠¢╠úi ca╠ån ba╠ën (chung).md",
+            "score": 1.749962,
+            "content": "### 4.2. Trợ cấp taxi\n\nTùy theo cấp bậc hoặc yêu cầu công việc đang đảm nhận, Công ty hỗ trợ Trợ cấp taxi cho Nhân viên kể từ tháng gia nhập Công ty. Chi tiết liên quan được qui định trong Chính sách hỗ trợ taxi do phòng AF ban hành.\n\nTrường hợp Nhân viên được thăng cấp, trợ cấp taxi sẽ hiệu lực từ tháng kế tiếp tháng hiệu lực thăng cấp.\n\nNhân viên được cung cấp thẻ taxi hoặc tài khoản sử dụng app taxi đã liên kết sẵn tài khoản thanh toán của Công ty."
+        },
+        {
+            "chunk_id": "ea73eb11a653e13008ab7f7c6bf96916287471f72fe41e64bae8ecf4e6a0b683",
+            "document_id": "",
+            "score": 0.898472,
+            "content": ""
+        },
+        {
+            "chunk_id": "496649ba46bd5c92a2e54296fce86a96cce18c98db85691f8741e7c28cd11a40",
+            "document_id": "CS Phu╠üc lo╠¢╠úi/CS Phu╠üc lo╠¢╠úi ca╠ån ba╠ën (chung).md",
+            "score": 0.839325,
+            "content": "### 4.3. Trợ cấp xe ôtô riêng\n\nĐối với các Nhân viên thuộc cấp bậc từ 4.3 trở lên, Công ty cung cấp phúc lợi xe ôtô riêng theo định mức, theo nhu cầu đi lại phục vụ công việc.\n\nChi tiết liên quan được qui định trong Chính sách xe ô tô riêng."
+        },
+        {
+            "chunk_id": "d67da758c634ae8c91c35487d545808eac01859e69e8ea599568915c1d4b7085",
+            "document_id": "CS Phu╠üc lo╠¢╠úi/CS Phu╠üc lo╠¢╠úi ca╠ån ba╠ën (chung).md",
+            "score": 0.82353,
+            "content": "### 4.1. Trợ cấp điện thoại\n\nTùy theo cấp bậc hoặc yêu cầu công việc đang đảm nhận, Công ty hỗ trợ Trợ cấp điện thoại cho Nhân viên kể từ tháng gia nhập Công ty. Chi tiết liên quan được qui định trong Chính sách hỗ trợ điện thoại do phòng AF ban hành.\n\nTrường hợp Nhân viên được thăng cấp, Trợ cấp điện thoại sẽ hiệu lực từ tháng kế tiếp tháng hiệu lực thăng cấp.\n\nTrợ cấp điện thoại được chuyển trực tiếp qua tài khoản ZaloPay (ví điện tử) hoặc Công ty thanh toán trực tiếp vào sau cho số điện thoại Nhân viên đăng ký."
+        },
+        {
+            "chunk_id": "77f46320edc5946f9da8005bf7c794e784cb3f43379ee3259d9b1ec6da834120",
+            "document_id": "CS Phu╠üc lo╠¢╠úi/CS Phu╠üc lo╠¢╠úi ca╠ån ba╠ën (chung).md",
+            "score": 0.768574,
+            "content": "### 2.2. Hỗ trợ tiền gửi xe\n\nCông ty cung cấp chỗ gửi xe máy cho toàn bộ Nhân viên làm việc tại văn phòng.\n\nĐối với các văn phòng không sắp xếp được chỗ gửi xe, Công ty hỗ trợ tiền gửi xe với định mức từ 180,000 đồng/ tháng – 300,000 đồng/ tháng tùy thuộc chi phí gửi xe thực tế phát sinh của từng văn phòng.\n\nMức hỗ trợ hằng tháng được tính như sau:\n\n| Tổng số ngày công đi làm thực tế trong tháng | Mức hỗ trợ tiền ăn trưa trong tháng |\n| :-- | :-- |\n| Từ đủ 15 ngày trở lên | Hưởng trọn định mức trong tháng |\n| Dưới 15 ngày | Số ngày làm việc thực tế trong tháng x định mức tháng của từng văn phòng |\n\nThông tin ngày công đi làm được căn cứ vào dữ liệu chấm công."
+        }
+    ],
+    "ablation": {
+        "use_memory": true,
+        "use_graph_rag": true,
+        "memory": {
+            "save_turns": true,
+            "use_session_memory": true,
+            "use_long_term_memory": true,
+            "use_graph_expand": true,
+            "use_rerank": true
+        },
+        "retrieval": {
+            "use_chunk_vectors": true,
+            "use_node_vectors": true,
+            "use_triplet_vectors": true,
+            "use_community_vectors": true,
+            "use_graph_expand": true,
+            "use_graph_boost": true,
+            "use_decompose": true,
+            "use_ircot": true
+        }
+    }
+}

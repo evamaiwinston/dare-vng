@@ -13,7 +13,7 @@ def main():
     data = fetch_backend(query)
     context, response = prepare_inputs(data)
     result = attribute_response(context, query, response)
-    print(result)
+    print(result.data.to_string())
 
 
 if __name__ == "__main__":
