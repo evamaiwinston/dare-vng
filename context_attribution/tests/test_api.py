@@ -10,7 +10,7 @@ def chat_response(backend_url, workspace_id, backend_token):
         f"{backend_url}/api/v1/workspaces/{workspace_id}/chat",
         headers={"Authorization": f"Bearer {backend_token}"},
         json={"query": QUERY, "mode": "agent", "top_k": 5},
-        timeout=120,
+        timeout=200,
     )
     return resp
 

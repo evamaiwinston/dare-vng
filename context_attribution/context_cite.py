@@ -59,8 +59,8 @@ BACKEND_TOKEN = os.getenv("BACKEND_API_KEY")
 
 # local-model-mini crashes the vllm worker when total prompt tokens exceed ~340
 # (measured overhead=44, safe limit=340). Set to None when switching to local-model.
-MINI_MAX_RESPONSE_CHARS = 120 if "mini" in MODEL else None  # ~40 response tokens
-MINI_MAX_CONTEXT_CHARS  = 900 if "mini" in MODEL else None  # ~250 context tokens
+MINI_MAX_RESPONSE_CHARS = 500  # 120 if "mini" in MODEL else None  # ~40 response tokens
+MINI_MAX_CONTEXT_CHARS  = 2200 #900 if "mini" in MODEL else None  # ~250 context tokens
 
 # --- Tokenizer ---------------------------------------------------------------
 
