@@ -1,19 +1,49 @@
-import sys
-from context_attribution.context_cite import fetch_backend, prepare_inputs, attribute_response
+import argparse
+
+from context_attribution.context_cite import run_pipeline
 
 
 def main():
-    if len(sys.argv) < 2:
-        print("Usage: python -m context_attribution \"<query>\"")
-        sys.exit(1)
+    parser = argparse.ArgumentParser(
+        prog="python -m context_attribution",
+        description="Run the context attribution pipeline (live backend or mock data).",
+    )
+    parser.add_argument(
+        "query",
+        nargs="?",
+        default=None,
+        help="The query to attribute. Required for live backend; optional with --mock.",
+    )
+    parser.add_argument(
+        "--mock",
+        metavar="PATH",
+        default=None,
+        help="Skip the backend and load this mock JSON file instead (demo mode).",
+    )
+    parser.add_argument(
+        "--num-ablations",
+        type=int,
+        default=32,
+        help="Number of ablations (default: 32).",
+    )
+    args = parser.parse_args()
 
-    query = sys.argv[1]
-    print(f"Query: {query}\n")
+    source = "mock" if args.mock else "backend"
+    print(f"Source: {source}" + (f" ({args.mock})" if args.mock else ""))
+    if args.query:
+        print(f"Query: {args.query}")
+    print()
 
-    data = fetch_backend(query)
-    context, response = prepare_inputs(data)
-    result = attribute_response(context, query, response)
-    print(result.data.to_string())
+    result = run_pipeline(
+        query=args.query,
+        source=source,
+        mock_path=args.mock,
+        num_ablations=args.num_ablations,
+    )
+
+    print(f"\nQuery: {result['query']}")
+    print(f"Sources: {result['num_sources']}\n")
+    print(result["attributions"].data.to_string())
 
 
 if __name__ == "__main__":

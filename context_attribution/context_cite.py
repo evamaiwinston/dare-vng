@@ -32,6 +32,8 @@ if not hasattr(Styler, "applymap"):
 from context_cite import ContextCiter
 from context_cite import utils as _cc_utils
 
+from context_attribution.partitioner import MarkdownContextPartitioner
+
 
 def _patched_color_scale(val, max_val):
     # Fixes: (1) negative val overshoots RGB >255, (2) numpy 2.x f-string formatting
@@ -351,6 +353,12 @@ def fetch_backend_or_file(query: str, fallback_path: str | Path) -> dict:
             return json.load(f)
 
 
+def load_mock(mock_path: str | Path) -> dict:
+    """Load a demo mock RAG response (same shape as fetch_backend output)."""
+    with open(mock_path) as f:
+        return json.load(f)
+
+
 def prepare_inputs(data: dict) -> tuple[str, str]:
     """Apply model capacity limits and return (context, response).
 
@@ -395,9 +403,11 @@ def attribute_response(
 ):
     """Run context attribution and return source weights.
 
-    ContextCite partitions context into sentences, masks random subsets across
-    num_ablations calls to the LLM endpoint (prompt_logprobs=1), then fits a
-    Lasso to identify which sentences drove the response.
+    Uses MarkdownContextPartitioner to split context into markdown-aware sources
+    (headers dropped, one source per list item, tables atomic, plain text by
+    sentence), masks random subsets across num_ablations calls to the LLM
+    endpoint (prompt_logprobs=1), then fits a Lasso to identify which sources
+    drove the response.
     """
     tokenizer = make_tokenizer()
     model = APIModel(response=response)
@@ -409,5 +419,67 @@ def attribute_response(
         num_ablations=num_ablations,
         ablation_keep_prob=ablation_keep_prob,
         batch_size=batch_size,
+        partitioner=MarkdownContextPartitioner(context),
     )
     return cc.get_attributions(as_dataframe=as_dataframe, verbose=verbose)
+
+
+# --- UI entry point ----------------------------------------------------------
+
+def run_pipeline(
+    query: str | None = None,
+    *,
+    source: str = "backend",
+    mock_path: str | Path | None = None,
+    num_ablations: int = 32,
+    ablation_keep_prob: float = 0.5,
+    batch_size: int = 1,
+    as_dataframe: bool = True,
+    verbose: bool = True,
+) -> dict:
+    """Run the full attribution pipeline; the single entry point a UI calls.
+
+    Two modes, selected explicitly via ``source`` (not by backend availability):
+
+    * ``source="backend"`` -- send ``query`` to the live RAG backend, then
+      attribute the answer. ``query`` is required.
+    * ``source="mock"`` -- skip the backend and load ``mock_path`` instead, for
+      demo consistency. ``query`` is optional: if omitted, the mock's own
+      ``query`` field is used, falling back to a demo placeholder. The ablation
+      logprobs still come from the live ZP/LLM endpoint either way.
+
+    Returns a dict with everything the UI needs to render:
+    ``{source, query, answer, context, response, num_sources, attributions}``.
+    """
+    if source == "mock":
+        if mock_path is None:
+            raise ValueError("source='mock' requires mock_path")
+        data = load_mock(mock_path)
+        query = query or data.get("query") or "[demo] context attribution"
+    elif source == "backend":
+        if not query:
+            raise ValueError("source='backend' requires a query")
+        data = fetch_backend(query)
+    else:
+        raise ValueError(f"unknown source {source!r} (use 'backend' or 'mock')")
+
+    context, response = prepare_inputs(data)
+    attributions = attribute_response(
+        context,
+        query,
+        response,
+        num_ablations=num_ablations,
+        ablation_keep_prob=ablation_keep_prob,
+        batch_size=batch_size,
+        as_dataframe=as_dataframe,
+        verbose=verbose,
+    )
+    return {
+        "source": source,
+        "query": query,
+        "answer": data["answer"],
+        "context": context,
+        "response": response,
+        "num_sources": MarkdownContextPartitioner(context).num_sources,
+        "attributions": attributions,
+    }
