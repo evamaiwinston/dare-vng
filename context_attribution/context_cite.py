@@ -13,6 +13,7 @@ High-level usage:
 
 import os
 import json
+import logging
 import numpy as np
 import requests
 import torch
@@ -62,6 +63,21 @@ BACKEND_TOKEN = os.getenv("BACKEND_API_KEY")
 MINI_MAX_RESPONSE_CHARS = 500  # 120 if "mini" in MODEL else None  # ~40 response tokens
 MINI_MAX_CONTEXT_CHARS  = 2200 #900 if "mini" in MODEL else None  # ~250 context tokens
 
+# --- Logging -----------------------------------------------------------------
+
+logger = logging.getLogger(__name__)
+
+_api_call_count = 0      # monotonic counter so log lines can be correlated
+_estimate_tok = None     # lazy GPT-2 tokenizer, used only for size estimates
+
+
+def _estimate_tokens(text: str) -> int:
+    """Rough token count for logging only (GPT-2 BPE; over-counts non-English)."""
+    global _estimate_tok
+    if _estimate_tok is None:
+        _estimate_tok = GPT2TokenizerFast.from_pretrained("gpt2")
+    return len(_estimate_tok.encode(text, add_special_tokens=False))
+
 # --- Tokenizer ---------------------------------------------------------------
 
 def make_tokenizer() -> GPT2TokenizerFast:
@@ -108,6 +124,16 @@ def _extract_user_content(prompt_text: str) -> str:
 
 
 def _api_response_token_logprobs(user_content: str, response_text: str) -> list[tuple[str, float]]:
+    global _api_call_count
+    _api_call_count += 1
+    call_n = _api_call_count
+
+    est_tokens = _estimate_tokens(user_content) + _estimate_tokens(response_text)
+    logger.info(
+        "API call #%d -> %s | user_content=%d chars, response=%d chars, ~%d est tokens (GPT-2)",
+        call_n, MODEL, len(user_content), len(response_text), est_tokens,
+    )
+
     r = requests.post(
         LLM_URL,
         headers={"Authorization": f"Bearer {API_KEY}"},
@@ -123,10 +149,23 @@ def _api_response_token_logprobs(user_content: str, response_text: str) -> list[
         },
     )
     if not r.ok:
-        print(f"  API error {r.status_code}: {r.text[:200]}")
+        logger.error(
+            "API call #%d FAILED: HTTP %d | user_content=%d chars, response=%d chars, "
+            "~%d est tokens (GPT-2) | body: %s",
+            call_n, r.status_code, len(user_content), len(response_text),
+            est_tokens, r.text[:300],
+        )
     r.raise_for_status()
 
-    tokens   = _actual_tokens(r.json()["prompt_logprobs"])
+    payload = r.json()
+    prompt_logprobs = payload["prompt_logprobs"]
+    usage = payload.get("usage") or {}
+    logger.info(
+        "API call #%d OK: %d prompt tokens (server-side), usage=%s",
+        call_n, len(prompt_logprobs), usage or "n/a",
+    )
+
+    tokens   = _actual_tokens(prompt_logprobs)
     full_txt = "".join(t for t, _ in tokens)
 
     start = full_txt.rfind(response_text)
@@ -201,8 +240,16 @@ def _align_to_gpt2_tokens(
 #   4. Align API token logprobs onto GPT-2 token boundaries.
 #   5. Build fake logits so _compute_logit_probs returns the aligned logprobs:
 #
-#      logits[b, pos, label_id] = api_logprob + log(V-1),  all others = 0
+#      logits[b, j, label_id] = api_logprob + log(V-1),  all others = 0
 #      → softmax-based loss recovers api_logprob exactly.
+#
+#   Only the response tail of the logits is ever read downstream
+#   (_get_response_logit_probs slices output.logits[:, -(R+1):-1]), so we
+#   allocate just [bs, R+1, V] rather than the full [bs, seq_len, V]. The prompt
+#   rows were only ever zero-filled and discarded; skipping them makes the
+#   allocation independent of context length (the old full-width tensor grew
+#   with MAX_CONTEXT_CHARS and was ~95% wasted). R is the response token count,
+#   constant across ablations and batch items since the response is fixed.
 
 class APIModel:
 
@@ -218,10 +265,15 @@ class APIModel:
         return torch.tensor([full_ids], dtype=torch.long)
 
     def __call__(self, input_ids, attention_mask=None, labels=None, **kwargs):
-        bs, seq_len = input_ids.shape
+        bs     = input_ids.shape[0]
         V      = self._tokenizer.vocab_size
-        logits = torch.zeros(bs, seq_len, V)
         log_V1 = float(np.log(V - 1))
+
+        # R = number of response tokens (non -100 labels). Constant across rows
+        # because the response is fixed; only the context mask varies. Allocate
+        # just the response tail [bs, R+1, V] — independent of context length.
+        R      = sum(1 for l in labels[0].tolist() if l != -100)
+        logits = torch.zeros(bs, R + 1, V)
 
         for b in range(bs):
             ids = input_ids[b].tolist()
@@ -238,9 +290,10 @@ class APIModel:
             api_tokens = _api_response_token_logprobs(user_content, response_text)
             aligned    = _align_to_gpt2_tokens(api_tokens, response_text, response_ids, self._tokenizer)
 
+            # Row j of the tail corresponds to old global position resp_start-1+j,
+            # which is exactly what output.logits[:, -(R+1):-1] reads back.
             for j, (rid, alp) in enumerate(zip(response_ids, aligned)):
-                pos = resp_start - 1 + j
-                logits[b, pos, rid] = alp + log_V1
+                logits[b, j, rid] = alp + log_V1
 
         return SimpleNamespace(logits=logits)
 
