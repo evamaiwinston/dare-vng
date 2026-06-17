@@ -13,6 +13,7 @@ High-level usage:
 
 import os
 import json
+import time
 import logging
 import numpy as np
 import requests
@@ -69,6 +70,14 @@ logger = logging.getLogger(__name__)
 
 _api_call_count = 0      # monotonic counter so log lines can be correlated
 _estimate_tok = None     # lazy GPT-2 tokenizer, used only for size estimates
+
+# --- Graceful-call throttle / retry ------------------------------------------
+# The mini worker can fall over under a burst of prompt_logprobs calls. Throttle
+# spaces calls out; retry rides through transient 5xx / connection errors. These
+# are operational only — they change no attribution value. Override from a notebook.
+API_CALL_DELAY    = 0.0  # seconds to sleep BEFORE each call (set >0 to throttle)
+API_MAX_RETRIES   = 1    # total attempts per call (1 = no retry)
+API_RETRY_BACKOFF = 3.0  # seconds; wait = backoff * attempt_number (linear)
 
 
 def _estimate_tokens(text: str) -> int:
@@ -134,30 +143,49 @@ def _api_response_token_logprobs(user_content: str, response_text: str) -> list[
         call_n, MODEL, len(user_content), len(response_text), est_tokens,
     )
 
-    r = requests.post(
-        LLM_URL,
-        headers={"Authorization": f"Bearer {API_KEY}"},
-        json={
-            "model": MODEL,
-            "messages": [
-                {"role": "user",      "content": user_content},
-                {"role": "assistant", "content": response_text},
-            ],
-            "temperature": 0,
-            "max_tokens": 1,
-            "prompt_logprobs": 1,
-        },
-    )
-    if not r.ok:
-        logger.error(
-            "API call #%d FAILED: HTTP %d | user_content=%d chars, response=%d chars, "
-            "~%d est tokens (GPT-2) | body: %s",
-            call_n, r.status_code, len(user_content), len(response_text),
-            est_tokens, r.text[:300],
-        )
-    r.raise_for_status()
+    body = {
+        "model": MODEL,
+        "messages": [
+            {"role": "user",      "content": user_content},
+            {"role": "assistant", "content": response_text},
+        ],
+        "temperature": 0,
+        "max_tokens": 1,
+        "prompt_logprobs": 1,
+    }
 
-    payload = r.json()
+    payload = None
+    for attempt in range(1, max(API_MAX_RETRIES, 1) + 1):
+        if API_CALL_DELAY:
+            time.sleep(API_CALL_DELAY)          # throttle: space calls out
+        try:
+            r = requests.post(
+                LLM_URL,
+                headers={"Authorization": f"Bearer {API_KEY}"},
+                json=body,
+                timeout=120,
+            )
+        except requests.RequestException as e:
+            logger.warning("API call #%d attempt %d/%d transport error: %s",
+                           call_n, attempt, API_MAX_RETRIES, e)
+            if attempt >= API_MAX_RETRIES:
+                raise
+            time.sleep(API_RETRY_BACKOFF * attempt)
+            continue
+
+        if r.ok:
+            payload = r.json()
+            break
+
+        logger.error(
+            "API call #%d attempt %d/%d FAILED: HTTP %d | user_content=%d chars, "
+            "response=%d chars, ~%d est tokens (GPT-2) | body: %s",
+            call_n, attempt, API_MAX_RETRIES, r.status_code, len(user_content),
+            len(response_text), est_tokens, r.text[:300],
+        )
+        if attempt >= API_MAX_RETRIES:
+            r.raise_for_status()                # exhausted retries -> propagate
+        time.sleep(API_RETRY_BACKOFF * attempt)
     prompt_logprobs = payload["prompt_logprobs"]
     usage = payload.get("usage") or {}
     logger.info(
