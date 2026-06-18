@@ -20,7 +20,7 @@ CITE_END = None
 
 # Mock RAG-response file to demo with (file name, relative to this demo/ dir).
 # Swap this to point the demo at a different mock case.
-MOCK_DATA_FILE = "demo_data/cc_example.json"
+MOCK_DATA_FILE = "demo_data/demo_mock_data.json"
 
 # Resolved absolute path handed to the runner — no need to edit this.
 MOCK_DATA_PATH = Path(__file__).resolve().parent / MOCK_DATA_FILE

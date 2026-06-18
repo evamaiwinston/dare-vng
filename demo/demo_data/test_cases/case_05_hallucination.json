@@ -1,0 +1,56 @@
+{
+  "query": "What is the company's policy for mental health coverage under the premium plan?",
+  "answer": "The premium health plan provides up to 10 therapy sessions per year with a $20 copay.",
+  "knowledge_sources": [
+    {
+      "chunk_id": "chunk_1_dental_vision",
+      "document_id": "Benefits/Health_Insurance_Premium_Plan.md",
+      "score": 0.45,
+      "content": "The company's standard premium health plan covers 100% of dental checkups, up to two visits per year. Vision care requires a separate $15 copay per visit."
+    },
+    {
+      "chunk_id": "chunk_2_premium_resources",
+      "document_id": "Benefits/Health_Insurance_Premium_Plan.md",
+      "score": 0.42,
+      "content": "Resources provided by the company for premium health plan:\nOnline healthy employee portal\nFree eye doctor consultation"
+    },
+    {
+      "chunk_id": "chunk_3_wellness_exercise",
+      "document_id": "Benefits/Onsite_Wellness_Policy.md",
+      "score": 0.15,
+      "content": "Adults should participate in 30-60 minutes of exercise a day to maintain a healthy lifestyle. Utilize the free gym and workout class available on site."
+    }
+  ],
+  "memory_sources": [],
+  "reasoning_trace": [],
+  "tools_used": [],
+  "session_id": null,
+  "usage": {
+    "llm_calls": 1,
+    "input_tokens": 510,
+    "output_tokens": 300,
+    "total_tokens": 810
+  },
+  "mode": "agent",
+  "ablation": {
+    "use_memory": false,
+    "use_graph_rag": false,
+    "memory": {
+      "save_turns": false,
+      "use_session_memory": false,
+      "use_long_term_memory": false,
+      "use_graph_expand": false,
+      "use_rerank": false
+    },
+    "retrieval": {
+      "use_chunk_vectors": true,
+      "use_node_vectors": false,
+      "use_triplet_vectors": false,
+      "use_community_vectors": false,
+      "use_graph_expand": false,
+      "use_graph_boost": false,
+      "use_decompose": false,
+      "use_ircot": false
+    }
+  }
+}

@@ -1,0 +1,62 @@
+{
+  "query": "Alara's new lead single performance on the charts and stream count",
+  "answer": "Alara topped the global charts with her new lead single, 'Neon Mirage,' which accumulated an unprecedented 142 million streams during its debut week",
+  "knowledge_sources": [
+    {
+      "chunk_id": "chunk_1_billboard",
+      "document_id": "Entertainment/Music_Charts_Alara.md",
+      "score": 0.92,
+      "content": "Pop sensation Alara has shattered streaming records this week. Her highly anticipated lead single, 'Neon Mirage,' debuted at the absolute top of the global charts. Data aggregators confirmed the track pulled in an unprecedented 142 million streams within its first seven days of availability, securing the biggest debut week of the decade."
+    },
+    {
+      "chunk_id": "chunk_2_streaming_metrics",
+      "document_id": "Entertainment/Music_Charts_Alara.md",
+      "score": 0.91,
+      "content": "According to the weekly wrap-up, the number one spot on the global charts belongs to Alara. Her new track 'Neon Mirage' served as the vanguard lead single for her upcoming album and completely dominated the competition by racking up a staggering 142 million plays across all major streaming platforms during its initial debut frame."
+    },
+    {
+      "chunk_id": "chunk_3_analyst_report",
+      "document_id": "Entertainment/Music_Charts_Alara.md",
+      "score": 0.89,
+      "content": "Market analysts are buzzing over Alara's latest charting achievement. Dropping as a lead single, 'Neon Mirage' went straight to number one globally. Total platform metrics reveal that the track accumulated 142 million streams worldwide in its opening week, proving that her streaming footprint has reached an all-time high."
+    },
+    {
+      "chunk_id": "chunk_4_chart_ledger",
+      "document_id": "Entertainment/Music_Charts_Alara.md",
+      "score": 0.88,
+      "content": "Weekly Chart Update: Alara's 'Neon Mirage' officially claims the #1 position on the Global Top 100. The track, which functions as the lead single for her third studio campaign, registered an official debut tally of exactly 142,000,000 streams globally, outpacing the runner-up track by more than double."
+    }
+  ],
+  "memory_sources": [],
+  "reasoning_trace": [],
+  "tools_used": [],
+  "session_id": null,
+  "usage": {
+    "llm_calls": 1,
+    "input_tokens": 580,
+    "output_tokens": 490,
+    "total_tokens": 1070
+  },
+  "mode": "agent",
+  "ablation": {
+    "use_memory": false,
+    "use_graph_rag": false,
+    "memory": {
+      "save_turns": false,
+      "use_session_memory": false,
+      "use_long_term_memory": false,
+      "use_graph_expand": false,
+      "use_rerank": false
+    },
+    "retrieval": {
+      "use_chunk_vectors": true,
+      "use_node_vectors": false,
+      "use_triplet_vectors": false,
+      "use_community_vectors": false,
+      "use_graph_expand": false,
+      "use_graph_boost": false,
+      "use_decompose": false,
+      "use_ircot": false
+    }
+  }
+}

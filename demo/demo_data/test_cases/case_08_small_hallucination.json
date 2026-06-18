@@ -1,0 +1,44 @@
+{
+  "query": "specific hardware and software are provided to general employees on their first day",
+  "answer": "On day one of onboarding, general track employees are issued an enterprise-managed 14-inch MacBook Pro running macOS Sequoia with 16GB of unified memory and a 512GB SSD. The machine comes pre-loaded with a core software suite containing Microsoft 365, Slack, and Zoom, alongside a fully licensed copy of Adobe Creative Cloud Suite to support daily multimedia design workflows.",
+  "knowledge_sources": [
+    {
+      "chunk_id": "chunk_1_hardware_catalog",
+      "document_id": "IT/Ops/Hardware_Provisioning_Catalog.md",
+      "score": 0.88,
+      "content": "The Global Operations Division has officially finalized the hardware provisioning catalog for all incoming permanent staff members for the upcoming fiscal cycle. According to the approved IT infrastructure blueprint, the standard corporate laptop deployment for general office track roles includes an enterprise-managed 14-inch MacBook Pro configured with an Apple M-series chip, 16GB of unified memory, and a 512GB solid-state drive running the latest stable build of macOS Sequoia. Engineering tracks are provisioned with upgraded 16-inch models boasting 32GB of unified memory to support local development environments. All devices are pre-loaded via automated mobile device management (MDM) profiles with a standard suite of productivity tools, including the Microsoft 365 Enterprise software bundle, Slack for internal communication, Zoom for video conferencing, and the CrowdStrike Falcon agent for endpoint security compliance. Hardware distribution occurs during the onboarding sequence on day one, and employees are required to sign a device liability waiver acknowledging that the asset remains the sole property of the corporation and must be returned immediately upon termination."
+    }
+  ],
+  "memory_sources": [],
+  "reasoning_trace": [],
+  "tools_used": [],
+  "session_id": null,
+  "usage": {
+    "llm_calls": 1,
+    "input_tokens": 530,
+    "output_tokens": 390,
+    "total_tokens": 920
+  },
+  "mode": "agent",
+  "ablation": {
+    "use_memory": false,
+    "use_graph_rag": false,
+    "memory": {
+      "save_turns": false,
+      "use_session_memory": false,
+      "use_long_term_memory": false,
+      "use_graph_expand": false,
+      "use_rerank": false
+    },
+    "retrieval": {
+      "use_chunk_vectors": true,
+      "use_node_vectors": false,
+      "use_triplet_vectors": false,
+      "use_community_vectors": false,
+      "use_graph_expand": false,
+      "use_graph_boost": false,
+      "use_decompose": false,
+      "use_ircot": false
+    }
+  }
+}

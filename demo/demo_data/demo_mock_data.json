@@ -1,4 +1,5 @@
 {
+   "query": "Nhân viên VNG được nghỉ phép bao nhiêu ngày mỗi năm?",
    "answer": "Theo tài liệu chính sách nội bộ VNG, số ngày phép năm được quy định như sau:\n\n| Cấp bậc | Số ngày phép năm |\n|---------|:----------------:|\n| Cấp bậc 2, 3, 4, 5 | **16 ngày** |\n| Cấp bậc 1 | **14 ngày** |\n\nNgoài ra, nhân viên làm việc tại VNG trên 03 năm sẽ được **cộng thêm 01 ngày Phép thâm niên** cứ mỗi 03 năm.\n\n**Một số lưu ý:**\n- Phép năm được tính từ ngày 01/01 đến 31/12 hằng năm.\n- Phép năm chưa sử dụng hết được bảo lưu sang năm tiếp theo (tối đa 5 ngày) và phải sử dụng trước 31/03 năm đó, sau thời điểm này sẽ bị hủy bỏ.\n- Nhân viên có thể đăng ký nghỉ tối đa bằng số ngày phép còn lại cộng thêm tối đa 5 ngày tạm ứng phép năm.",
    "knowledge_sources": [
        {

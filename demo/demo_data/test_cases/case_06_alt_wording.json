@@ -1,0 +1,50 @@
+{
+  "query": "what happened to the company's staffing in the third quarter",
+  "answer": "Due to higher earnings during Q3, management hired 40 new employees.",
+  "knowledge_sources": [
+    {
+      "chunk_id": "chunk_1_q2_growth",
+      "document_id": "Corporate/Staffing_and_Performance_Ledger.md",
+      "score": 0.82,
+      "content": "The company’s core team consisted of 80 members in Q2. In the following quarter, revenue surged and allowed the team to recruit new-hires and grow by 50%.\n\nCompany size is partly a reflection of the company's performance in terms of profit. The company aims to grow each quarter."
+    },
+    {
+      "chunk_id": "chunk_2_q1_layoffs",
+      "document_id": "Corporate/Staffing_and_Performance_Ledger.md",
+      "score": 0.35,
+      "content": "In Q1, the company experienced a financial hit and was forced to lay off 40 employees. Factors such as the pandemic and AI agent implementation were contributive to this decision."
+    }
+  ],
+  "memory_sources": [],
+  "reasoning_trace": [],
+  "tools_used": [],
+  "session_id": null,
+  "usage": {
+    "llm_calls": 1,
+    "input_tokens": 450,
+    "output_tokens": 280,
+    "total_tokens": 730
+  },
+  "mode": "agent",
+  "ablation": {
+    "use_memory": false,
+    "use_graph_rag": false,
+    "memory": {
+      "save_turns": false,
+      "use_session_memory": false,
+      "use_long_term_memory": false,
+      "use_graph_expand": false,
+      "use_rerank": false
+    },
+    "retrieval": {
+      "use_chunk_vectors": true,
+      "use_node_vectors": false,
+      "use_triplet_vectors": false,
+      "use_community_vectors": false,
+      "use_graph_expand": false,
+      "use_graph_boost": false,
+      "use_decompose": false,
+      "use_ircot": false
+    }
+  }
+}
