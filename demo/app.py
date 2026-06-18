@@ -15,6 +15,7 @@ Run (from inside demo/):  python app.py
 
 import gradio as gr
 
+from config import NUM_ABLATIONS, MOCK_DATA_PATH
 from runner import fetch_inputs, attribute
 
 
@@ -22,16 +23,17 @@ def run(query, progress=gr.Progress(track_tqdm=True)):
     """Stage 1: show the answer. Stage 2: run attribution, show the table.
 
     `query` is accepted but ignored for now — the demo always runs the mock.
+    The mock file and ablation count come from config.py.
     progress=gr.Progress(track_tqdm=True) hooks the ablation loop's tqdm so the
     right column shows real per-ablation progress.
     """
-    inputs = fetch_inputs(source="mock")
+    inputs = fetch_inputs(source="mock", mock_path=MOCK_DATA_PATH)
 
     # Stage 1 — answer is available instantly; clear any prior table.
     yield inputs["answer"], inputs["raw"], None
 
     # Stage 2 — the slow ablation loop; progress bar advances on the right.
-    styler = attribute(inputs)
+    styler = attribute(inputs, num_ablations=NUM_ABLATIONS)
     yield inputs["answer"], inputs["raw"], styler
 
 
