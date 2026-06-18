@@ -1,98 +1,118 @@
 """Gradio demo for context attribution.
 
 Two-column layout:
-  Left  — query box (decorative for now; always runs the mock), a Run button,
-          the answer, and an expander with the full endpoint output.
-  Right — a progress bar during the ~34s attribution, then the color-scaled
+  Left  — a test-case dropdown, the query (auto-filled from the case, editable),
+          a Run button, the answer, and an expander with the full endpoint output.
+  Right — a progress bar during the attribution, then the color-scaled
           Score/Source table.
 
-One button, staged like the CLI: a generator yields the answer immediately,
-then runs attribution and yields the highlighted table. The pipeline is a
-black box reached only through runner.fetch_inputs / runner.attribute.
+Selecting a case fills the query box from that case's `query`. Run is staged
+like the CLI: a generator yields the answer immediately, then runs attribution
+and yields the table. The pipeline is a black box reached only through
+runner.fetch_inputs / runner.attribute.
+
+Each case may cite a response sub-span (config.CASES start/end). Span cases get
+a shaded HighlightedText answer; full-answer cases render markdown (so tables
+show). The component is toggled per run.
 
 Run (from inside demo/):  python app.py
 """
 
+import json
+
 import gradio as gr
 
-from config import NUM_ABLATIONS, MOCK_DATA_PATH, CITE_START, CITE_END
+from config import NUM_ABLATIONS, CASES, case_by_label, case_path
 from runner import fetch_inputs, attribute
 
-# Highlight the cited span only when BOTH offsets are set. Config is static per
-# app start, so this is decided once and picks the left answer component below.
-CITE_ACTIVE = CITE_START is not None and CITE_END is not None
 _CITED_LABEL = "cited"
+_CASE_LABELS = [c["label"] for c in CASES]
 
 
-def _answer_payload(inputs):
-    """Build the value for the left answer component.
+def _case_query(label):
+    """Read a case file's own `query` (fast, no LLM) to populate the box."""
+    data = json.loads(case_path(case_by_label(label)).read_text())
+    return data.get("query", "")
 
-    When citing is active, return HighlightedText segments with the cited span
-    labeled; otherwise return the plain answer string (rendered as markdown).
-    Offsets index `response`, which is a prefix of `answer` (== answer when the
-    answer fits the char limit), so they map straight onto `answer`.
+
+def _answer_components(inputs, start, end):
+    """Build (markdown_update, highlighted_update) for the answer panel.
+
+    Full-answer cases (no span) → markdown shown, highlighted hidden.
+    Span cases → highlighted shown with the cited span shaded, markdown hidden.
+    Offsets index `response` (a prefix of `answer`), so they map onto `answer`.
     """
     answer = inputs["answer"]
-    if not CITE_ACTIVE:
-        return answer
-    s = max(0, CITE_START)
-    e = min(CITE_END, len(inputs["response"]))
-    if e <= s:  # nothing to highlight — show plain
-        return [(answer, None)]
-    return [
+    has_span = start is not None or end is not None
+    if not has_span:
+        return gr.update(value=answer, visible=True), gr.update(visible=False)
+
+    s = max(0, start or 0)
+    e = min(end if end is not None else len(inputs["response"]), len(inputs["response"]))
+    if e <= s:  # degenerate span — fall back to plain markdown
+        return gr.update(value=answer, visible=True), gr.update(visible=False)
+
+    segments = [
         (answer[:s], None),
         (answer[s:e], _CITED_LABEL),
         (answer[e:], None),
     ]
+    return gr.update(visible=False), gr.update(value=segments, visible=True)
 
 
-def run(query, progress=gr.Progress(track_tqdm=True)):
+def run(label, query, progress=gr.Progress(track_tqdm=True)):
     """Stage 1: show the answer. Stage 2: run attribution, show the table.
 
-    `query` is accepted but ignored for now — the demo always runs the mock.
-    The mock file and ablation count come from config.py.
+    The selected case picks the mock file and the cited span; the (editable)
+    query box overrides the case's own query when non-empty.
     progress=gr.Progress(track_tqdm=True) hooks the ablation loop's tqdm so the
     right column shows real per-ablation progress.
     """
-    inputs = fetch_inputs(source="mock", mock_path=MOCK_DATA_PATH)
-    answer = _answer_payload(inputs)
+    case = case_by_label(label)
+    start, end = case["start"], case["end"]
+    inputs = fetch_inputs(
+        source="mock",
+        query=query or None,
+        mock_path=case_path(case),
+    )
+    md_update, hl_update = _answer_components(inputs, start, end)
 
     # Stage 1 — answer is available instantly; clear any prior table.
-    yield answer, inputs["raw"], None
+    yield md_update, hl_update, inputs["raw"], None
 
     # Stage 2 — the slow ablation loop; progress bar advances on the right.
-    styler = attribute(
-        inputs,
-        num_ablations=NUM_ABLATIONS,
-        start_idx=CITE_START,
-        end_idx=CITE_END,
-    )
-    yield answer, inputs["raw"], styler
+    styler = attribute(inputs, num_ablations=NUM_ABLATIONS, start_idx=start, end_idx=end)
+    yield md_update, hl_update, inputs["raw"], styler
 
 
 with gr.Blocks(title="Context Attribution") as demo:
     gr.Markdown("# Context Attribution")
 
     with gr.Row(equal_height=False):
-        # --- Left: query + answer -------------------------------------------
+        # --- Left: case + query + answer ------------------------------------
         with gr.Column(scale=1):
+            case_dd = gr.Dropdown(
+                choices=_CASE_LABELS,
+                value=_CASE_LABELS[0],
+                label="Test case",
+            )
             query_in = gr.Textbox(
                 label="Query",
-                placeholder="Type a question… (demo runs the mock either way)",
+                value=_case_query(_CASE_LABELS[0]),
                 lines=2,
             )
             run_btn = gr.Button("Run", variant="primary")
-            if CITE_ACTIVE:
-                # Cited span shaded; renders plain text (no markdown) but never
-                # breaks on arbitrary offsets.
-                answer_out = gr.HighlightedText(
-                    label=f"Answer (citing chars {CITE_START}–{CITE_END})",
-                    color_map={_CITED_LABEL: "#fde68a"},
-                    show_legend=False,
-                    combine_adjacent=True,
-                )
-            else:
-                answer_out = gr.Markdown(label="Answer")
+
+            # Two answer components, toggled per run (see _answer_components).
+            answer_md = gr.Markdown(label="Answer", visible=True)
+            answer_hl = gr.HighlightedText(
+                label="Answer (cited span shaded)",
+                color_map={_CITED_LABEL: "#fde68a"},
+                show_legend=False,
+                combine_adjacent=True,
+                visible=False,
+            )
+
             with gr.Accordion("Full endpoint output", open=False):
                 raw_out = gr.JSON(label="Raw response")
 
@@ -104,7 +124,14 @@ with gr.Blocks(title="Context Attribution") as demo:
                 wrap=True,
             )
 
-    run_btn.click(run, inputs=[query_in], outputs=[answer_out, raw_out, scores_out])
+    # Selecting a case fills the query box from that case.
+    case_dd.change(_case_query, inputs=case_dd, outputs=query_in)
+
+    run_btn.click(
+        run,
+        inputs=[case_dd, query_in],
+        outputs=[answer_md, answer_hl, raw_out, scores_out],
+    )
 
 
 if __name__ == "__main__":
