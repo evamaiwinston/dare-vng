@@ -1,0 +1,50 @@
+{
+  "answer": "Paul Bell, a director of online gambling firm 666Bet, was arrested at Heathrow airport as part of a £21m fraud probe, along with six others. The firm, which has deals with West Bromwich Albion and Leicester City, had signed Harry Redknapp to appear in its adverts, but Redknapp claims he knows nothing about the investigation. The firm’s licence was suspended by the UK Gambling Commission, and its website is currently offline, with no indication of when it will be restored.",
+  "knowledge_sources": [
+    {
+      "chunk_id": "a1b2c3d4e5f6g7h8i9j0k1l2m3n4o5p6q7r8s9t0u1v2w3x4y5z6a7b8c9d0e1f2",
+      "document_id": "News/International/Gambling_Firm_Fraud_Investigation_2015.md",
+      "score": 0.95,
+      "content": "A director of an online gambling firm linked to Harry Redknapp and two Premier League football clubs has been arrested over a £21m fraud probe, it has emerged. Paul Bell, a director of 666Bet, was reportedly arrested at Heathrow airport last week as part of a joint money-laundering investigation by HM Revenue & Customs and the National Crime Agency. Six other people were arrested, 13 properties were raided and £1m in cash was also seized as part of the investigation. A director of an online gambling firm, which signed Harry Redknapp to star in its adverts (pictured above) has been arrested over a £21m fraud . The online firm announced deals with West Bromwich Albion and Leicester City last summer. It also signed former QPR manager Redknapp to appear in its adverts, alongside Lock, Stock and Two Smoking Barrels actor Vas Blackwood. Last week, the UK gambling regulator The Gambling Commission suspended the firm's licence. The suspension led to Football League One side Leyton Orient, which signed a contract with the bookmakers in August last year, terminating its deal for shirt sponsorship. It is not yet known whether the two Premier League clubs will follow suit. Speaking from Dubai, Mr Redknapp told the Independent on Sunday: 'I just did an advert for them. I don't know anything about it at all. Not a clue.' Mr Bell, a stockbroker who is now an investor, was reportedly arrested at Heathrow before being re-arrested the following day when he arrived on the Isle of Man by private jet. According to a source, the businessman, who is said to be an active part of the community in the Isle of Man, has 'vigorously denied any wrongdoing'. Online firm 666Bet announced deals with West Brom and Leicester City last summer. It also signed Redknapp to appear in its adverts, alongside Lock, Stock and Two Smoking Barrels actor Vas Blackwood."
+    }
+  ],
+  "memory_sources": [],
+  "reasoning_trace": [
+    {
+      "step": 1,
+      "tool": null,
+      "thought": "The user wants a three sentence summary of the article.",
+      "type": "conclusion"
+    }
+  ],
+  "tools_used": [],
+  "session_id": null,
+  "usage": {
+    "llm_calls": 1,
+    "input_tokens": 850,
+    "output_tokens": 620,
+    "total_tokens": 1470
+  },
+  "mode": "agent",
+  "ablation": {
+    "use_memory": false,
+    "use_graph_rag": false,
+    "memory": {
+      "save_turns": false,
+      "use_session_memory": false,
+      "use_long_term_memory": false,
+      "use_graph_expand": false,
+      "use_rerank": false
+    },
+    "retrieval": {
+      "use_chunk_vectors": true,
+      "use_node_vectors": false,
+      "use_triplet_vectors": false,
+      "use_community_vectors": false,
+      "use_graph_expand": false,
+      "use_graph_boost": false,
+      "use_decompose": false,
+      "use_ircot": false
+    }
+  }
+}
