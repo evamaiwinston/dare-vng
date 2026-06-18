@@ -400,6 +400,8 @@ def attribute_response(
     batch_size: int = 1,
     as_dataframe: bool = True,
     verbose: bool = True,
+    start_idx: int | None = None,
+    end_idx: int | None = None,
 ):
     """Run context attribution and return source weights.
 
@@ -408,6 +410,10 @@ def attribute_response(
     sentence), masks random subsets across num_ablations calls to the LLM
     endpoint (prompt_logprobs=1), then fits a Lasso to identify which sources
     drove the response.
+
+    start_idx / end_idx select a sub-span of the response to attribute, as
+    character offsets into ``response``. Both None (the default) attributes the
+    whole response.
     """
     tokenizer = make_tokenizer()
     model = APIModel(response=response)
@@ -421,7 +427,12 @@ def attribute_response(
         batch_size=batch_size,
         partitioner=MarkdownContextPartitioner(context),
     )
-    return cc.get_attributions(as_dataframe=as_dataframe, verbose=verbose)
+    return cc.get_attributions(
+        start_idx=start_idx,
+        end_idx=end_idx,
+        as_dataframe=as_dataframe,
+        verbose=verbose,
+    )
 
 
 # --- UI entry point ----------------------------------------------------------

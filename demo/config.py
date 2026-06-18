@@ -11,6 +11,13 @@ from pathlib import Path
 # Higher = more stable scores but slower (each ablation is one LLM call).
 NUM_ABLATIONS = 32
 
+# Sub-span to cite: character offsets into the *attributed response* (the
+# truncated text ContextCite scores — NOT the full displayed answer).
+# Leave both None to attribute the whole response (current behavior).
+# Example: CITE_START, CITE_END = 0, 120  -> attribute only the first 120 chars.
+CITE_START = None
+CITE_END = None
+
 # Mock RAG-response file to demo with (file name, relative to this demo/ dir).
 # Swap this to point the demo at a different mock case.
 MOCK_DATA_FILE = "demo_data/cc_example.json"

@@ -127,10 +127,18 @@ def fetch_inputs(
     }
 
 
-def attribute(inputs: dict, *, num_ablations: int = 32):
+def attribute(
+    inputs: dict,
+    *,
+    num_ablations: int = 32,
+    start_idx: int | None = None,
+    end_idx: int | None = None,
+):
     """Stage 2 (slow): run attribution on stage-1 inputs.
 
     This is the ~34s ablation loop (its tqdm drives the UI progress bar).
+    `start_idx`/`end_idx` cite a sub-span of the response (char offsets into
+    `inputs["response"]`); both None attributes the whole response.
     Returns the sorted, color-scaled pandas Styler (Styler.data has columns
     "Score", "Source").
     """
@@ -139,4 +147,6 @@ def attribute(inputs: dict, *, num_ablations: int = 32):
         inputs["query"],
         inputs["response"],
         num_ablations=num_ablations,
+        start_idx=start_idx,
+        end_idx=end_idx,
     )
