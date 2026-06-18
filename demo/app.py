@@ -22,8 +22,8 @@ import json
 
 import gradio as gr
 
-from config import NUM_ABLATIONS, CASES, case_by_label, case_path
-from runner import fetch_inputs, attribute
+from config import NUM_ABLATIONS, GREEN_MAX, CASES, case_by_label, case_path
+from runner import fetch_inputs, attribute, style_scores
 
 _CITED_LABEL = "cited"
 _CASE_LABELS = [c["label"] for c in CASES]
@@ -82,7 +82,9 @@ def run(label, query, progress=gr.Progress(track_tqdm=True)):
 
     # Stage 2 — the slow ablation loop; progress bar advances on the right.
     styler = attribute(inputs, num_ablations=NUM_ABLATIONS, start_idx=start, end_idx=end)
-    yield md_update, hl_update, inputs["raw"], styler
+    # Re-shade with a FIXED green scale instead of the pipeline's per-run-max one.
+    scores = style_scores(styler.data, GREEN_MAX)
+    yield md_update, hl_update, inputs["raw"], scores
 
 
 with gr.Blocks(title="Context Attribution") as demo:

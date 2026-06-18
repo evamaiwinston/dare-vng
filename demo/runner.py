@@ -28,6 +28,7 @@ from context_attribution.context_cite import (  # noqa: E402
     fetch_backend,
     prepare_inputs,
     attribute_response,
+    _patched_color_scale,
 )
 
 # Default mock file shipped with the demo.
@@ -36,6 +37,21 @@ DEFAULT_MOCK_PATH = Path(__file__).resolve().parent / "demo_mock_data.json"
 # Fallback query label when a mock file carries no `query` of its own
 # (matches run_pipeline's own placeholder).
 _DEMO_QUERY = "[demo] context attribution"
+
+
+def style_scores(df, green_max: float):
+    """Re-shade the Score column with a FIXED green scale.
+
+    The pipeline's own Styler normalizes green to each run's max score
+    (relative). This reuses the module's exact color function but with a fixed
+    reference (`green_max`), so a given score always renders the same intensity:
+    <= 0 white, >= green_max full green, linear in between. Takes the raw
+    Score/Source DataFrame (e.g. `attribute(...).data`) and returns a Styler
+    ready for gr.Dataframe(interactive=False).
+    """
+    return df.style.map(
+        lambda v: _patched_color_scale(v, green_max), subset=["Score"]
+    ).format(precision=3)
 
 
 def run_attribution(

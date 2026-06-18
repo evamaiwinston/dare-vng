@@ -11,6 +11,12 @@ from pathlib import Path
 # Higher = more stable scores but slower (each ablation is one LLM call).
 NUM_ABLATIONS = 32
 
+# Fixed reference for the green Score shading: the score that renders as full
+# green. FIXED (absolute), not relative to each run's max — so a given score
+# always shows the same intensity across cases/runs. Scores <= 0 render white;
+# scores >= GREEN_MAX render full green. Tune to your score range.
+GREEN_MAX = 50.0
+
 _DEMO_DIR = Path(__file__).resolve().parent
 
 
