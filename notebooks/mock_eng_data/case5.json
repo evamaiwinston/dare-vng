@@ -1,0 +1,110 @@
+{
+    "answer": "Based on VNG's taxi allowance policy:\n\n**Employees will start receiving the taxi allowance according to the new rank standard from September.**\n\nReason: According to regulations, when an employee is promoted, the taxi allowance will take effect from the **next month** following the effective month of the promotion. Since the effective date of the rank adjustment is August 22 (August), the new allowance will start from September.",
+    "knowledge_sources": [
+        {
+            "chunk_id": "e70a52f22b9383b50ed4ff2bfd5bf403513c5fbbc26643b1215e2342efedcc05",
+            "document_id": "Welfare Policy/Basic Welfare Policy (general).md",
+            "score": 1.749962,
+            "content": "### 4.2. Taxi allowance\n\nDepending on the rank or job requirements being undertaken, the Company provides Taxi Allowance for Employees starting from the month of joining the Company. Relevant details are regulated in the Taxi Support Policy issued by the AF department.\n\nIn case an Employee is promoted, the taxi allowance will take effect from the month following the effective month of promotion.\n\nEmployees are provided with a taxi card or an account using a taxi app already linked to the Company's payment account."
+        },
+        {
+            "chunk_id": "ea73eb11a653e13008ab7f7c6bf96916287471f72fe41e64bae8ecf4e6a0b683",
+            "document_id": "",
+            "score": 0.898472,
+            "content": ""
+        },
+        {
+            "chunk_id": "496649ba46bd5c92a2e54296fce86a96cce18c98db85691f8741e7c28cd11a40",
+            "document_id": "Welfare Policy/Basic Welfare Policy (general).md",
+            "score": 0.839325,
+            "content": "### 4.3. Private car allowance\n\nFor Employees holding ranks from 4.3 and above, the Company provides private car benefits according to standards, based on travel needs for work purposes.\n\nRelevant details are regulated in the Private Car Policy."
+        },
+        {
+            "chunk_id": "d67da758c634ae8c91c35487d545808eac01859e69e8ea599568915c1d4b7085",
+            "document_id": "Welfare Policy/Basic Welfare Policy (general).md",
+            "score": 0.82353,
+            "content": "### 4.1. Phone allowance\n\nDepending on the rank or job requirements being undertaken, the Company provides Phone Allowance for Employees starting from the month of joining the Company. Relevant details are regulated in the Phone Support Policy issued by the AF department.\n\nIn case an Employee is promoted, the Phone Allowance will take effect from the month following the effective month of promotion.\n\nThe phone allowance is transferred directly to the ZaloPay account (e-wallet) or the Company pays directly afterwards to the phone number registered by the Employee."
+        },
+        {
+            "chunk_id": "77f46320edc5946f9da8005bf7c794e784cb3f43379ee3259d9b1ec6da834120",
+            "document_id": "Welfare Policy/Basic Welfare Policy (general).md",
+            "score": 0.768574,
+            "content": "### 2.2. Parking support\n\nThe Company provides motorbike parking spaces for all Employees working at the office.\n\nFor offices that cannot arrange parking spaces, the Company supports parking fees with a standard level from 180,000 VND/month – 300,000 VND/month depending on the actual parking costs incurred at each office.\n\nThe monthly support level is calculated as follows:\n\n| Total actual working days in the month | Lunch support level in the month |\n| :-- | :-- |\n| From 15 days or more | Enjoy the full standard rate in the month |\n| Less than 15 days | Number of actual working days in the month x monthly standard rate of each office |\n\nWorking day information is based on time attendance data."
+        }
+    ],
+    "memory_sources": [],
+    "reasoning_trace": [
+        {
+            "step": 1,
+            "tool": "search_knowledge",
+            "args": {
+                "query": "taxi allowance rank adjustment effective date 22/08"
+            },
+            "result": "[1] (chunk_id=e70a52f22b9383b50ed4ff2bfd5bf403513c5fbbc26643b1215e2342efedcc05)\n### 4.2. Taxi allowance\n\nDepending on the rank or job requirements being undertaken, the Company supports Taxi Allowance for Employees ..."
+        }
+    ],
+    "tools_used": [
+        "search_knowledge"
+    ],
+    "session_id": null,
+    "usage": {
+        "llm_calls": 6,
+        "input_tokens": 4123,
+        "output_tokens": 9565,
+        "total_tokens": 13688
+    },
+    "mode": "agent",
+    "sources": [
+        {
+            "chunk_id": "e70a52f22b9383b50ed4ff2bfd5bf403513c5fbbc26643b1215e2342efedcc05",
+            "document_id": "Welfare Policy/Basic Welfare Policy (general).md",
+            "score": 1.749962,
+            "content": "### 4.2. Taxi allowance\n\nDepending on the rank or job requirements being undertaken, the Company supports Taxi Allowance for Employees starting from the month of joining the Company. Relevant details are regulated in the Taxi Support Policy issued by the AF department.\n\nIn case an Employee is promoted, the taxi allowance will take effect from the month following the effective month of promotion.\n\nEmployees are provided with a taxi card or an account using a taxi app already linked to the Company's payment account."
+        },
+        {
+            "chunk_id": "ea73eb11a653e13008ab7f7c6bf96916287471f72fe41e64bae8ecf4e6a0b683",
+            "document_id": "",
+            "score": 0.898472,
+            "content": ""
+        },
+        {
+            "chunk_id": "496649ba46bd5c92a2e54296fce86a96cce18c98db85691f8741e7c28cd11a40",
+            "document_id": "Welfare Policy/Basic Welfare Policy (general).md",
+            "score": 0.839325,
+            "content": "### 4.3. Private car allowance\n\nFor Employees holding ranks from 4.3 and above, the Company provides private car benefits according to standards, based on travel needs for work purposes.\n\nRelevant details are regulated in the Private Car Policy."
+        },
+        {
+            "chunk_id": "d67da758c634ae8c91c35487d545808eac01859e69e8ea599568915c1d4b7085",
+            "document_id": "Welfare Policy/Basic Welfare Policy (general).md",
+            "score": 0.82353,
+            "content": "### 4.1. Phone allowance\n\nDepending on the rank or job requirements being undertaken, the Company provides Phone Allowance for Employees starting from the month of joining the Company. Relevant details are regulated in the Phone Support Policy issued by the AF department.\n\nIn case an Employee is promoted, the Phone Allowance will take effect from the month following the effective month of promotion.\n\nThe phone allowance is transferred directly to the ZaloPay account (e-wallet) or the Company pays directly afterwards to the phone number registered by the Employee."
+        },
+        {
+            "chunk_id": "77f46320edc5946f9da8005bf7c794e784cb3f43379ee3259d9b1ec6da834120",
+            "document_id": "Welfare Policy/Basic Welfare Policy (general).md",
+            "score": 0.768574,
+            "content": "### 2.2. Parking support\n\nThe Company provides motorbike parking spaces for all Employees working at the office.\n\nFor offices that cannot arrange parking spaces, the Company supports parking fees with a standard level from 180,000 VND/month – 300,000 VND/month depending on the actual parking costs incurred at each office.\n\nThe monthly support level is calculated as follows:\n\n| Total actual working days in the month | Lunch support level in the month |\n| :-- | :-- |\n| From 15 days or more | Enjoy the full standard rate in the month |\n| Less than 15 days | Number of actual working days in the month x monthly standard rate of each office |\n\nWorking day information is based on time attendance data."
+        }
+    ],
+    "ablation": {
+        "use_memory": true,
+        "use_graph_rag": true,
+        "memory": {
+            "save_turns": true,
+            "use_session_memory": true,
+            "use_long_term_memory": true,
+            "use_graph_expand": true,
+            "use_rerank": true
+        },
+        "retrieval": {
+            "use_chunk_vectors": true,
+            "use_node_vectors": true,
+            "use_triplet_vectors": true,
+            "use_community_vectors": true,
+            "use_graph_expand": true,
+            "use_graph_boost": true,
+            "use_decompose": true,
+            "use_ircot": true
+        }
+    }
+}
