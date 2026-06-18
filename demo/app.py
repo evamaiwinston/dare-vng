@@ -111,6 +111,7 @@ with gr.Blocks(title="Context Attribution") as demo:
                 label="Answer (cited span shaded)",
                 color_map={_CITED_LABEL: "#fde68a"},
                 show_legend=False,
+                show_inline_category=False,  # no "cited" tag on the span
                 combine_adjacent=True,
                 visible=False,
             )
