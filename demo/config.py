@@ -30,13 +30,13 @@ _DEMO_DIR = Path(__file__).resolve().parent
 # The first four reuse two example files with different cited spans.
 CASES = [
     {
-        "label": "ContextCite example — first sentence",
+        "label": "ContextCite example",
         "file": "demo_data/cc_example.json",
-        "start": 0,
-        "end": None,   # TODO: end char of the first sentence
+        "start": None,
+        "end": None, 
     },
     {
-        "label": "ContextCite example — chars 0–145",
+        "label": "ContextCite example — first sentence",
         "file": "demo_data/cc_example.json",
         "start": 0,
         "end": 145,

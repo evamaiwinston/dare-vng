@@ -1,5 +1,5 @@
 {
-  "query": "what happened to the company's staffing in the third quarter",
+  "query": "What happened to the company's staffing in the third quarter?",
   "answer": "Due to higher earnings during Q3, management hired 40 new employees.",
   "knowledge_sources": [
     {

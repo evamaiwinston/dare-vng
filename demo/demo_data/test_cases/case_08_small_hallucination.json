@@ -1,5 +1,5 @@
 {
-  "query": "specific hardware and software are provided to general employees on their first day",
+  "query": "What specific hardware and software are provided to general employees on their first day?",
   "answer": "On day one of onboarding, general track employees are issued an enterprise-managed 14-inch MacBook Pro running macOS Sequoia with 16GB of unified memory and a 512GB SSD. The machine comes pre-loaded with a core software suite containing Microsoft 365, Slack, and Zoom, alongside a fully licensed copy of Adobe Creative Cloud Suite to support daily multimedia design workflows.",
   "knowledge_sources": [
     {
