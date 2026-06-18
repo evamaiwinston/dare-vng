@@ -22,10 +22,20 @@ REPO_ROOT = Path(__file__).resolve().parent.parent
 if str(REPO_ROOT) not in sys.path:
     sys.path.insert(0, str(REPO_ROOT))
 
-from context_attribution.context_cite import run_pipeline  # noqa: E402
+from context_attribution.context_cite import (  # noqa: E402
+    run_pipeline,
+    load_mock,
+    fetch_backend,
+    prepare_inputs,
+    attribute_response,
+)
 
 # Default mock file shipped with the demo.
 DEFAULT_MOCK_PATH = Path(__file__).resolve().parent / "demo_mock_data.json"
+
+# Fallback query label when a mock file carries no `query` of its own
+# (matches run_pipeline's own placeholder).
+_DEMO_QUERY = "[demo] context attribution"
 
 
 def run_attribution(
@@ -70,3 +80,63 @@ def run_attribution(
             num_ablations=num_ablations,
         )
     raise ValueError(f"unknown source {source!r} (use 'mock' or 'backend')")
+
+
+# --- Two-stage split (for the UI: show the answer, then run attribution) ------
+#
+# run_pipeline does fetch + attribute in one blocking call and only returns at
+# the end. The UI wants the answer on screen *before* the ~34s attribution, so
+# we expose the same two steps run_pipeline performs internally, in the same
+# order, as separate functions. The algorithm is untouched — these just call
+# its public building blocks.
+
+
+def fetch_inputs(
+    *,
+    source: str = "mock",
+    query: str | None = None,
+    mock_path: str | Path | None = None,
+) -> dict:
+    """Stage 1 (fast): load the RAG response and prepare attribution inputs.
+
+    No ablation / LLM scoring happens here. Returns everything needed to show
+    the answer immediately and to drive stage 2:
+        {source, query, answer, context, response, raw}
+    where `answer` is the full endpoint answer, `raw` is the whole response
+    dict (for the "full output" expander), and `context`/`response` feed
+    `attribute()`.
+    """
+    if source == "mock":
+        data = load_mock(str(mock_path or DEFAULT_MOCK_PATH))
+        query = query or data.get("query") or _DEMO_QUERY
+    elif source == "backend":
+        if not query:
+            raise ValueError("backend mode requires a query")
+        data = fetch_backend(query)
+    else:
+        raise ValueError(f"unknown source {source!r} (use 'mock' or 'backend')")
+
+    context, response = prepare_inputs(data)
+    return {
+        "source": source,
+        "query": query,
+        "answer": data["answer"],
+        "context": context,
+        "response": response,
+        "raw": data,
+    }
+
+
+def attribute(inputs: dict, *, num_ablations: int = 32):
+    """Stage 2 (slow): run attribution on stage-1 inputs.
+
+    This is the ~34s ablation loop (its tqdm drives the UI progress bar).
+    Returns the sorted, color-scaled pandas Styler (Styler.data has columns
+    "Score", "Source").
+    """
+    return attribute_response(
+        inputs["context"],
+        inputs["query"],
+        inputs["response"],
+        num_ablations=num_ablations,
+    )

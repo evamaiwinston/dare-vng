@@ -1,43 +1,65 @@
-"""Minimal Gradio demo for context attribution.
+"""Gradio demo for context attribution.
 
-Deliberately bare: mock mode only, one button, a progress bar, and three
-outputs (query, answer, raw score table). This is the skeleton we iterate on
-toward the full explainability UI (ranked source cards, emphasis, backend
-mode). The pipeline is a black box reached only through runner.run_attribution.
+Two-column layout:
+  Left  — query box (decorative for now; always runs the mock), a Run button,
+          the answer, and an expander with the full endpoint output.
+  Right — a progress bar during the ~34s attribution, then the color-scaled
+          Score/Source table.
 
-Run:  python demo/app.py     (then open the printed local URL)
+One button, staged like the CLI: a generator yields the answer immediately,
+then runs attribution and yields the highlighted table. The pipeline is a
+black box reached only through runner.fetch_inputs / runner.attribute.
+
+Run (from inside demo/):  python app.py
 """
 
 import gradio as gr
 
-from runner import run_attribution
+from runner import fetch_inputs, attribute
 
 
-def attribute(progress=gr.Progress(track_tqdm=True)):
-    """Run the mock-mode pipeline and return (query, answer, score table).
+def run(query, progress=gr.Progress(track_tqdm=True)):
+    """Stage 1: show the answer. Stage 2: run attribution, show the table.
 
-    progress=gr.Progress(track_tqdm=True) hooks the ablation loop's tqdm bar
-    (context_cite.utils) so the ~34s run shows real per-ablation progress.
+    `query` is accepted but ignored for now — the demo always runs the mock.
+    progress=gr.Progress(track_tqdm=True) hooks the ablation loop's tqdm so the
+    right column shows real per-ablation progress.
     """
-    result = run_attribution(source="mock")
-    score_table = result["attributions"].data  # DataFrame: columns Score, Source
-    return result["query"], result["response"], score_table
+    inputs = fetch_inputs(source="mock")
+
+    # Stage 1 — answer is available instantly; clear any prior table.
+    yield inputs["answer"], inputs["raw"], None
+
+    # Stage 2 — the slow ablation loop; progress bar advances on the right.
+    styler = attribute(inputs)
+    yield inputs["answer"], inputs["raw"], styler
 
 
-with gr.Blocks(title="Context Attribution (minimal)") as demo:
-    gr.Markdown("# Context Attribution — minimal demo")
+with gr.Blocks(title="Context Attribution") as demo:
+    gr.Markdown("# Context Attribution")
 
-    run_btn = gr.Button("Run attribution", variant="primary")
+    with gr.Row(equal_height=False):
+        # --- Left: query + answer -------------------------------------------
+        with gr.Column(scale=1):
+            query_in = gr.Textbox(
+                label="Query",
+                placeholder="Type a question… (demo runs the mock either way)",
+                lines=2,
+            )
+            run_btn = gr.Button("Run", variant="primary")
+            answer_out = gr.Markdown(label="Answer")
+            with gr.Accordion("Full endpoint output", open=False):
+                raw_out = gr.JSON(label="Raw response")
 
-    query_out = gr.Textbox(label="Query", interactive=False)
-    answer_out = gr.Markdown(label="Answer")
-    scores_out = gr.Dataframe(
-        headers=["Score", "Source"],
-        label="Attribution scores (ranked)",
-        wrap=True,
-    )
+        # --- Right: attribution ---------------------------------------------
+        with gr.Column(scale=1):
+            scores_out = gr.Dataframe(
+                label="Context attribution",
+                interactive=False,  # required for the Styler colors to render
+                wrap=True,
+            )
 
-    run_btn.click(attribute, outputs=[query_out, answer_out, scores_out])
+    run_btn.click(run, inputs=[query_in], outputs=[answer_out, raw_out, scores_out])
 
 
 if __name__ == "__main__":
