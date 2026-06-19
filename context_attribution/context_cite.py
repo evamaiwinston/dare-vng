@@ -74,12 +74,18 @@ _api_call_count = 0      # monotonic counter so log lines can be correlated
 _estimate_tok = None     # lazy GPT-2 tokenizer, used only for size estimates
 
 # --- Graceful-call throttle / retry ------------------------------------------
-# The mini worker can fall over under a burst of prompt_logprobs calls. Throttle
-# spaces calls out; retry rides through transient 5xx / connection errors. These
-# are operational only — they change no attribution value. Override from a notebook.
-API_CALL_DELAY    = 0.0  # seconds to sleep BEFORE each call (set >0 to throttle)
-API_MAX_RETRIES   = 1    # total attempts per call (1 = no retry)
+# The NVIDIA-hosted endpoint queues requests server-side under load and can be
+# slow or briefly rate-limit (429) a burst of prompt_logprobs calls. Throttle
+# spaces calls out to stay under the rate limit; retry rides through transient
+# timeouts / 429 / 5xx / connection errors. These are operational only — they
+# change no attribution value. Edit here, or override from a notebook.
+API_CALL_DELAY    = 0.5   # seconds to sleep BEFORE each call (set 0 to disable)
+API_MAX_RETRIES   = 3     # total attempts per call (1 = no retry)
 API_RETRY_BACKOFF = 10.0  # seconds; wait = backoff * attempt_number (linear)
+# Per-call HTTP timeout as (connect, read) seconds. Read is per-response: a
+# request that stalls server-side fails after ~read seconds and is retried,
+# rather than blocking on one long timeout for the whole run.
+API_TIMEOUT       = (10, 90)
 
 
 def _estimate_tokens(text: str) -> int:
@@ -165,7 +171,7 @@ def _api_response_token_logprobs(user_content: str, response_text: str) -> list[
                 LLM_URL,
                 headers={"Authorization": f"Bearer {API_KEY}"},
                 json=body,
-                timeout=600,
+                timeout=API_TIMEOUT,
             )
         except requests.RequestException as e:
             logger.warning("API call #%d attempt %d/%d transport error: %s",
