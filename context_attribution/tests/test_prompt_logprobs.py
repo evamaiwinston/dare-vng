@@ -35,7 +35,7 @@ def logprobs_response(llm_url, llm_key, llm_model):
             "max_tokens": 1,
             "prompt_logprobs": 1,
         },
-        timeout=60,
+        timeout=180,
     )
     return r
 
@@ -94,6 +94,6 @@ def test_context_sizes_succeed(llm_url, llm_key, llm_model, ctx_chars):
             "max_tokens": 1,
             "prompt_logprobs": 1,
         },
-        timeout=60,
+        timeout=180,
     )
     assert r.status_code == 200, f"ctx_chars={ctx_chars}: {r.text[:200]}"

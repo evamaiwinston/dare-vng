@@ -79,7 +79,7 @@ _estimate_tok = None     # lazy GPT-2 tokenizer, used only for size estimates
 # are operational only — they change no attribution value. Override from a notebook.
 API_CALL_DELAY    = 0.0  # seconds to sleep BEFORE each call (set >0 to throttle)
 API_MAX_RETRIES   = 1    # total attempts per call (1 = no retry)
-API_RETRY_BACKOFF = 3.0  # seconds; wait = backoff * attempt_number (linear)
+API_RETRY_BACKOFF = 10.0  # seconds; wait = backoff * attempt_number (linear)
 
 
 def _estimate_tokens(text: str) -> int:
@@ -165,7 +165,7 @@ def _api_response_token_logprobs(user_content: str, response_text: str) -> list[
                 LLM_URL,
                 headers={"Authorization": f"Bearer {API_KEY}"},
                 json=body,
-                timeout=120,
+                timeout=600,
             )
         except requests.RequestException as e:
             logger.warning("API call #%d attempt %d/%d transport error: %s",
