@@ -21,7 +21,7 @@ from pathlib import Path
 from types import SimpleNamespace
 
 from dotenv import load_dotenv
-from transformers import GPT2TokenizerFast
+from transformers import AutoTokenizer, GPT2TokenizerFast
 
 # Compatibility patches
 from pandas.io.formats.style import Styler
@@ -55,6 +55,11 @@ load_dotenv(dotenv_path=Path(__file__).parent.parent / ".env")
 API_KEY  = os.getenv("OPENAI_API_KEY")
 LLM_URL  = os.getenv("OPENAI_BASE_URL", "").rstrip("/") + "/v1/chat/completions"
 MODEL    = os.getenv("LLM_MODEL")
+
+# Structural tokenizer shell for ContextCiter (NOT the model's weights — log-
+# probs come from the API). Default "gpt2"; set to the model's own tokenizer
+# repo (e.g. the Qwen HF id) so local tokenization matches the API's.
+SHELL_TOKENIZER = os.getenv("SHELL_TOKENIZER", "gpt2")
 
 BACKEND_URL   = os.getenv("BACKEND_API_URL")
 WORKSPACE_ID  = os.getenv("BACKEND_WORKSPACE_ID")
@@ -96,15 +101,20 @@ def _estimate_tokens(text: str) -> int:
 
 # --- Tokenizer ---------------------------------------------------------------
 
-def make_tokenizer() -> GPT2TokenizerFast:
-    """GPT-2 as a structural tokenizer shell for ContextCiter.
+def make_tokenizer():
+    """Structural tokenizer shell for ContextCiter, loaded from SHELL_TOKENIZER.
 
-    Provides pad/eos tokens, encode/decode, token_to_chars, and .pad().
-    The chat_template matches the ChatML format the LLM endpoint expects.
-    Actual log-probabilities come from the API, not GPT-2 weights.
+    Any HF fast tokenizer works: it must provide encode/decode, token_to_chars,
+    pad/eos, and .pad(). Default "gpt2"; set SHELL_TOKENIZER to the model's own
+    tokenizer repo (e.g. the Qwen HF id) so local tokenization matches the API's
+    — making response-token alignment ~1:1 and avoiding GPT-2 byte-splitting of
+    non-English text. The chat_template matches the ChatML format the LLM
+    endpoint expects. Actual log-probabilities come from the API, not the shell
+    tokenizer's weights.
     """
-    tok = GPT2TokenizerFast.from_pretrained("gpt2")
-    tok.pad_token    = tok.eos_token
+    tok = AutoTokenizer.from_pretrained(SHELL_TOKENIZER)
+    if tok.pad_token is None:
+        tok.pad_token = tok.eos_token
     tok.padding_side = "left"
     tok.chat_template = (
         "{% for message in messages %}"
