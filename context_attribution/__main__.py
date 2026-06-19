@@ -35,6 +35,20 @@ def main():
         default=32,
         help="Number of ablations (default: 32).",
     )
+    parser.add_argument(
+        "--start-idx",
+        type=int,
+        default=None,
+        help="Cite only a sub-span of the response: start character offset into "
+             "the response. Omitted = from the beginning.",
+    )
+    parser.add_argument(
+        "--end-idx",
+        type=int,
+        default=None,
+        help="Cite only a sub-span of the response: end character offset into the "
+             "response. Omitted = to the end. Both omitted = whole response.",
+    )
     args = parser.parse_args()
 
     if args.list_mocks:
@@ -60,6 +74,8 @@ def main():
     print(f"Source: {source}" + (f" ({mock_path.name})" if mock_path else ""))
     if args.query:
         print(f"Query: {args.query}")
+    if args.start_idx is not None or args.end_idx is not None:
+        print(f"Response span: [{args.start_idx}, {args.end_idx})")
     print()
 
     try:
@@ -68,6 +84,8 @@ def main():
             source=source,
             mock_path=mock_path,
             num_ablations=args.num_ablations,
+            start_idx=args.start_idx,
+            end_idx=args.end_idx,
         )
     except ValueError as e:
         # Missing query (no CLI arg and none in the mock) and other input errors

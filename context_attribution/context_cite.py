@@ -507,6 +507,8 @@ def run_pipeline(
     batch_size: int = 1,
     as_dataframe: bool = True,
     verbose: bool = True,
+    start_idx: int | None = None,
+    end_idx: int | None = None,
 ) -> dict:
     """Run the full attribution pipeline; the single entry point a UI calls.
 
@@ -519,6 +521,10 @@ def run_pipeline(
       its own ``query`` field; with neither, the run is refused (see
       ``resolve_query``). The ablation logprobs still come from the live LLM
       endpoint either way.
+
+    ``start_idx`` / ``end_idx`` cite a sub-span of the response, as character
+    offsets into ``response``. Both None (the default) attributes the whole
+    response.
 
     Returns a dict with everything the UI needs to render:
     ``{source, query, answer, context, response, num_sources, attributions}``.
@@ -544,6 +550,8 @@ def run_pipeline(
         batch_size=batch_size,
         as_dataframe=as_dataframe,
         verbose=verbose,
+        start_idx=start_idx,
+        end_idx=end_idx,
     )
     return {
         "source": source,
