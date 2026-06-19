@@ -149,6 +149,49 @@ def _extract_user_content(prompt_text: str) -> str:
     return prompt_text[start:] if end == -1 else prompt_text[start:end]
 
 
+_ASSISTANT_HEADER = "<|im_start|>assistant\n"
+
+
+def _response_span(full_txt: str, response_text: str) -> tuple[int, int]:
+    """(start, end) char offsets of the response within the decoded prompt.
+
+    The endpoint templates the messages as ChatML, so the response is the
+    content of the assistant turn:
+
+        ...<|im_start|>assistant\\n{RESPONSE}<|im_end|>...<|im_start|>assistant\\n
+
+    (a trailing generation-prompt header with no content may follow). When those
+    markers are present we bound the response by the first *closed* assistant
+    turn rather than matching ``response_text`` directly — the server normalizes
+    whitespace in the content (markdown-table / bullet newlines collapse to
+    spaces), which breaks an exact substring match.
+
+    Falls back to the original text search when the stream carries no ChatML
+    markers, so a different model/endpoint keeps the prior behavior. Raises
+    ValueError if neither locates the response.
+    """
+    search = 0
+    while True:
+        h = full_txt.find(_ASSISTANT_HEADER, search)
+        if h == -1:
+            break
+        s = h + len(_ASSISTANT_HEADER)
+        e = full_txt.find("<|im_end|>", s)
+        if e > s:                       # a closed assistant turn with content
+            return s, e
+        search = s                      # empty/generation-prompt turn — keep looking
+
+    start = full_txt.rfind(response_text)
+    if start == -1:
+        start = full_txt.rfind(response_text.strip())
+    if start == -1:
+        raise ValueError(
+            f"response not found in decoded sequence (no assistant turn, no text "
+            f"match).\nTail: {full_txt[-300:]!r}"
+        )
+    return start, start + len(response_text)
+
+
 def _api_response_token_logprobs(user_content: str, response_text: str) -> list[tuple[str, float]]:
     global _api_call_count
     _api_call_count += 1
@@ -213,12 +256,7 @@ def _api_response_token_logprobs(user_content: str, response_text: str) -> list[
     tokens   = _actual_tokens(prompt_logprobs)
     full_txt = "".join(t for t, _ in tokens)
 
-    start = full_txt.rfind(response_text)
-    if start == -1:
-        start = full_txt.rfind(response_text.strip())
-    if start == -1:
-        raise ValueError(f"response_text not found in decoded sequence.\nTail: {full_txt[-300:]!r}")
-    end = start + len(response_text)
+    start, end = _response_span(full_txt, response_text)
 
     out, pos = [], 0
     for decoded, lp in tokens:
