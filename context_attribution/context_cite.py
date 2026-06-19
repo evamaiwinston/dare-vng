@@ -1,12 +1,11 @@
 """
-Context attribution pipeline using ContextCite + vllm prompt_logprobs.
-
-Ports notebook 03_local_pipeline.ipynb to an importable module.
+Context attribution pipeline using ContextCite + open ai compatible prompt_logprobs.
+(explored in 03_notebook.)
 
 High-level usage:
     from context_attribution.context_cite import attribute_response, fetch_backend, prepare_inputs
 
-    data = fetch_backend("Nhân viên VNG được nghỉ phép bao nhiêu ngày mỗi năm?")
+    data = fetch_backend("Nhân viên VNG được nghỉ phép bao nhiêu ngày mỗi năm?") 
     context, response = prepare_inputs(data)
     df = attribute_response(context, query, response)
 """
@@ -24,7 +23,7 @@ from types import SimpleNamespace
 from dotenv import load_dotenv
 from transformers import GPT2TokenizerFast
 
-# --- Compatibility patches (context_cite 0.0.4 + pandas 2.x + numpy 2.x) ----
+# Compatibility patches
 from pandas.io.formats.style import Styler
 if not hasattr(Styler, "applymap"):
     Styler.applymap = Styler.map
@@ -49,22 +48,22 @@ def _patched_color_scale(val, max_val):
 
 _cc_utils._color_scale = _patched_color_scale
 
-# --- Config ------------------------------------------------------------------
+# Config
 
 load_dotenv(dotenv_path=Path(__file__).parent.parent / ".env")
 
 API_KEY  = os.getenv("OPENAI_API_KEY")
 LLM_URL  = os.getenv("OPENAI_BASE_URL", "").rstrip("/") + "/v1/chat/completions"
-MODEL    = os.getenv("LLM_MODEL", "local-model-mini")
+MODEL    = os.getenv("LLM_MODEL")
 
 BACKEND_URL   = os.getenv("BACKEND_API_URL")
 WORKSPACE_ID  = os.getenv("BACKEND_WORKSPACE_ID")
 BACKEND_TOKEN = os.getenv("BACKEND_API_KEY")
 
 # local-model-mini crashes the vllm worker when total prompt tokens exceed ~340
-# (measured overhead=44, safe limit=340). Set to None when switching to local-model.
-MINI_MAX_RESPONSE_CHARS = 500  # 120 if "mini" in MODEL else None  # ~40 response tokens
-MINI_MAX_CONTEXT_CHARS  = 2200 #900 if "mini" in MODEL else None  # ~250 context tokens
+# (measured overhead=44, safe limit=340). Set to None when switching model.
+MINI_MAX_RESPONSE_CHARS = None 
+MINI_MAX_CONTEXT_CHARS  = None 
 
 # --- Logging -----------------------------------------------------------------
 
@@ -347,22 +346,29 @@ def fetch_backend(query: str) -> dict:
     return resp.json()
 
 
-def fetch_backend_or_file(query: str, fallback_path: str | Path) -> dict:
-    """Try backend API first; fall back to a local JSON file if unreachable."""
-    try:
-        data = fetch_backend(query)
-        print("Loaded from live backend API")
-        return data
-    except Exception as e:
-        print(f"Backend unreachable ({e.__class__.__name__}), loading from {fallback_path}")
-        with open(fallback_path) as f:
-            return json.load(f)
-
 
 def load_mock(mock_path: str | Path) -> dict:
     """Load a demo mock RAG response (same shape as fetch_backend output)."""
     with open(mock_path) as f:
         return json.load(f)
+
+
+def resolve_query(query: str | None, data: dict | None = None) -> str:
+    """Return the query to attribute, or raise if there is none.
+
+    Resolution order: an explicit ``query`` (from the CLI or the UI box) wins;
+    otherwise the mock/RAG ``data``'s own ``query`` field is used. There is no
+    placeholder fallback — a run with no query is an error: it is logged and
+    refused, never silently run against a stand-in question.
+    """
+    candidate = (query or (data or {}).get("query") or "").strip()
+    if not candidate:
+        logger.error(
+            "No query provided — refusing to run. Pass a query on the CLI/UI or "
+            "include a 'query' field in the mock file."
+        )
+        raise ValueError("a query is required (none given and none in the mock data)")
+    return candidate
 
 
 def prepare_inputs(data: dict) -> tuple[str, str]:
@@ -461,9 +467,10 @@ def run_pipeline(
     * ``source="backend"`` -- send ``query`` to the live RAG backend, then
       attribute the answer. ``query`` is required.
     * ``source="mock"`` -- skip the backend and load ``mock_path`` instead, for
-      demo consistency. ``query`` is optional: if omitted, the mock's own
-      ``query`` field is used, falling back to a demo placeholder. The ablation
-      logprobs still come from the live ZP/LLM endpoint either way.
+      demo consistency. ``query`` may be omitted only if the mock file carries
+      its own ``query`` field; with neither, the run is refused (see
+      ``resolve_query``). The ablation logprobs still come from the live LLM
+      endpoint either way.
 
     Returns a dict with everything the UI needs to render:
     ``{source, query, answer, context, response, num_sources, attributions}``.
@@ -472,10 +479,9 @@ def run_pipeline(
         if mock_path is None:
             raise ValueError("source='mock' requires mock_path")
         data = load_mock(mock_path)
-        query = query or data.get("query") or "[demo] context attribution"
+        query = resolve_query(query, data)          # explicit > mock's own field
     elif source == "backend":
-        if not query:
-            raise ValueError("source='backend' requires a query")
+        query = resolve_query(query)                # backend: explicit query only
         data = fetch_backend(query)
     else:
         raise ValueError(f"unknown source {source!r} (use 'backend' or 'mock')")

@@ -1,6 +1,8 @@
 import argparse
+import sys
 
 from context_attribution.context_cite import run_pipeline
+from context_attribution.mocks import list_mocks, mock_names, resolve_mock
 
 
 def main():
@@ -12,13 +14,20 @@ def main():
         "query",
         nargs="?",
         default=None,
-        help="The query to attribute. Required for live backend; optional with --mock.",
+        help="The query to attribute. Required, unless the mock file carries its "
+             "own 'query' field.",
     )
     parser.add_argument(
         "--mock",
-        metavar="PATH",
+        metavar="NAME_OR_PATH",
         default=None,
-        help="Skip the backend and load this mock JSON file instead (demo mode).",
+        help="Skip the backend and use this mock instead. Accepts a name from "
+             "mock_data/ (e.g. 'cc_example') or a path. See --list-mocks.",
+    )
+    parser.add_argument(
+        "--list-mocks",
+        action="store_true",
+        help="List the mock files available in mock_data/ and exit.",
     )
     parser.add_argument(
         "--num-ablations",
@@ -28,18 +37,43 @@ def main():
     )
     args = parser.parse_args()
 
-    source = "mock" if args.mock else "backend"
-    print(f"Source: {source}" + (f" ({args.mock})" if args.mock else ""))
+    if args.list_mocks:
+        mocks = list_mocks()
+        if not mocks:
+            print("No mock files found in mock_data/.")
+        else:
+            print(f"Available mocks in mock_data/ ({len(mocks)}):")
+            for name in mock_names():
+                print(f"  {name}")
+        return
+
+    # Resolve the mock reference (name or path) up front for a clear error.
+    mock_path = None
+    if args.mock:
+        try:
+            mock_path = resolve_mock(args.mock)
+        except FileNotFoundError as e:
+            print(f"Error: {e}", file=sys.stderr)
+            sys.exit(2)
+
+    source = "mock" if mock_path else "backend"
+    print(f"Source: {source}" + (f" ({mock_path.name})" if mock_path else ""))
     if args.query:
         print(f"Query: {args.query}")
     print()
 
-    result = run_pipeline(
-        query=args.query,
-        source=source,
-        mock_path=args.mock,
-        num_ablations=args.num_ablations,
-    )
+    try:
+        result = run_pipeline(
+            query=args.query,
+            source=source,
+            mock_path=mock_path,
+            num_ablations=args.num_ablations,
+        )
+    except ValueError as e:
+        # Missing query (no CLI arg and none in the mock) and other input errors
+        # are refusals, not crashes — report cleanly and exit non-zero.
+        print(f"Error: {e}", file=sys.stderr)
+        sys.exit(2)
 
     print(f"\nQuery: {result['query']}")
     print(f"Sources: {result['num_sources']}\n")

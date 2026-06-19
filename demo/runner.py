@@ -28,15 +28,19 @@ from context_attribution.context_cite import (  # noqa: E402
     fetch_backend,
     prepare_inputs,
     attribute_response,
+    resolve_query,
     _patched_color_scale,
 )
+# Re-export mock discovery so the UI can import everything from `runner` (which
+# already put the repo root on sys.path) rather than re-resolving the path.
+from context_attribution.mocks import (  # noqa: E402,F401
+    MOCK_DIR,
+    list_mocks,
+    resolve_mock,
+)
 
-# Default mock file shipped with the demo.
-DEFAULT_MOCK_PATH = Path(__file__).resolve().parent / "demo_mock_data.json"
-
-# Fallback query label when a mock file carries no `query` of its own
-# (matches run_pipeline's own placeholder).
-_DEMO_QUERY = "[demo] context attribution"
+# Default mock used when the UI/caller names none.
+DEFAULT_MOCK_PATH = MOCK_DIR / "cc_example.json"
 
 
 def style_scores(df, green_max: float):
@@ -124,10 +128,9 @@ def fetch_inputs(
     """
     if source == "mock":
         data = load_mock(str(mock_path or DEFAULT_MOCK_PATH))
-        query = query or data.get("query") or _DEMO_QUERY
+        query = resolve_query(query, data)          # explicit > mock's own field
     elif source == "backend":
-        if not query:
-            raise ValueError("backend mode requires a query")
+        query = resolve_query(query)                # backend: explicit query only
         data = fetch_backend(query)
     else:
         raise ValueError(f"unknown source {source!r} (use 'mock' or 'backend')")

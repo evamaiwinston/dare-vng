@@ -2,7 +2,7 @@
 
 Calls run_attribution(source="mock") and prints the response and the raw
 score table (attributions.data) so the output can be diffed against
-`python -m context_attribution --mock demo/demo_mock_data.json`.
+`python -m context_attribution --mock demo_mock_data`.
 
 The pipeline is deterministic for a fixed input (ablation masks are seeded;
 the LLM is queried at temperature 0 with prompt_logprobs), so the score
