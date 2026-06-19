@@ -1,24 +1,36 @@
 {
-  "query": "What is the company's policy for mental health coverage under the premium plan?",
-  "answer": "The premium health plan provides up to 10 therapy sessions per year with a $20 copay.",
+  "query": "How much does the Lumen Arc cost, and when will it ship?",
+  "answer": "The Lumen Arc costs $899 and ships on March 15, 2026. Beyond pricing, the glasses weigh 48 grams, use micro-LED projectors rated for outdoor visibility, and last a full day of typical glanceable use on a single charge. They run ArcOS and pair with both Android and iOS phones.",
   "knowledge_sources": [
     {
-      "chunk_id": "chunk_1_dental_vision",
-      "document_id": "Benefits/Health_Insurance_Premium_Plan.md",
-      "score": 0.45,
-      "content": "The company's standard premium health plan covers 100% of dental checkups, up to two visits per year. Vision care requires a separate $15 copay per visit."
+      "chunk_id": "chunk_arc_announcement",
+      "document_id": "Press/Lumen_Arc_Launch.md",
+      "score": 0.70,
+      "content": "Lumen Devices today unveiled the Lumen Arc, its first pair of augmented-reality glasses, at the company's annual developer conference in Austin. The Arc projects a translucent heads-up display onto each lens, letting wearers see notifications, walking directions, and live translations without reaching for a phone. The company called the launch the result of a four-year hardware effort and its most ambitious product to date."
     },
     {
-      "chunk_id": "chunk_2_premium_resources",
-      "document_id": "Benefits/Health_Insurance_Premium_Plan.md",
-      "score": 0.42,
-      "content": "Resources provided by the company for premium health plan:\nOnline healthy employee portal\nFree eye doctor consultation"
+      "chunk_id": "chunk_arc_specs",
+      "document_id": "Press/Lumen_Arc_SpecSheet.md",
+      "score": 0.64,
+      "content": "The Arc weighs 48 grams, about the same as a regular pair of sunglasses, and uses a pair of micro-LED projectors rated at 1,000 nits for outdoor visibility. Onboard sensors include a 12-megapixel camera, dual microphones, and an inertial measurement unit for head tracking. Lumen says the frames will come in three sizes and two colors, charcoal and sand."
     },
     {
-      "chunk_id": "chunk_3_wellness_exercise",
-      "document_id": "Benefits/Onsite_Wellness_Policy.md",
-      "score": 0.15,
-      "content": "Adults should participate in 30-60 minutes of exercise a day to maintain a healthy lifestyle. Utilize the free gym and workout class available on site."
+      "chunk_id": "chunk_arc_battery_software",
+      "document_id": "Press/Lumen_Arc_SpecSheet.md",
+      "score": 0.59,
+      "content": "Battery life is a central question for any wearable. Lumen claims the Arc runs for a full day of typical glanceable use on a single charge, with a companion carrying case providing two additional recharges. The glasses run ArcOS, a stripped-down platform that pairs with both Android and iOS phones, and Lumen has opened a software development kit so outside developers can build their own overlays."
+    },
+    {
+      "chunk_id": "chunk_arc_availability",
+      "document_id": "Press/Lumen_Arc_Launch.md",
+      "score": 0.55,
+      "content": "Lumen said the Arc would be available in select markets later this year, beginning with the United States and Germany, with enterprise customers getting early access through a partner program. Executives repeatedly declined to discuss pricing during the event, saying only that the company would share more on cost and timing closer to launch. Pre-orders are not yet open."
+    },
+    {
+      "chunk_id": "chunk_arc_ceo_quote",
+      "document_id": "Press/Lumen_Arc_Launch.md",
+      "score": 0.48,
+      "content": "We didn't want to build a screen you wear on your face, we wanted something you'd forget you had on, said Lumen chief executive Dana Okafor during the keynote. Okafor said the team deliberately left out a built-in speaker to keep the frames light, relying instead on bone-conduction audio routed through the temples."
     }
   ],
   "memory_sources": [],
@@ -27,9 +39,9 @@
   "session_id": null,
   "usage": {
     "llm_calls": 1,
-    "input_tokens": 510,
-    "output_tokens": 300,
-    "total_tokens": 810
+    "input_tokens": 612,
+    "output_tokens": 71,
+    "total_tokens": 683
   },
   "mode": "agent",
   "ablation": {
