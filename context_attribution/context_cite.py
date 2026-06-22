@@ -12,6 +12,7 @@ High-level usage:
 
 import os
 import json
+import math
 import time
 import logging
 import numpy as np
@@ -321,10 +322,17 @@ def _align_to_gpt2_tokens(
 #   2. Parse the ChatML prompt to extract user_content (masked context + query).
 #   3. Call the LLM endpoint with prompt_logprobs=1 to score the response.
 #   4. Align API token logprobs onto GPT-2 token boundaries.
-#   5. Build fake logits so _compute_logit_probs returns the aligned logprobs:
+#   5. Build fake logits so _compute_logit_probs returns the aligned values:
 #
-#      logits[b, j, label_id] = api_logprob + log(V-1),  all others = 0
-#      → softmax-based loss recovers api_logprob exactly.
+#      logits[b, j, label_id] = logit_prob + log(V-1),  all others = 0
+#      → softmax-based loss recovers logit_prob exactly.
+#
+#      ContextCite speaks in LOGIT-probabilities log(p/(1-p)), not log-probs:
+#      aggregate_logit_probs applies logsigmoid, which inverts the logit
+#      transform back to log p. So we convert the API logprob (alp = log p) to
+#      logit_prob = alp - log(1-p) here before encoding it. Feeding raw log p
+#      would make logsigmoid mangle it (≈10x signal compression), which lets the
+#      Lasso shrink the true source away.
 #
 #   Only the response tail of the logits is ever read downstream
 #   (_get_response_logit_probs slices output.logits[:, -(R+1):-1]), so we
@@ -376,7 +384,11 @@ class APIModel:
             # Row j of the tail corresponds to old global position resp_start-1+j,
             # which is exactly what output.logits[:, -(R+1):-1] reads back.
             for j, (rid, alp) in enumerate(zip(response_ids, aligned)):
-                logits[b, j, rid] = alp + log_V1
+                # alp = log p (API logprob) -> logit_prob = log(p/(1-p)) so the
+                # downstream logsigmoid recovers log p correctly. expm1 keeps
+                # log(1-p) stable for tiny p; clamp near p=1 to avoid -inf.
+                log1m = math.log(-math.expm1(alp)) if alp < -1e-7 else math.log(1e-7)
+                logits[b, j, rid] = (alp - log1m) + log_V1
 
         return SimpleNamespace(logits=logits)
 
