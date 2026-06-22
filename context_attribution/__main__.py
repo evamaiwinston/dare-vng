@@ -22,7 +22,7 @@ def main():
         metavar="NAME_OR_PATH",
         default=None,
         help="Skip the backend and use this mock instead. Accepts a name from "
-             "mock_data/ (e.g. 'cc_example') or a path. See --list-mocks.",
+             "mock_data/ (e.g. 'demo_mock_data') or a path. See --list-mocks.",
     )
     parser.add_argument(
         "--list-mocks",

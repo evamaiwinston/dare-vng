@@ -40,7 +40,7 @@ from context_attribution.mocks import (  # noqa: E402,F401
 )
 
 # Default mock used when the UI/caller names none.
-DEFAULT_MOCK_PATH = MOCK_DIR / "cc_example.json"
+DEFAULT_MOCK_PATH = MOCK_DIR / "demo_mock_data.json"
 
 
 def style_scores(df, green_max: float):

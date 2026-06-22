@@ -1,15 +1,18 @@
 """Gradio demo for context attribution.
 
 Two-column layout:
-  Left  — a mock-file dropdown, the query (auto-filled from the mock, editable),
-          a Run button, the answer, and an expander with the full endpoint output.
+  Left  — an upload widget, a bundled-mock dropdown, the query (auto-filled from
+          the chosen file, editable), a Run button, the answer, and an expander
+          with the full endpoint output.
   Right — a progress bar during the attribution, then the color-scaled
           Score/Source table.
 
-The dropdown is built from the shared mock_data/ folder (context_attribution.
-mocks.list_mocks) — drop a JSON file in there and it shows up here. Selecting a
-mock fills the query box from that file's `query`. A run requires a query: if
-the box is empty and the mock carries none, the run is refused.
+The test file can come from either input: upload any JSON at runtime, or pick
+one of the bundled mocks (the dropdown is built from the shared mock_data/
+folder via context_attribution.mocks.list_mocks — drop a JSON in there and it
+shows up). An uploaded file takes precedence over the dropdown. Choosing either
+fills the query box from that file's `query`. A run requires a query: if the
+box is empty and the file carries none, the run is refused.
 
 Run (from inside demo/):  python app.py
 """
@@ -26,30 +29,38 @@ _MOCKS = list_mocks()
 _MOCK_LABELS = [p.stem for p in _MOCKS]
 
 
-def _mock_query(label):
-    """Read a mock file's own `query` (fast, no LLM) to populate the box."""
-    if not label:
+def _query_from(ref):
+    """Read a test file's own `query` (fast, no LLM) to populate the box.
+
+    ``ref`` is either a dropdown label (a bundled mock's stem) or an uploaded
+    file's path; ``resolve_mock`` accepts both.
+    """
+    if not ref:
         return ""
-    data = json.loads(resolve_mock(label).read_text())
+    data = json.loads(resolve_mock(ref).read_text())
     return data.get("query", "")
 
 
-def run(label, query, progress=gr.Progress(track_tqdm=True)):
+def run(label, upload, query, progress=gr.Progress(track_tqdm=True)):
     """Stage 1: show the answer. Stage 2: run attribution, show the table.
 
-    The dropdown picks the mock file; the (editable) query box supplies the
-    question. A query is required — empty box with no `query` in the mock is a
+    The test file comes from the upload widget if a file is given, otherwise
+    from the dropdown (the bundled mocks). The (editable) query box supplies the
+    question. A query is required — empty box with no `query` in the file is a
     refusal, surfaced as a UI error rather than a silent run.
     progress=gr.Progress(track_tqdm=True) hooks the ablation loop's tqdm so the
     right column shows real per-ablation progress.
     """
+    ref = upload or label
+    if not ref:
+        raise gr.Error("Upload a test file or pick a mock to run.")
     if not (query or "").strip():
-        raise gr.Error("Enter a query to run (this mock has none of its own).")
+        raise gr.Error("Enter a query to run (this file has none of its own).")
 
     inputs = fetch_inputs(
         source="mock",
         query=query,
-        mock_path=resolve_mock(label),
+        mock_path=resolve_mock(ref),
     )
 
     # Stage 1 — answer is available instantly; clear any prior table.
@@ -66,16 +77,21 @@ with gr.Blocks(title="Context Attribution") as demo:
     gr.Markdown("# Context Attribution")
 
     with gr.Row(equal_height=False):
-        # --- Left: mock + query + answer ------------------------------------
+        # --- Left: file + query + answer ------------------------------------
         with gr.Column(scale=1):
+            upload_in = gr.File(
+                label="Upload test file (.json)",
+                file_types=[".json"],
+                file_count="single",
+            )
             mock_dd = gr.Dropdown(
                 choices=_MOCK_LABELS,
                 value=_MOCK_LABELS[0] if _MOCK_LABELS else None,
-                label="Mock file",
+                label="…or pick a bundled mock",
             )
             query_in = gr.Textbox(
                 label="Query",
-                value=_mock_query(_MOCK_LABELS[0]) if _MOCK_LABELS else "",
+                value=_query_from(_MOCK_LABELS[0]) if _MOCK_LABELS else "",
                 lines=2,
             )
             run_btn = gr.Button("Run", variant="primary")
@@ -93,12 +109,13 @@ with gr.Blocks(title="Context Attribution") as demo:
                 wrap=True,
             )
 
-    # Selecting a mock fills the query box from that file.
-    mock_dd.change(_mock_query, inputs=mock_dd, outputs=query_in)
+    # Selecting a mock or uploading a file fills the query box from that file.
+    mock_dd.change(_query_from, inputs=mock_dd, outputs=query_in)
+    upload_in.change(_query_from, inputs=upload_in, outputs=query_in)
 
     run_btn.click(
         run,
-        inputs=[mock_dd, query_in],
+        inputs=[mock_dd, upload_in, query_in],
         outputs=[answer_md, raw_out, scores_out],
     )
 
