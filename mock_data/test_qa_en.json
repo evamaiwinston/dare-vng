@@ -1,0 +1,415 @@
+{
+    "query": "What is the policy regarding taxi allowances for employees?",
+    "answer": "The taxi support policy for employees is regulated as follows:\n\n*   **Form of support:** Employees are provided with a taxi card or a taxi application account (Grab) that is pre-linked to the company's payment account.\n*   **Support allowance:** Depends on the job level (for example: Level 4.2 is 4,500,000 VND/month, Level 3.3 is 3,000,000 VND/month, Level 2.3 is 1,500,000 VND/month).\n*   **Payment regulations:**\n    *   If the actual cost is lower than the allowance, the difference will not be refunded.\n    *   If the actual cost is higher than the allowance, the excess amount will be deducted from the employee's salary.\n    *   Employees can request to convert the taxi support into a cash allowance for fuel/car expenses if they use their personal car.\n*   **Effective date:**\n    *   New employees: Usage rights will be granted within 03 working days (Grab) or 10–14 days (taxi card).\n    *   Upon promotion: The allowance takes effect from the month following the promotion month.\n    *   Upon job level adjustment: If the effective date falls between the 1st and 20th of the month, the support is received starting that month; if it falls between the 21st and 31st, it is received from the following month.",
+    "answer_via_tool": true,
+    "knowledge_sources": [
+        {
+            "chunk_id": "bb84ceed5f85a880cb38cda7aed9b66e826e784b3c918dd2dd03da7c411c1560",
+            "document_id": "doc_e3b3fdb1e4c09b26",
+            "score": 2.151513,
+            "content": "## 1.1. Objective\n\nThe taxi policy is established to:\n\n- Ensure the transportation needs of VNG employees to complete the Company's work efficiently.\n- Centralize management and ensure on-time payment to service providers."
+        },
+        {
+            "chunk_id": "5a66ee5614d9b90e80836d831fa7fb6a9a69bdc1cf426908db46cc9643f38cf3",
+            "document_id": "doc_e3b3fdb1e4c09b26",
+            "score": 2.054498,
+            "content": "## 2.3. Target Users and Monthly Allowances\n\nThe support allowance depends on the job level, specifically regulated as follows:\n\n| Level | Allowance (VND/month) |\n|---|---:|\n| 4.2 | 4,500,000 |\n| 4.1 |  |\n| 3.3 | 3,000,000 |\n| 3.2 |  |\n| 3.1 |  |\n| 2.3 | 1,500,000 |\n\n- For newly joined Employees, AF will grant access to the Company's Grab account and send login and usage instructions within 03 working days from the start date.\n- For traditional taxis, AF will issue a taxi card within 10–14 days from the date the Employee submits the request.\n- If the actual monthly card usage cost is lower than the entitled allowance, the difference will not be refunded. Depending on the actual monthly card usage cost, any amount exceeding the entitled allowance will be deducted from that month's salary.\n- In case of using a personal car, the Employee can request to convert the Taxi Support into a cash-only car allowance added to their monthly salary."
+        },
+        {
+            "chunk_id": "bea5f4efa38a9c8dd3e2c02623f35fd195a993718127385172a443c22cf7c5d2",
+            "document_id": "doc_cf99b3308edd1efb",
+            "score": 2.152689,
+            "content": "### 4.2. Taxi Allowance\n\nDepending on the level or job requirements being undertaken, the Company provides a Taxi Allowance to Employees starting from the month they join the Company. Relevant details are regulated in the Taxi Support Policy issued by the AF department.\n\nIn case an Employee is promoted, the taxi allowance will take effect from the month following the effective promotion month.\n\nEmployees are provided with a taxi card or a taxi app account pre-linked to the Company's payment account."
+        },
+        {
+            "chunk_id": "9887bd725e7fdd57c0076d9b6e1cae0e29e7c1766f44d4cc621875c0b996abc4",
+            "document_id": "doc_e3b3fdb1e4c09b26",
+            "score": 2.114429,
+            "content": "## 2.5. Cases of Job Level Adjustment\n\n- [Garbled text/Prefix], when a new job level is adjusted, the AF department will proceed to issue taxi cards to Employees according to the allowance regulated in section 2.3.\n- The provision of Taxi Allowance support according to the newly adjusted job level is regulated as follows:\n  - New level effective date from the 01st to the 20th of the month: receive support from the effective month.\n  - New level effective date from the 21st to the 31st of the month: receive support from the following month.\n- For cases of job level adjustment with a backdated effective date, the Taxi Allowance applied in previous months will not be recalculated."
+        }
+    ],
+    "memory_sources": [],
+    "reasoning_trace": [
+        {
+            "step": 1,
+            "tool": "search_knowledge",
+            "args": {
+                "query": "taxi support policy for employees"
+            },
+            "result": "[1] (chunk_id=b3864f4ff2aa30c96bd7c4cc9807b42cc465753a9f36ee0ab6bcac9c3e8193a6)\n# TABLE OF CONTENTS\n\n1. [Introduction](#1-introduction)  \n   1.1. [Objective](#11-objective)  \n   1.2. [Scope of application](#12-scope-of-..."
+        },
+        {
+            "step": 2,
+            "tool": "generate_answer",
+            "args": {
+                "question": "What is the taxi support policy for employees?",
+                "chunk_ids": [
+                    "bb84ceed5f85a880cb38cda7aed9b66e826e784b3c918dd2dd03da7c411c1560",
+                    "5a66ee5614d9b90e80836d831fa7fb6a9a69bdc1cf426908db46cc9643f38cf3",
+                    "bea5f4efa38a9c8dd3e2c02623f35fd195a993718127385172a443c22cf7c5d2",
+                    "9887bd725e7fdd57c0076d9b6e1cae0e29e7c1766f44d4cc621875c0b996abc4"
+                ]
+            },
+            "result": "The taxi support policy for employees is regulated as follows:\n\n*   **Form of support:** Employees are provided with a taxi card or a taxi application account (Grab) that is pre-linked to the company's payment account...."
+        }
+    ],
+    "tools_used": [
+        "search_knowledge",
+        "generate_answer"
+    ],
+    "step_timings": [
+        {
+            "step": 1,
+            "kind": "llm",
+            "name": "agent",
+            "elapsed": 1.543
+        },
+        {
+            "step": 2,
+            "kind": "retrieval",
+            "name": "search_knowledge.decompose_question",
+            "elapsed": 1.632
+        },
+        {
+            "step": 3,
+            "kind": "retrieval",
+            "name": "search_knowledge.seed_retrieval",
+            "elapsed": 11.212
+        },
+        {
+            "step": 4,
+            "kind": "retrieval",
+            "name": "search_knowledge.rerank",
+            "elapsed": 0.001
+        },
+        {
+            "step": 5,
+            "kind": "retrieval",
+            "name": "search_knowledge.ircot_step",
+            "elapsed": 3.647
+        },
+        {
+            "step": 6,
+            "kind": "retrieval",
+            "name": "search_knowledge.seed_retrieval",
+            "elapsed": 2.87
+        },
+        {
+            "step": 7,
+            "kind": "retrieval",
+            "name": "search_knowledge.rerank",
+            "elapsed": 0.001
+        },
+        {
+            "step": 8,
+            "kind": "retrieval",
+            "name": "search_knowledge.ircot_step",
+            "elapsed": 2.282
+        },
+        {
+            "step": 9,
+            "kind": "retrieval",
+            "name": "search_knowledge.seed_retrieval",
+            "elapsed": 2.703
+        },
+        {
+            "step": 10,
+            "kind": "retrieval",
+            "name": "search_knowledge.rerank",
+            "elapsed": 0.001
+        },
+        {
+            "step": 11,
+            "kind": "retrieval",
+            "name": "search_knowledge.ircot_step",
+            "elapsed": 2.319
+        },
+        {
+            "step": 12,
+            "kind": "retrieval",
+            "name": "search_knowledge.format_results",
+            "elapsed": 0.001
+        },
+        {
+            "step": 13,
+            "kind": "tool",
+            "name": "search_knowledge",
+            "elapsed": 26.709
+        },
+        {
+            "step": 14,
+            "kind": "llm",
+            "name": "agent",
+            "elapsed": 2.582
+        },
+        {
+            "step": 15,
+            "kind": "tool",
+            "name": "generate_answer",
+            "elapsed": 2.501
+        }
+    ],
+    "total_step_time": 33.335,
+    "llm_trace": [],
+    "retrieval_detail": {
+        "sub_questions": [
+            {
+                "q": "Request for detailed content of sections: 2.3 (allowance for levels 4.1, 3.2, 3.1), 2.4 (Special Approval), 2.6 (User Guide), 2.7 (In case of lost card), and 2.8 (Employee Responsibilities) in the taxi support policy.",
+                "embed_elapsed": 0.645,
+                "routes": {
+                    "chunk": {
+                        "elapsed": 0.01,
+                        "hits": 10,
+                        "chunk_ids": [
+                            "b3864f4ff2aa30c96bd7c4cc9807b42cc465753a9f36ee0ab6bcac9c3e8193a6",
+                            "dad77d16ba4c1ce703c7661d9468c1dffa77c905c42f18ad54e5c53553b8345d",
+                            "905f9f268c8f95910e7928df79c6b8440e0b08abb5541a00c65b59dd605ca68d",
+                            "7aef61e18b959068fb3c1c868e4fc7584ae310c9e67298ac8994ce80234665a3",
+                            "bb84ceed5f85a880cb38cda7aed9b66e826e784b3c918dd2dd03da7c411c1560",
+                            "2b803e205f0d895ed996ed6c0394e34a14abd036f2a09eb04132acb84e939216",
+                            "bea5f4efa38a9c8dd3e2c02623f35fd195a993718127385172a443c22cf7c5d2",
+                            "1272b27659d1fdc4f06c7257a64899c52afb1bd603f260ae6033ecbae3f98d9e",
+                            "fd77cbe342906eaa80012dfd7292de09091f0a7fc6d53af87686458977f0ec20",
+                            "9887bd725e7fdd57c0076d9b6e1cae0e29e7c1766f44d4cc621875c0b996abc4"
+                        ]
+                    },
+                    "entity": {
+                        "elapsed": 0.014,
+                        "hits": 10,
+                        "seeds_added": [
+                            "Taxi support allowance level 4.2",
+                            "Taxi Allowance Policy",
+                            "Taxi support allowance level 2.3",
+                            "Taxi support allowance level 3.3",
+                            "Allowance section 2.3",
+                            "Taxi policy",
+                            "Taxi Support Policy",
+                            "Taxi allowance",
+                            "Taxi Allowance Program",
+                            "Parking fee support"
+                        ],
+                        "type_filter": [
+                            "benefit",
+                            "employee_type",
+                            "policy"
+                        ]
+                    },
+                    "triple": {
+                        "elapsed": 0.018,
+                        "hits": 6,
+                        "seeds_added": [
+                            "Taxi support allowance level 4.2",
+                            "Job level 4.2",
+                            "Taxi support allowance level 2.3",
+                            "Job level 2.3",
+                            "Taxi allowance implementation process",
+                            "Taxi allowance",
+                            "Allowance section 2.3",
+                            "Taxi card",
+                            "Taxi support allowance level 3.3",
+                            "Job level 3.3",
+                            "Job requirements"
+                        ],
+                        "type_filter": [
+                            "applies_to",
+                            "provides"
+                        ]
+                    },
+                    "community": {
+                        "elapsed": 0.005,
+                        "hits": 3,
+                        "seeds_added": [
+                            "Motorbike parking space",
+                            "Parking fee support",
+                            "Taxi allowance",
+                            "Personal car allowance",
+                            "Job requirements",
+                            "Office cannot arrange parking spaces",
+                            "personal car",
+                            "Personal car policy",
+                            "Fuel allowance",
+                            "Quang Trung allowance",
+                            "Taxi support allowance",
+                            "Gasoline support",
+                            "isolated office far from the center",
+                            "specific work requiring frequent travel outside the office",
+                            "Isolated office far from the center",
+                            "Specific work requiring frequent travel outside the office",
+                            "Taxi Allowance Policy",
+                            "Taxi allowance implementation process",
+                            "Request for taxi card",
+                            "Employees working at isolated offices far from the center",
+                            "Employees in charge of specific jobs that require frequent travel outside the office",
+                            "Fuel stipend",
+                            "Employee belonging to an office not located in the city center",
+                            "Employee in charge of specific work",
+                            "Driver's license",
+                            "driver information",
+                            "Vehicle documents",
+                            "vehicle information",
+                            "PIT",
+                            "Taxi card",
+                            "Taxi app account",
+                            "cost",
+                            "Temporary Residence Card (TRC)",
+                            "TRC application fee",
+                            "Company Union Budget",
+                            "General expenses of the whole delegation",
+                            "Retained annual leave",
+                            "Cost",
+                            "Incurred cost",
+                            "Card reissuance fee",
+                            "Cost exceeding allowance",
+                            "ZaloPay",
+                            "Salary",
+                            "Probationary salary",
+                            "Budget",
+                            "Taxi Allowance Program",
+                            "Additional payment items",
+                            "SPORTS PROGRAM/EVENT 2025",
+                            "hotel cost",
+                            "Pre-tax income",
+                            "Salary deduction form",
+                            "monthly allowance",
+                            "Accommodation cost",
+                            "Union budget",
+                            "public cost",
+                            "Union fee",
+                            "financial sponsorship",
+                            "VAT invoice",
+                            "Deductible tax",
+                            "Invoice",
+                            "National tax",
+                            "Refund amount",
+                            "Number of labor contract months before committed deadline",
+                            "Teambuilding Budget",
+                            "Transferred budget",
+                            "Hotel cost",
+                            "Travel cost",
+                            "Home visit ticket cost",
+                            "Approval threshold",
+                            "Taxi budget",
+                            "House rental cost",
+                            "budget",
+                            "Salary advance policy",
+                            "Telephone allowance policy",
+                            "Salary advance",
+                            "Days when Employee has no work schedule",
+                            "Salary unit price",
+                            "TAXI SUPPORT POLICY",
+                            "Target users",
+                            "Taxi policy",
+                            "on-time payment",
+                            "Personal phone cost",
+                            "Vietcombank",
+                            "Personal card",
+                            "Allowance section 2.3",
+                            "Taxi allowance",
+                            "Traditional taxi card",
+                            "phone budget",
+                            "Roaming usage limit",
+                            "Policy on updating self-purchase threshold",
+                            "service",
+                            "Self-purchase transaction",
+                            "Financial invoice",
+                            "Authorized payment account",
+                            "service amount",
+                            "Declared value service",
+                            "Return shipping fee",
+                            "Difference cost",
+                            "Monthly salary period",
+                            "difference cost",
+                            "salary",
+                            "Income advance policy",
+                            "Salary",
+                            "Union Funds",
+                            "Other revenue sources",
+                            "Union Budget",
+                            "Case of buying tickets in groups",
+                            "Union Fee",
+                            "assets",
+                            "Overtime salary",
+                            "Personal Income Tax",
+                            "Net income",
+                            "Service Fee",
+                            "Personal income tax",
+                            "Transfer to supplier",
+                            "Regular personal account",
+                            "accommodation cost",
+                            "3G/4G/Internet sim usage limit",
+                            "financial approval process",
+                            "Payment",
+                            "Accountant payable",
+                            "Transportation cost",
+                            "hotel",
+                            "Guest reception cost limit",
+                            "Accountant receivable",
+                            "GTGT invoice",
+                            "Payment by personal bank card/personal credit card",
+                            "Personal account",
+                            "1",
+                            "Eform to register an authorized account",
+                            "Bank",
+                            "Hospital fee guarantee service",
+                            "Medical expenses due to accident",
+                            "Compensation money",
+                            "Bank transfer",
+                            "Hospital fee statement",
+                            "amount of money",
+                            "Salary statement",
+                            "SI salary scale",
+                            "Lunch allowance",
+                            "Childbirth allowance",
+                            "Sickness allowance",
+                            "Parking allowance",
+                            "13th-month salary",
+                            "Maternity allowance",
+                            "Allowance adjustment",
+                            "Support from Union budget",
+                            "Holiday bonus adjustment",
+                            "Tet bonus",
+                            "Car fund",
+                            "Condition for 12-month office collaborator",
+                            "Case of promotion",
+                            "Version 12.0",
+                            "Personal car allowance",
+                            "Version 13.0",
+                            "On-phone support",
+                            "VNG Campus relocation support",
+                            "Holiday bonus",
+                            "Natural disaster, fire support",
+                            "Taxi Support Policy",
+                            "Version 1.2",
+                            "Support from Union",
+                            "Collaborator benefits",
+                            "Union budget support",
+                            "Holiday Tet bonus",
+                            "Lunch stipend",
+                            "Strengthen security measures",
+                            "Company birthday support",
+                            "Natural disaster support",
+                            "Fire support",
+                            "Version 17.0",
+                            "Starter honoring activity",
+                            "Relocation allowance"
+                        ]
+                    }
+                }
+            }
+        ],
+        "path_traversal": {
+            "elapsed": 1.997,
+            "seed_count": 179,
+            "expanded_nodes": 179,
+            "graph_chunks": 145,
+            "inv_rels_filter": [
+                "applies_to",
+                "provides"
+            ]
+        },
+        "total_candidates": 240,
+        "total_seeds": 16
+    },
+    "mode": "agent",
+    "sources": []
+}
