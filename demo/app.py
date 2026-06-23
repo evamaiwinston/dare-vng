@@ -40,7 +40,10 @@ from runner import fetch_inputs, attribute, style_scores, resolve_mock
 
 # Hide the offset-relay textbox while keeping it in the DOM, so the selection JS
 # can write to it. (visible=False can drop a component from the DOM entirely.)
-_CSS = "#cc-span { display: none !important; }"
+_CSS = """
+#cc-span { display: none !important; }
+.block { box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06) !important; }
+"""
 
 # Document-level mouseup listener: when the selection sits inside the raw
 # response <pre>, compute its character offsets relative to that element's text
@@ -206,7 +209,7 @@ def run_attribution(inputs, use_span, span, progress=gr.Progress(track_tqdm=True
     return style_scores(styler.data, GREEN_MAX)
 
 
-with gr.Blocks(title="Context Attribution", theme=gr.themes.Soft()) as demo:
+with gr.Blocks(title="Context Attribution") as demo:
     gr.Markdown("## Context Attribution")
 
     with gr.Row(equal_height=False):
