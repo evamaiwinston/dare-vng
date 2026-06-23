@@ -33,6 +33,7 @@ import html
 import json
 
 import gradio as gr
+import pandas as pd
 
 from config import NUM_ABLATIONS, GREEN_MAX
 from runner import fetch_inputs, attribute, style_scores, resolve_mock
@@ -159,7 +160,7 @@ def run(upload, query, use_span):
         _response_pre(inputs["response"]),
         inputs["raw"],
         inputs,
-        None,
+        pd.DataFrame(columns=["Score", "Source"]),
         "",
         _span_preview(use_span, inputs, ""),
     )
@@ -205,8 +206,8 @@ def run_attribution(inputs, use_span, span, progress=gr.Progress(track_tqdm=True
     return style_scores(styler.data, GREEN_MAX)
 
 
-with gr.Blocks(title="Context Attribution") as demo:
-    gr.Markdown("# Context Attribution")
+with gr.Blocks(title="Context Attribution", theme=gr.themes.Soft()) as demo:
+    gr.Markdown("## Context Attribution")
 
     with gr.Row(equal_height=False):
         # --- Left: file + query + answer ------------------------------------
@@ -225,15 +226,15 @@ with gr.Blocks(title="Context Attribution") as demo:
             # Stage-1 inputs, stashed so "Run attribution" can pick them up.
             inputs_state = gr.State()
 
-            span_toggle = gr.Checkbox(
-                label="Select a span to attribute (highlight in plain text)",
-                value=False,
-            )
             # Confirmation banner: what the captured offsets actually select.
             span_preview = gr.Markdown(visible=False)
             # Rendered answer (default) and the raw selectable view (when ticked).
             answer_md = gr.Markdown(label="Answer", visible=True)
             answer_raw = gr.HTML(visible=False)
+            span_toggle = gr.Checkbox(
+                label="Select a span to attribute",
+                value=False,
+            )
             # Hidden relay: JS writes "start,end" character offsets here.
             span_box = gr.Textbox(elem_id="cc-span", value="")
 
@@ -244,6 +245,7 @@ with gr.Blocks(title="Context Attribution") as demo:
         with gr.Column(scale=1):
             attribute_btn = gr.Button("Run attribution", variant="primary")
             scores_out = gr.Dataframe(
+                value=pd.DataFrame(columns=["Score", "Source"]),
                 label="Context attribution",
                 interactive=False,  # required for the Styler colors to render
                 wrap=True,
