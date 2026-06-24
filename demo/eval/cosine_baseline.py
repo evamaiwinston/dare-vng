@@ -68,7 +68,7 @@ load_dotenv(dotenv_path=REPO_ROOT / ".env")
 # already talks to (NVIDIA NIM by default). nv-embedqa is an asymmetric QA model:
 # it expects an input_type of "query" or "passage". Override with --embed-model.
 DEFAULT_EMBED_MODEL = os.getenv("EMBED_MODEL", "nvidia/nv-embedqa-e5-v5")
-DEFAULT_ABLATIONS = [32, 64, 128]
+DEFAULT_ABLATIONS = [64, 128, 256]
 DEFAULT_KS = [1, 3, 5]
 DEFAULT_MOCK = "test_qa_en.json"
 RESULTS_DIR = Path(__file__).resolve().parent / "results"
