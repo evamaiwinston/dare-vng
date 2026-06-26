@@ -5,7 +5,7 @@ effect on the next app start: restart `python app.py`, or run `gradio app.py`
 for auto-reload on save.
 
 The list of selectable mocks is no longer hard-coded here — it is discovered
-from the shared mock_data/ folder (see context_attribution.mocks). Drop a JSON
+from the shared mock_data/ folder (see dare.mocks). Drop a JSON
 file in there and it appears in both the CLI and the demo automatically.
 """
 

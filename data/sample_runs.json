@@ -1,0 +1,3654 @@
+[
+  {
+    "qa_id": "qa-luongvh-0001",
+    "question": "Nhân viên VNG ở cấp bậc 4.2 được hưởng định mức hỗ trợ taxi tối đa bao nhiêu một tháng?",
+    "request": {
+      "query": "Nhân viên VNG ở cấp bậc 4.2 được hưởng định mức hỗ trợ taxi tối đa bao nhiêu một tháng?",
+      "mode": "agent",
+      "use_memory": false
+    },
+    "response": {
+      "answer": "Nhân viên VNG ở cấp bậc 4.2 được hưởng định mức hỗ trợ taxi tối đa 4.500.000 đồng một tháng.",
+      "answer_via_tool": true,
+      "knowledge_sources": [
+        {
+          "chunk_id": "204adf0ff219c60f661bd8f95bff992833ab1979cefe4b1979deba7b403d892c",
+          "document_id": "doc_a2734411efe0bd06",
+          "score": 2.140087,
+          "content": "## 2.3. Đối tượng sử dụng và định mức hàng tháng\n\nĐịnh mức hỗ trợ tùy thuộc vào cấp bậc, được quy định cụ thể như sau:\n\n| Cấp bậc | Định mức đồng/tháng |\n|---|---:|\n| 4.2 | 4,500,000 |\n| 4.1 |  |\n| 3.3 | 3,000,000 |\n| 3.2 |  |\n| 3.1 |  |\n| 2.3 | 1,500,000 |\n\n- Đối với Nhân viên mới gia nhập, AF sẽ cấp quyền sử dụng tài khoản Grab của Công ty và gửi thông tin hướng dẫn đăng nhập và sử dụng trong vòng 03 ngày làm việc kể từ ngày nhận việc.\n- Đối với taxi truyền thống, AF sẽ cấp thẻ taxi trong vòng 10 – 14 ngày kể từ ngày Nhân viên gửi yêu cầu.\n- Chi phí chỉ sử dụng thẻ trong tháng nếu thấp hơn định mức được hưởng sẽ không được hoàn tiền chênh lệch. Tùy theo chi phí sử dụng thẻ thực tế trong tháng cao hơn định mức được hưởng sẽ bị trừ lương theo tháng đó.\n- Trường hợp sử dụng xe ô tô riêng, Nhân viên có thể đề nghị chuyển Hỗ trợ taxi thành Trợ cấp xăng xe chỉ tiền mặt vào lương tháng."
+        }
+      ],
+      "memory_sources": [],
+      "reasoning_trace": [
+        {
+          "step": 1,
+          "tool": "search_knowledge",
+          "args": {
+            "query": "định mức hỗ trợ taxi cấp bậc 4.2 nhân viên VNG"
+          },
+          "result": "[1] (chunk_id=204adf0ff219c60f661bd8f95bff992833ab1979cefe4b1979deba7b403d892c)\n## 2.3. Đối tượng sử dụng và định mức hàng tháng\n\nĐịnh mức hỗ trợ tùy thuộc vào cấp bậc, được quy định cụ thể như sau:\n\n..."
+        },
+        {
+          "step": 2,
+          "tool": "generate_answer",
+          "args": {
+            "question": "Nhân viên VNG ở cấp bậc 4.2 được hưởng định mức hỗ trợ taxi tối đa bao nhiêu một tháng?",
+            "chunk_ids": [
+              "204adf0ff219c60f661bd8f95bff992833ab1979cefe4b1979deba7b403d892c"
+            ]
+          },
+          "result": "Nhân viên VNG ở cấp bậc 4.2 được hưởng định mức hỗ trợ taxi tối đa 4.500.000 đồng một tháng."
+        }
+      ],
+      "tools_used": [
+        "search_knowledge",
+        "generate_answer"
+      ],
+      "step_timings": [
+        {
+          "step": 1,
+          "kind": "llm",
+          "name": "agent",
+          "elapsed": 1.502
+        },
+        {
+          "step": 2,
+          "kind": "retrieval",
+          "name": "search_knowledge.decompose_question",
+          "elapsed": 2.921
+        },
+        {
+          "step": 3,
+          "kind": "retrieval",
+          "name": "search_knowledge.seed_retrieval",
+          "elapsed": 16.916
+        },
+        {
+          "step": 4,
+          "kind": "retrieval",
+          "name": "search_knowledge.rerank",
+          "elapsed": 0.001
+        },
+        {
+          "step": 5,
+          "kind": "retrieval",
+          "name": "search_knowledge.ircot_step",
+          "elapsed": 1.297
+        },
+        {
+          "step": 6,
+          "kind": "retrieval",
+          "name": "search_knowledge.format_results",
+          "elapsed": 0.0
+        },
+        {
+          "step": 7,
+          "kind": "tool",
+          "name": "search_knowledge",
+          "elapsed": 21.146
+        },
+        {
+          "step": 8,
+          "kind": "llm",
+          "name": "agent",
+          "elapsed": 1.543
+        },
+        {
+          "step": 9,
+          "kind": "tool",
+          "name": "generate_answer",
+          "elapsed": 0.891
+        }
+      ],
+      "total_step_time": 25.082,
+      "retrieval_detail": {
+        "sub_questions": [
+          {
+            "q": "Định mức hỗ trợ taxi cho nhân viên cấp bậc 4.2 là bao nhiêu?",
+            "embed_elapsed": 7.795,
+            "routes": {
+              "chunk": {
+                "elapsed": 0.022,
+                "hits": 10,
+                "chunk_ids": [
+                  "3ad8b4ca641b818e98ec26b38a9c6e4fe876354d619f6362bae54d89c7c20940",
+                  "96d99bb59a955ee1582952c3b253de254a9ab2311775d64b5d8ec2adbffd6ba1",
+                  "437ac7e4fc0fa8c392bd114f5833bc3761203fdebda92d5aa87b5572c7cff549",
+                  "ccff48f616ebbbe34ded3eaf229e3492788f7b402bd076141aee66cafc25f440",
+                  "8b9fa9f1a92229329c54d57f08726bee9b59481b7dede274e49c2f8d9e2d4266",
+                  "71578a118767f733ccd078102ab556ae4675007f82063302d19a5501be61a8ff",
+                  "204adf0ff219c60f661bd8f95bff992833ab1979cefe4b1979deba7b403d892c",
+                  "761760aadc3aeef0707341602ee93739e1f2de4155334d6b116b81585039653d",
+                  "170fd090df5ec7ddf41aadb9c40d2d0c324a40a30e8ae188141c961543122a08",
+                  "6e9337030c2867359e9b845fcfe37cb71d5bc3b14b0d0ef667ac9190275417da"
+                ]
+              },
+              "entity": {
+                "elapsed": 0.022,
+                "hits": 10,
+                "seeds_added": [
+                  "4,500,000 VND/tháng",
+                  "1,500,000 VND/tháng",
+                  "3,000,000 VND/tháng",
+                  "Mức hỗ trợ tối đa",
+                  "Mức hỗ trợ tối thiểu",
+                  "Định mức hỗ trợ tiền gửi xe",
+                  "Ngân sách taxi",
+                  "Chính sách Trợ cấp Taxi",
+                  "Mức trợ cấp",
+                  "Chương trình Taxi Allowance"
+                ],
+                "type_filter": [
+                  "amount",
+                  "organization",
+                  "policy",
+                  "role"
+                ]
+              },
+              "triple": {
+                "elapsed": 0.024,
+                "hits": 10,
+                "seeds_added": [
+                  "Định mức hỗ trợ taxi cấp 4.2",
+                  "4,500,000 VND/tháng",
+                  "Cấp bậc 4.2",
+                  "Định mức hỗ trợ taxi cấp 2.3",
+                  "1,500,000 VND/tháng",
+                  "Định mức hỗ trợ taxi cấp 3.3",
+                  "3,000,000 VND/tháng",
+                  "Định mức hỗ trợ tiền gửi xe",
+                  "Mức hỗ trợ tối đa",
+                  "Mức hỗ trợ tối thiểu",
+                  "Cấp bậc 2.3",
+                  "Quy trình thực hiện trợ cấp taxi",
+                  "Trợ cấp taxi",
+                  "nhân viên sẽ được hỗ trợ theo định mức",
+                  "2,000,000 đồng",
+                  "Cấp bậc 3.3"
+                ],
+                "type_filter": [
+                  "applies_to",
+                  "has_amount",
+                  "issued_by"
+                ]
+              },
+              "community": {
+                "elapsed": 0.004,
+                "hits": 3,
+                "seeds_added": [
+                  "20,000,000 đồng",
+                  "2,000,000 đồng",
+                  "2/3 tổng số Ủy viên",
+                  "Mức trợ cấp",
+                  "Tổng thu nhập những ngày nghỉ",
+                  "Tổng thu nhập những ngày nghỉ tính theo Lương Cơ bản và mức thưởng V_Bonus tối đa trên HĐLĐ - Số tiền trợ cấp do BHXH chi trả",
+                  "Số tuổi của VNG x 100,000 đồng",
+                  "Số tuổi VNG × 100,000 đồng",
+                  "số tuổi VNG x 100,000 VNĐ",
+                  "Định mức hỗ trợ tiền gửi xe",
+                  "180,000 – 300,000 đồng/tháng",
+                  "990,000 đồng/tháng",
+                  "Định mức",
+                  "Công nợ",
+                  "4 bản chính",
+                  "100,000 đồng",
+                  "75% lương đóng BHXH",
+                  "55% lương đóng BHXH",
+                  "65% lương đóng BHXH",
+                  "180,000 đồng/tháng – 300,000 đồng/tháng",
+                  "Mức hỗ trợ tối thiểu",
+                  "Mức hỗ trợ tối đa",
+                  "_______ VND/tháng",
+                  "1,000,000 đồng",
+                  "500,000 đồng",
+                  "Số tiền được phân bổ",
+                  "30,000,000 đồng/tháng",
+                  "Mức hỗ trợ tối đa một (01) tháng lương",
+                  "Mức hỗ trợ tối đa lần đầu",
+                  "Mức hỗ trợ tối đa 30,000,000 đồng",
+                  "20,000,000 đồng/trường hợp",
+                  "Đơn giá tính tiền ăn trưa",
+                  "Giá tiền khách sạn",
+                  "Giá tiền thuê nhà",
+                  "Công ty hỗ trợ tiền ăn trưa với định mức",
+                  "990,000 đồng",
+                  "Hưởng trọn định mức",
+                  "Số ngày làm việc thực tế trong tháng x",
+                  "45,000 đồng",
+                  "ng ty hỗ trợ tiền gửi xe với định mức từ",
+                  "180,000 đồng",
+                  "1,200,000 đồng/tháng",
+                  "2,000,000 đồng/tháng",
+                  "Trợ cấp VNG Campus với định mức",
+                  "1,200,000 đồng",
+                  "nhân viên sẽ được hỗ trợ theo định mức",
+                  "tỷ lệ với số tháng HĐLĐ trước thời hạn",
+                  "Số tuổi của VNG x",
+                  "được nhận tiền mừng khi kết hôn hợp pháp",
+                  "tiền mừng cho em bé thứ hai trở đi",
+                  "ua thử việc được nhận tiền mừng sinh con",
+                  "ùy từng trường hợp cụ thể với mức hỗ trợ",
+                  "30,000,000 đồng",
+                  "thăm hỏi và động viên và không vượt quá",
+                  "10,000,000 đồng",
+                  "phòng ban tổ chức phúng viếng và hỗ trợ",
+                  "xét hỗ trợ phù hợp nhưng không vượt quá",
+                  "Số ngày làm việc thực tế × định mức tháng",
+                  "Ngày công tính lương của tháng",
+                  "01 chuyến bay khứ hồi",
+                  "trưa cho toàn bộ Nhân viên với định mức",
+                  "990.000 đồng",
+                  "khấu trừ lương",
+                  "500,000 đồng/tháng",
+                  "Bậc 2.3-3.3",
+                  "300,000 đồng/tháng",
+                  "200,000 đồng/tháng",
+                  "20,000,000 đồng/tháng",
+                  "15,000,000 đồng/tháng",
+                  "3,000,000 đồng/tháng",
+                  "1,500,000 đồng/tháng",
+                  "500,000 VNĐ",
+                  "BHSK người thân do Công ty tài trợ",
+                  "6,500,000 đồng/năm",
+                  "289,976 nghìn đồng",
+                  "Lương cơ bản + V_Bonus",
+                  "tỉ lệ 1:1",
+                  "4,500,000 VND/tháng",
+                  "3,000,000 VND/tháng",
+                  "1,500,000 VND/tháng",
+                  "2,000,000 VND/tháng",
+                  "500,000 VND/tháng",
+                  "300,000 VND/tháng",
+                  "200,000 VND/tháng",
+                  "10000000 VNĐ",
+                  "3000000 VNĐ",
+                  "3.000.000 VNĐ",
+                  "Số lượng ít",
+                  "khấu trừ vào lương",
+                  "Bậc 2.3–3.3",
+                  "2 bản",
+                  "Số tiền tạm ứng",
+                  "2 bản chính",
+                  "mười ba (13) Điều",
+                  "VND/tháng",
+                  "Tối đa VND/tháng",
+                  "990,000 VNĐ/tháng",
+                  "hạn mức",
+                  "234,000 đồng/tháng",
+                  "2,808,000 đồng/năm",
+                  "một lần",
+                  "Mức hỗ trợ Đoàn viên",
+                  "không quá",
+                  "234,000 đồng",
+                  "2,808,000 đồng",
+                  "3,000,000 VND",
+                  "Tổng hóa đơn tài chính",
+                  "5 triệu đồng",
+                  "VND",
+                  "bản gốc",
+                  "Ngân sách tiếp khách",
+                  "Hạn mức quà tặng",
+                  "990,000 VNĐ",
+                  "số tuổi của VNG x",
+                  "100,000 VNĐ",
+                  "990.000 VND/tháng",
+                  "Trọng tài viên",
+                  "VND 100,000",
+                  "Hỗ trợ từ Kinh phí Công đoàn",
+                  "số tiền thực tế phát sinh",
+                  "1.000.000 VND",
+                  "số tiền thực tế",
+                  "1.000.000 VND/quà",
+                  "2.000.000 VND/quà",
+                  "500.000 VND/người",
+                  "30 USD/người",
+                  "50 USD/người",
+                  "100 USD/người",
+                  "Bệnh do các nguyên nhân khác",
+                  "1,000,000 VNĐ",
+                  "đi khám ngoại trú với chi phí phát sinh",
+                  "1,500,000 VNĐ",
+                  "mức một lần khám của người được bảo hiểm",
+                  "3,100,000 VNĐ",
+                  "×",
+                  "Người được bảo hiểm tự chi trả",
+                  "700,000 VNĐ",
+                  "mức quyền lợi ngoại trú còn lại của NĐBH",
+                  "Toàn bộ phần chi phí vượt quá hạn mức",
+                  "g số tiền người được bảo hiểm tự chi trả",
+                  "Theo hạn mức tối đa",
+                  "2% Số tiền bảo hiểm tối đa",
+                  "5% STBH tối đa",
+                  "Tổng mức trách nhiệm bảo hiểm",
+                  "VNĐ 2.100.000.000/hợp đồng",
+                  "VNĐ 2.100.000.000/vụ",
+                  "2.100.000.000 VNĐ/vụ",
+                  "500,000 VNĐ/người/năm",
+                  "1,000,000 đồng/năm",
+                  "Tỷ lệ %",
+                  "300,000 VNĐ",
+                  "Chỗ gửi xe máy",
+                  "Hỗ trợ tiền gửi xe",
+                  "Trợ cấp taxi",
+                  "Trợ cấp xe ôtô riêng",
+                  "Yêu cầu công việc",
+                  "Văn phòng không sắp xếp được chỗ gửi xe",
+                  "xe ôtô riêng",
+                  "Chính sách xe ô tô riêng",
+                  "Trợ cấp xăng xe",
+                  "Trợ cấp Quang Trung",
+                  "Định mức hỗ trợ taxi",
+                  "Hỗ trợ xăng xe",
+                  "văn phòng biệt lập xa trung tâm",
+                  "công việc đặc thù thường xuyên đi lại ngoài văn phòng",
+                  "Văn phòng biệt lập xa trung tâm",
+                  "Công việc đặc thù thường xuyên đi lại ngoài văn phòng",
+                  "Chính sách Trợ cấp Taxi",
+                  "Quy trình thực hiện trợ cấp taxi",
+                  "Đề nghị cấp thẻ taxi",
+                  "Nhân viên làm việc tại các văn phòng biệt lập xa trung tâm",
+                  "Nhân viên đang phụ trách các công việc có tính chất đặc thù phải thường xuyên đi lại ngoài văn phòng",
+                  "Phụ cấp xăng xe",
+                  "NLĐ thuộc văn phòng không nằm tại trung tâm thành phố",
+                  "NLĐ phụ trách công việc đặc thù",
+                  "Giấy phép lái xe",
+                  "thông tin người lái",
+                  "Giấy tờ xe",
+                  "thông tin xe",
+                  "Trợ cấp ăn trưa",
+                  "Trợ cấp sinh con",
+                  "Trợ cấp ốm đau",
+                  "Trợ cấp gửi xe",
+                  "Lương tháng 13",
+                  "Trợ cấp thai sản",
+                  "Điều chỉnh trợ cấp",
+                  "Hỗ trợ từ ngân sách Công đoàn",
+                  "Điều chỉnh thưởng lễ",
+                  "Thưởng Tết",
+                  "Quỹ xe",
+                  "Điều kiện CTV văn phòng 12 tháng",
+                  "Trường hợp thăng cấp",
+                  "Phiên bản 12.0",
+                  "Trợ cấp xe ô tô riêng",
+                  "Phiên bản 13.0",
+                  "Hỗ trợ on-phone",
+                  "Trợ cấp di chuyển VNG Campus",
+                  "Thưởng lễ",
+                  "Hỗ trợ thiên tai, hỏa hoạn",
+                  "Chính sách Hỗ trợ Taxi",
+                  "Phiên bản 1.2",
+                  "Hỗ trợ từ Công đoàn",
+                  "Quyền lợi Cộng tác viên",
+                  "Hỗ trợ kinh phí Công đoàn",
+                  "Thưởng lễ tết",
+                  "Trợ cấp cơm trưa",
+                  "Tăng cường biện pháp bảo mật",
+                  "Hỗ trợ sinh nhật Công ty",
+                  "Hỗ trợ thiên tai",
+                  "Hỗ trợ hỏa hoạn",
+                  "Phiên bản 17.0",
+                  "Hoạt động vinh danh Starter",
+                  "Trợ cấp chuyển vùng"
+                ]
+              }
+            }
+          },
+          {
+            "q": "Ai là tổ chức ban hành chính sách hỗ trợ taxi cho nhân viên cấp bậc 4.2?",
+            "embed_elapsed": 0.408,
+            "routes": {
+              "chunk": {
+                "elapsed": 0.009,
+                "hits": 10,
+                "chunk_ids": [
+                  "3ad8b4ca641b818e98ec26b38a9c6e4fe876354d619f6362bae54d89c7c20940",
+                  "8b9fa9f1a92229329c54d57f08726bee9b59481b7dede274e49c2f8d9e2d4266",
+                  "71578a118767f733ccd078102ab556ae4675007f82063302d19a5501be61a8ff",
+                  "96d99bb59a955ee1582952c3b253de254a9ab2311775d64b5d8ec2adbffd6ba1",
+                  "ccff48f616ebbbe34ded3eaf229e3492788f7b402bd076141aee66cafc25f440",
+                  "761760aadc3aeef0707341602ee93739e1f2de4155334d6b116b81585039653d",
+                  "437ac7e4fc0fa8c392bd114f5833bc3761203fdebda92d5aa87b5572c7cff549",
+                  "3f572ba1a4880ecd770f4aeedcf2aeee7bf0adbaee5a9290e69eb382671adc15",
+                  "170bf3a72eb422e291e530238d78edb84680000d13c082f22248ab5a6ecd9c4f",
+                  "27425edd3123d01c8ea43a91b999c8d11493965d7b3b0969a14cbacc126658d1"
+                ]
+              },
+              "entity": {
+                "elapsed": 0.02,
+                "hits": 8,
+                "seeds_added": [
+                  "Chính sách Trợ cấp Taxi",
+                  "Chính sách taxi",
+                  "4,500,000 VND/tháng",
+                  "Chính sách Hỗ trợ Taxi",
+                  "Chương trình Taxi Allowance",
+                  "Ngân sách taxi",
+                  "Định mức mục 2.3",
+                  "Nhân viên cấp bậc 4.3 trở lên"
+                ],
+                "type_filter": [
+                  "amount",
+                  "organization",
+                  "policy",
+                  "role"
+                ]
+              },
+              "triple": {
+                "elapsed": 0.019,
+                "hits": 7,
+                "seeds_added": [
+                  "Định mức hỗ trợ taxi cấp 4.2",
+                  "Cấp bậc 4.2",
+                  "Quy trình thực hiện trợ cấp taxi",
+                  "Trợ cấp taxi",
+                  "4,500,000 VND/tháng",
+                  "Chính sách hỗ trợ taxi",
+                  "Phòng AF",
+                  "Định mức hỗ trợ taxi cấp 2.3",
+                  "Cấp bậc 2.3",
+                  "Chính sách Hỗ trợ Taxi",
+                  "Phiên bản 5.0",
+                  "Chính sách taxi",
+                  "nhân viên VNG"
+                ],
+                "type_filter": [
+                  "applies_to",
+                  "has_amount",
+                  "issued_by"
+                ]
+              },
+              "community": {
+                "elapsed": 0.005,
+                "hits": 3,
+                "seeds_added": [
+                  "Chỗ gửi xe máy",
+                  "Hỗ trợ tiền gửi xe",
+                  "Trợ cấp taxi",
+                  "Trợ cấp xe ôtô riêng",
+                  "Yêu cầu công việc",
+                  "Văn phòng không sắp xếp được chỗ gửi xe",
+                  "xe ôtô riêng",
+                  "Chính sách xe ô tô riêng",
+                  "Trợ cấp xăng xe",
+                  "Trợ cấp Quang Trung",
+                  "Định mức hỗ trợ taxi",
+                  "Hỗ trợ xăng xe",
+                  "văn phòng biệt lập xa trung tâm",
+                  "công việc đặc thù thường xuyên đi lại ngoài văn phòng",
+                  "Văn phòng biệt lập xa trung tâm",
+                  "Công việc đặc thù thường xuyên đi lại ngoài văn phòng",
+                  "Chính sách Trợ cấp Taxi",
+                  "Quy trình thực hiện trợ cấp taxi",
+                  "Đề nghị cấp thẻ taxi",
+                  "Nhân viên làm việc tại các văn phòng biệt lập xa trung tâm",
+                  "Nhân viên đang phụ trách các công việc có tính chất đặc thù phải thường xuyên đi lại ngoài văn phòng",
+                  "Phụ cấp xăng xe",
+                  "NLĐ thuộc văn phòng không nằm tại trung tâm thành phố",
+                  "NLĐ phụ trách công việc đặc thù",
+                  "Giấy phép lái xe",
+                  "thông tin người lái",
+                  "Giấy tờ xe",
+                  "thông tin xe",
+                  "Thuế TNCN",
+                  "Thẻ taxi",
+                  "Tài khoản app taxi",
+                  "chi phí",
+                  "Thẻ tạm trú (TRC)",
+                  "Chi phí xin TRC",
+                  "Ngân sách Công đoàn Công ty",
+                  "Chi phí chung của toàn đoàn",
+                  "Phép năm bảo lưu",
+                  "Chi phí",
+                  "Chi phí phát sinh",
+                  "Chi phí làm lại thẻ",
+                  "Chi phí vượt định mức",
+                  "ZaloPay",
+                  "Lương",
+                  "Tiền lương thử việc",
+                  "Ngân sách",
+                  "Chương trình Taxi Allowance",
+                  "Các khoản trả bổ sung",
+                  "CHƯƠNG TRÌNH/SỰ KIỆN THỂ THAO 2025",
+                  "chi phí khách sạn",
+                  "Thu nhập trước thuế",
+                  "Hình thức trừ qua lương",
+                  "định mức hàng tháng",
+                  "Chi phí lưu trú",
+                  "ngân sách Công đoàn",
+                  "chi phí công",
+                  "Đoàn phí",
+                  "tài trợ kinh phí",
+                  "Hóa đơn VAT",
+                  "Thuế được khấu trừ",
+                  "Hóa đơn",
+                  "Thuế quốc gia",
+                  "Khoản hoàn trả",
+                  "Số tháng HĐLĐ trước thời hạn cam kết",
+                  "Ngân sách Teambuilding",
+                  "Ngân sách được chuyển",
+                  "Chi phí khách sạn",
+                  "Chi phí đi chuyển",
+                  "Chi phí vé về thăm nhà",
+                  "Định mức phê duyệt",
+                  "Ngân sách taxi",
+                  "Chi phí thuê nhà",
+                  "ngân sách",
+                  "Chính sách tạm ứng lương",
+                  "Chính sách trợ cấp điện thoại",
+                  "Tạm ứng lương",
+                  "Ngày Nhân viên không có lịch làm việc",
+                  "Đơn giá tiền lương",
+                  "CHÍNH SÁCH HỖ TRỢ TAXI",
+                  "Đối tượng sử dụng",
+                  "Chính sách taxi",
+                  "thanh toán đúng thời gian",
+                  "Chi phí điện thoại cá nhân",
+                  "Ngân hàng Vietcombank",
+                  "Thẻ cá nhân",
+                  "Định mức mục 2.3",
+                  "Định mức taxi",
+                  "Thẻ taxi truyền thống",
+                  "ngân sách điện thoại",
+                  "Định mức sử dụng roaming",
+                  "Chính sách cập nhật ngưỡng tự mua",
+                  "dịch vụ",
+                  "Giao dịch tự mua",
+                  "Hóa đơn tài chính",
+                  "Tài khoản ủy quyền thanh toán",
+                  "số tiền dịch vụ",
+                  "Dịch vụ khai giá",
+                  "Cước chuyển hoàn",
+                  "Chi phí chênh lệch",
+                  "Kỳ lương tháng",
+                  "chi phí chênh lệch",
+                  "tiền lương",
+                  "Chính sách tạm ứng thu nhập",
+                  "Tiền lương",
+                  "Kinh phí Công đoàn",
+                  "Nguồn thu khác",
+                  "Ngân sách Công đoàn",
+                  "Trường hợp mua vé theo nhóm",
+                  "Đoàn Phí",
+                  "tài sản",
+                  "Tiền lương làm thêm",
+                  "Thuế Thu Nhập Cá Nhân",
+                  "Thu nhập thực nhận",
+                  "Phí Dịch Vụ",
+                  "Thuế thu nhập cá nhân",
+                  "Chuyển khoản cho NCC",
+                  "Tài khoản cá nhân thông thường",
+                  "chi phí lưu trú",
+                  "Định mức sử dụng sim 3G/4G/Internet",
+                  "qui trình phê duyệt tài chính",
+                  "Thanh toán",
+                  "Kế toán thanh toán",
+                  "Chi phí vận chuyển",
+                  "khách sạn",
+                  "Định mức chi phí tiếp khách",
+                  "Kế toán công nợ",
+                  "Hóa đơn GTGT",
+                  "Thanh toán bằng thẻ ngân hàng cá nhân/thẻ tín dụng cá nhân",
+                  "Tài khoản cá nhân",
+                  "1",
+                  "Eform đăng ký tài khoản ủy quyền",
+                  "Ngân hàng",
+                  "Dịch vụ bảo lãnh viện phí",
+                  "Chi phí y tế do tai nạn",
+                  "Tiền bồi thường",
+                  "Chuyển khoản",
+                  "Bảng kê viện phí",
+                  "số tiền",
+                  "Bảng sao kê lương",
+                  "Bảng lương BHXH",
+                  "Trợ cấp ăn trưa",
+                  "Trợ cấp sinh con",
+                  "Trợ cấp ốm đau",
+                  "Trợ cấp gửi xe",
+                  "Lương tháng 13",
+                  "Trợ cấp thai sản",
+                  "Điều chỉnh trợ cấp",
+                  "Hỗ trợ từ ngân sách Công đoàn",
+                  "Điều chỉnh thưởng lễ",
+                  "Thưởng Tết",
+                  "Quỹ xe",
+                  "Điều kiện CTV văn phòng 12 tháng",
+                  "Trường hợp thăng cấp",
+                  "Phiên bản 12.0",
+                  "Trợ cấp xe ô tô riêng",
+                  "Phiên bản 13.0",
+                  "Hỗ trợ on-phone",
+                  "Trợ cấp di chuyển VNG Campus",
+                  "Thưởng lễ",
+                  "Hỗ trợ thiên tai, hỏa hoạn",
+                  "Chính sách Hỗ trợ Taxi",
+                  "Phiên bản 1.2",
+                  "Hỗ trợ từ Công đoàn",
+                  "Quyền lợi Cộng tác viên",
+                  "Hỗ trợ kinh phí Công đoàn",
+                  "Thưởng lễ tết",
+                  "Trợ cấp cơm trưa",
+                  "Tăng cường biện pháp bảo mật",
+                  "Hỗ trợ sinh nhật Công ty",
+                  "Hỗ trợ thiên tai",
+                  "Hỗ trợ hỏa hoạn",
+                  "Phiên bản 17.0",
+                  "Hoạt động vinh danh Starter",
+                  "Trợ cấp chuyển vùng"
+                ]
+              }
+            }
+          }
+        ],
+        "path_traversal": {
+          "elapsed": 2.336,
+          "seed_count": 335,
+          "expanded_nodes": 335,
+          "graph_chunks": 197,
+          "inv_rels_filter": [
+            "applies_to",
+            "has_amount",
+            "issued_by"
+          ]
+        },
+        "total_candidates": 198,
+        "total_seeds": 14
+      },
+      "session_id": null,
+      "usage": {
+        "llm_calls": 5,
+        "input_tokens": 5391,
+        "output_tokens": 496,
+        "total_tokens": 5887
+      },
+      "mode": "agent",
+      "sources": [
+        {
+          "chunk_id": "204adf0ff219c60f661bd8f95bff992833ab1979cefe4b1979deba7b403d892c",
+          "document_id": "doc_a2734411efe0bd06",
+          "score": 2.140087,
+          "content": "## 2.3. Đối tượng sử dụng và định mức hàng tháng\n\nĐịnh mức hỗ trợ tùy thuộc vào cấp bậc, được quy định cụ thể như sau:\n\n| Cấp bậc | Định mức đồng/tháng |\n|---|---:|\n| 4.2 | 4,500,000 |\n| 4.1 |  |\n| 3.3 | 3,000,000 |\n| 3.2 |  |\n| 3.1 |  |\n| 2.3 | 1,500,000 |\n\n- Đối với Nhân viên mới gia nhập, AF sẽ cấp quyền sử dụng tài khoản Grab của Công ty và gửi thông tin hướng dẫn đăng nhập và sử dụng trong vòng 03 ngày làm việc kể từ ngày nhận việc.\n- Đối với taxi truyền thống, AF sẽ cấp thẻ taxi trong vòng 10 – 14 ngày kể từ ngày Nhân viên gửi yêu cầu.\n- Chi phí chỉ sử dụng thẻ trong tháng nếu thấp hơn định mức được hưởng sẽ không được hoàn tiền chênh lệch. Tùy theo chi phí sử dụng thẻ thực tế trong tháng cao hơn định mức được hưởng sẽ bị trừ lương theo tháng đó.\n- Trường hợp sử dụng xe ô tô riêng, Nhân viên có thể đề nghị chuyển Hỗ trợ taxi thành Trợ cấp xăng xe chỉ tiền mặt vào lương tháng."
+        }
+      ],
+      "ablation": {
+        "use_memory": false,
+        "use_graph_rag": true,
+        "memory": {
+          "save_turns": true,
+          "use_session_memory": true,
+          "use_long_term_memory": true,
+          "use_graph_expand": true,
+          "use_rerank": true
+        },
+        "retrieval": {
+          "use_chunk_vectors": true,
+          "use_node_vectors": true,
+          "use_triplet_vectors": true,
+          "use_community_vectors": true,
+          "use_graph_expand": true,
+          "use_graph_boost": true,
+          "use_decompose": true,
+          "use_ircot": true
+        }
+      }
+    },
+    "elapsed": 25.2,
+    "error": null
+  },
+  {
+    "qa_id": "qa-luongvh-0070",
+    "question": "Tool đăng ký tài khoản ủy quyền thanh toán (cho chi phí từ 5 triệu trở lên) chính thức được sử dụng từ ngày nào, và những Starter đã đăng ký tạm thời qua link Form trước đó phải làm gì?",
+    "request": {
+      "query": "Tool đăng ký tài khoản ủy quyền thanh toán (cho chi phí từ 5 triệu trở lên) chính thức được sử dụng từ ngày nào, và những Starter đã đăng ký tạm thời qua link Form trước đó phải làm gì?",
+      "mode": "agent",
+      "use_memory": false
+    },
+    "response": {
+      "answer": "- Tool đăng ký tài khoản ủy quyền thanh toán chính thức được sử dụng từ ngày **01/08/2025**.  \n- Những Starter đã đăng ký tạm thời qua link Form trước đó **bắt buộc truy cập Eform System** để đăng ký lại theo đúng thông tin ban đầu nhằm hợp thức hóa việc phê duyệt ủy quyền.",
+      "answer_via_tool": true,
+      "knowledge_sources": [
+        {
+          "chunk_id": "c5006de097dcaf467a6a8a8d36eaf2bfdba7a0a6300e713543dcfbcbc61731c9",
+          "document_id": "doc_a754da463de51e3b",
+          "score": 1.432306,
+          "content": "## Đăng ký tài khoản ủy quyền thanh toán\n\nLiên quan đến hướng dẫn đăng ký tài khoản ủy quyền thanh toán, FA xin thông báo ban hành Tool Đăng Ký Tài Khoản Ủy Quyền Thanh Toán, chính thức sử dụng từ ngày 01/08/2025. Starters vui lòng truy cập **Eform System** => mục **Khác** => chọn \"**Đề nghị đăng ký ủy quyền tài khoản**\" để đăng ký.\n\nNhững Starter đã đăng ký tạm thời qua Link “Form”, bắt buộc truy cập **Eform System** để thực hiện đăng ký lại theo đúng thông tin ban đầu để hợp thức hóa việc phê duyệt ủy quyền."
+        },
+        {
+          "chunk_id": "e9c326ecc9c6681f07f4739af7f057530253ddb05959bd0f179d40a8f2fc9ca8",
+          "document_id": "doc_a754da463de51e3b",
+          "score": 1.950733,
+          "content": "## Quy định thanh toán\n\n1. Từ ngày 01.07.2025, hóa đơn GTGT có giá trị từ 5 triệu trở lên bắt buộc áp dụng một trong những hình thức thanh toán sau:\n   - Thanh toán bằng chuyển khoản từ tài khoản công ty\n   - Thanh toán bằng thẻ tín dụng công ty\n   - Thanh toán bằng thẻ ngân hàng cá nhân/thẻ tín dụng cá nhân (áp dụng khi tài khoản cá nhân đó đã đăng ký và được duyệt, mỗi NV chỉ được đăng ký 1 tài khoản, hướng dẫn đăng ký sẽ ở luồng mail sau) và có chứng từ chứng minh thanh toán bằng chuyển khoản đến người bán (tài khoản người bán là tài khoản của tổ chức xuất hóa đơn GTGT).\n2. Trường hợp cùng một bên bán trong 01 ngày xuất nhiều hóa đơn, các hóa đơn đều dưới 05 triệu nhưng tổng các hóa đơn từ 05 triệu trở lên thì vẫn phải áp dụng thanh toán không dùng tiền mặt.\n3. Hóa đơn GTGT có giá trị dưới 5 triệu, Starter có thể thanh toán bằng tiền mặt. Tuy nhiên khuyến khích Starter thanh toán bằng chuyển khoản để tránh trường hợp (ii) xảy ra khi phát sinh nhiều hóa đơn GTGT cùng 1 người bán trong cùng 1 ngày.\n4. Hóa đơn GTGT không đạt điều kiện (i) & (ii) sẽ tính không hợp lệ và charge 120% ngân sách trên tổng giá trị hóa đơn."
+        }
+      ],
+      "memory_sources": [],
+      "reasoning_trace": [
+        {
+          "step": 1,
+          "tool": "search_knowledge",
+          "args": {
+            "query": "đăng ký tài khoản ủy quyền thanh toán 5 triệu tool chính thức"
+          },
+          "result": "[1] (chunk_id=e9c326ecc9c6681f07f4739af7f057530253ddb05959bd0f179d40a8f2fc9ca8)\n## Quy định thanh toán\n\n1. Từ ngày 01.07.2025, hóa đơn GTGT có giá trị từ 5 triệu trở lên bắt buộc áp dụng một trong nhữ..."
+        },
+        {
+          "step": 2,
+          "tool": "search_knowledge",
+          "args": {
+            "query": "Starter đăng ký tạm thời link Form trước đó phải làm gì"
+          },
+          "result": "[1] (chunk_id=7cb5572b5cbcd32426642035326c73e9d43ac18425607622c4848f0746def03c)\n## Lưu ý đối với Eform đăng ký tài khoản ủy quyền\n\n- Starters tự đăng ký cho mình với chi tiết đề nghị bao gồm **Số tài ..."
+        },
+        {
+          "step": 3,
+          "tool": "generate_answer",
+          "args": {
+            "question": "Tool đăng ký tài khoản ủy quyền thanh toán (cho chi phí từ 5 triệu trở lên) chính thức được sử dụng từ ngày nào, và những Starter đã đăng ký tạm thời qua link Form trước đó phải làm gì?",
+            "chunk_ids": [
+              "c5006de097dcaf467a6a8a8d36eaf2bfdba7a0a6300e713543dcfbcbc61731c9",
+              "e9c326ecc9c6681f07f4739af7f057530253ddb05959bd0f179d40a8f2fc9ca8"
+            ]
+          },
+          "result": "- Tool đăng ký tài khoản ủy quyền thanh toán chính thức được sử dụng từ ngày **01/08/2025**.  \n- Những Starter đã đăng ký tạm thời qua link Form trước đó **bắt buộc truy cập Eform System** để đăng ký ..."
+        }
+      ],
+      "tools_used": [
+        "search_knowledge",
+        "search_knowledge",
+        "generate_answer"
+      ],
+      "step_timings": [
+        {
+          "step": 1,
+          "kind": "llm",
+          "name": "agent",
+          "elapsed": 1.851
+        },
+        {
+          "step": 2,
+          "kind": "retrieval",
+          "name": "search_knowledge.decompose_question",
+          "elapsed": 1.824
+        },
+        {
+          "step": 3,
+          "kind": "retrieval",
+          "name": "search_knowledge.seed_retrieval",
+          "elapsed": 11.247
+        },
+        {
+          "step": 4,
+          "kind": "retrieval",
+          "name": "search_knowledge.rerank",
+          "elapsed": 0.001
+        },
+        {
+          "step": 5,
+          "kind": "retrieval",
+          "name": "search_knowledge.ircot_step",
+          "elapsed": 10.325
+        },
+        {
+          "step": 6,
+          "kind": "retrieval",
+          "name": "search_knowledge.format_results",
+          "elapsed": 0.0
+        },
+        {
+          "step": 7,
+          "kind": "tool",
+          "name": "search_knowledge",
+          "elapsed": 23.402
+        },
+        {
+          "step": 8,
+          "kind": "retrieval",
+          "name": "search_knowledge.decompose_question",
+          "elapsed": 1.846
+        },
+        {
+          "step": 9,
+          "kind": "retrieval",
+          "name": "search_knowledge.seed_retrieval",
+          "elapsed": 21.511
+        },
+        {
+          "step": 10,
+          "kind": "retrieval",
+          "name": "search_knowledge.rerank",
+          "elapsed": 0.002
+        },
+        {
+          "step": 11,
+          "kind": "retrieval",
+          "name": "search_knowledge.ircot_step",
+          "elapsed": 2.153
+        },
+        {
+          "step": 12,
+          "kind": "retrieval",
+          "name": "search_knowledge.seed_retrieval",
+          "elapsed": 4.882
+        },
+        {
+          "step": 13,
+          "kind": "retrieval",
+          "name": "search_knowledge.rerank",
+          "elapsed": 0.001
+        },
+        {
+          "step": 14,
+          "kind": "retrieval",
+          "name": "search_knowledge.ircot_step",
+          "elapsed": 1.894
+        },
+        {
+          "step": 15,
+          "kind": "retrieval",
+          "name": "search_knowledge.seed_retrieval",
+          "elapsed": 2.586
+        },
+        {
+          "step": 16,
+          "kind": "retrieval",
+          "name": "search_knowledge.rerank",
+          "elapsed": 0.001
+        },
+        {
+          "step": 17,
+          "kind": "retrieval",
+          "name": "search_knowledge.ircot_step",
+          "elapsed": 2.056
+        },
+        {
+          "step": 18,
+          "kind": "retrieval",
+          "name": "search_knowledge.format_results",
+          "elapsed": 0.0
+        },
+        {
+          "step": 19,
+          "kind": "tool",
+          "name": "search_knowledge",
+          "elapsed": 36.949
+        },
+        {
+          "step": 20,
+          "kind": "llm",
+          "name": "agent",
+          "elapsed": 2.089
+        },
+        {
+          "step": 21,
+          "kind": "tool",
+          "name": "generate_answer",
+          "elapsed": 3.502
+        }
+      ],
+      "total_step_time": 67.793,
+      "retrieval_detail": {
+        "sub_questions": [
+          {
+            "q": "Có giới hạn số tiền cụ thể nào (ví dụ: 5 triệu) để đăng ký tài khoản ủy quyền thanh toán không, hay con số 5 triệu chỉ áp dụng cho quy định thanh toán hóa đơn GTGT?",
+            "embed_elapsed": 0.486,
+            "routes": {
+              "chunk": {
+                "elapsed": 0.006,
+                "hits": 10,
+                "chunk_ids": [
+                  "996bc02ea98a22f85a16f486d40c09d28d669f19314f0f3541769d4f7391f8f1",
+                  "e9c326ecc9c6681f07f4739af7f057530253ddb05959bd0f179d40a8f2fc9ca8",
+                  "54cbc49a4e6dc7356e83220ebe31a91de00504f5b69f2cc0e23ea437544d82e4",
+                  "ba20ec46e419c76236bbf188853d433a78aa6ac7a8594cbacb419993f7ef6b2f",
+                  "c5006de097dcaf467a6a8a8d36eaf2bfdba7a0a6300e713543dcfbcbc61731c9",
+                  "7cb5572b5cbcd32426642035326c73e9d43ac18425607622c4848f0746def03c",
+                  "fa28566f2f0227c0cb5cd3ce0c350896247ffeec61439dc578b7c45e041664d7",
+                  "8a2a7ab3c5bc94d3418d07e1b9e3ebd902c34bc4f02a1bbb4cdb4ae6851b43b4",
+                  "03f75f898b1183d6c7e59e9c9dbd48f8337c0b1aac73515a78ea84c20277f054",
+                  "4b5a50108708d8a9cc75cfa283ba05de1cab9974eaaa2e5e3fe5d7db68e72584"
+                ]
+              },
+              "entity": {
+                "elapsed": 0.006,
+                "hits": 10,
+                "seeds_added": [
+                  "Tài khoản ủy quyền thanh toán chi phí từ",
+                  "Hóa đơn GTGT có giá trị dưới",
+                  "Tài khoản ngân hàng",
+                  "hóa đơn GTGT có giá trị từ",
+                  "5 triệu",
+                  "Thẻ tín dụng quốc tế",
+                  "Số tài khoản",
+                  "180,000 đồng/tháng – 300,000 đồng/tháng",
+                  "Tài khoản ủy quyền thanh toán",
+                  "Số tiền được phân bổ"
+                ],
+                "type_filter": [
+                  "amount",
+                  "condition",
+                  "entity",
+                  "policy"
+                ]
+              },
+              "triple": {
+                "elapsed": 0.005,
+                "hits": 10,
+                "seeds_added": [
+                  "Tài khoản ủy quyền thanh toán chi phí",
+                  "5 triệu",
+                  "Tài khoản ủy quyền thanh toán chi phí từ",
+                  "kéo dài thời hạn nâng lương",
+                  "5 triệu đồng",
+                  "Hóa đơn GTGT có giá trị dưới",
+                  "Hóa đơn GTGT",
+                  "hóa đơn GTGT có giá trị từ",
+                  "10 triệu đồng",
+                  "Thanh toán không dùng tiền mặt",
+                  "Tổng hóa đơn tài chính",
+                  "20 triệu đồng",
+                  "mức quyền lợi ngoại trú còn lại của NĐBH",
+                  "500,000 VNĐ"
+                ],
+                "type_filter": [
+                  "applies_to",
+                  "has_amount",
+                  "requires_condition"
+                ]
+              },
+              "community": {
+                "elapsed": 0.003,
+                "hits": 3,
+                "seeds_added": [
+                  "Thuế TNCN",
+                  "Thẻ taxi",
+                  "Tài khoản app taxi",
+                  "chi phí",
+                  "Thẻ tạm trú (TRC)",
+                  "Chi phí xin TRC",
+                  "Ngân sách Công đoàn Công ty",
+                  "Chi phí chung của toàn đoàn",
+                  "Phép năm bảo lưu",
+                  "Chi phí",
+                  "Chi phí phát sinh",
+                  "Chi phí làm lại thẻ",
+                  "Chi phí vượt định mức",
+                  "ZaloPay",
+                  "Lương",
+                  "Tiền lương thử việc",
+                  "Ngân sách",
+                  "Chương trình Taxi Allowance",
+                  "Các khoản trả bổ sung",
+                  "CHƯƠNG TRÌNH/SỰ KIỆN THỂ THAO 2025",
+                  "chi phí khách sạn",
+                  "Thu nhập trước thuế",
+                  "Hình thức trừ qua lương",
+                  "định mức hàng tháng",
+                  "Chi phí lưu trú",
+                  "ngân sách Công đoàn",
+                  "chi phí công",
+                  "Đoàn phí",
+                  "tài trợ kinh phí",
+                  "Hóa đơn VAT",
+                  "Thuế được khấu trừ",
+                  "Hóa đơn",
+                  "Thuế quốc gia",
+                  "Khoản hoàn trả",
+                  "Số tháng HĐLĐ trước thời hạn cam kết",
+                  "Ngân sách Teambuilding",
+                  "Ngân sách được chuyển",
+                  "Chi phí khách sạn",
+                  "Chi phí đi chuyển",
+                  "Chi phí vé về thăm nhà",
+                  "Định mức phê duyệt",
+                  "Ngân sách taxi",
+                  "Chi phí thuê nhà",
+                  "ngân sách",
+                  "Chính sách tạm ứng lương",
+                  "Chính sách trợ cấp điện thoại",
+                  "Tạm ứng lương",
+                  "Ngày Nhân viên không có lịch làm việc",
+                  "Đơn giá tiền lương",
+                  "CHÍNH SÁCH HỖ TRỢ TAXI",
+                  "Đối tượng sử dụng",
+                  "Chính sách taxi",
+                  "thanh toán đúng thời gian",
+                  "Chi phí điện thoại cá nhân",
+                  "Ngân hàng Vietcombank",
+                  "Thẻ cá nhân",
+                  "Định mức mục 2.3",
+                  "Định mức taxi",
+                  "Thẻ taxi truyền thống",
+                  "ngân sách điện thoại",
+                  "Định mức sử dụng roaming",
+                  "Chính sách cập nhật ngưỡng tự mua",
+                  "dịch vụ",
+                  "Giao dịch tự mua",
+                  "Hóa đơn tài chính",
+                  "Tài khoản ủy quyền thanh toán",
+                  "số tiền dịch vụ",
+                  "Dịch vụ khai giá",
+                  "Cước chuyển hoàn",
+                  "Chi phí chênh lệch",
+                  "Kỳ lương tháng",
+                  "chi phí chênh lệch",
+                  "tiền lương",
+                  "Chính sách tạm ứng thu nhập",
+                  "Tiền lương",
+                  "Kinh phí Công đoàn",
+                  "Nguồn thu khác",
+                  "Ngân sách Công đoàn",
+                  "Trường hợp mua vé theo nhóm",
+                  "Đoàn Phí",
+                  "tài sản",
+                  "Tiền lương làm thêm",
+                  "Thuế Thu Nhập Cá Nhân",
+                  "Thu nhập thực nhận",
+                  "Phí Dịch Vụ",
+                  "Thuế thu nhập cá nhân",
+                  "Chuyển khoản cho NCC",
+                  "Tài khoản cá nhân thông thường",
+                  "chi phí lưu trú",
+                  "Định mức sử dụng sim 3G/4G/Internet",
+                  "qui trình phê duyệt tài chính",
+                  "Thanh toán",
+                  "Kế toán thanh toán",
+                  "Chi phí vận chuyển",
+                  "khách sạn",
+                  "Định mức chi phí tiếp khách",
+                  "Kế toán công nợ",
+                  "Hóa đơn GTGT",
+                  "Thanh toán bằng thẻ ngân hàng cá nhân/thẻ tín dụng cá nhân",
+                  "Tài khoản cá nhân",
+                  "1",
+                  "Eform đăng ký tài khoản ủy quyền",
+                  "Ngân hàng",
+                  "Dịch vụ bảo lãnh viện phí",
+                  "Chi phí y tế do tai nạn",
+                  "Tiền bồi thường",
+                  "Chuyển khoản",
+                  "Bảng kê viện phí",
+                  "số tiền",
+                  "Bảng sao kê lương",
+                  "Bảng lương BHXH",
+                  "20,000,000 đồng",
+                  "2,000,000 đồng",
+                  "2/3 tổng số Ủy viên",
+                  "Mức trợ cấp",
+                  "Tổng thu nhập những ngày nghỉ",
+                  "Tổng thu nhập những ngày nghỉ tính theo Lương Cơ bản và mức thưởng V_Bonus tối đa trên HĐLĐ - Số tiền trợ cấp do BHXH chi trả",
+                  "Số tuổi của VNG x 100,000 đồng",
+                  "Số tuổi VNG × 100,000 đồng",
+                  "số tuổi VNG x 100,000 VNĐ",
+                  "Định mức hỗ trợ tiền gửi xe",
+                  "180,000 – 300,000 đồng/tháng",
+                  "990,000 đồng/tháng",
+                  "Định mức",
+                  "Công nợ",
+                  "4 bản chính",
+                  "100,000 đồng",
+                  "75% lương đóng BHXH",
+                  "55% lương đóng BHXH",
+                  "65% lương đóng BHXH",
+                  "180,000 đồng/tháng – 300,000 đồng/tháng",
+                  "Mức hỗ trợ tối thiểu",
+                  "Mức hỗ trợ tối đa",
+                  "_______ VND/tháng",
+                  "1,000,000 đồng",
+                  "500,000 đồng",
+                  "Số tiền được phân bổ",
+                  "30,000,000 đồng/tháng",
+                  "Mức hỗ trợ tối đa một (01) tháng lương",
+                  "Mức hỗ trợ tối đa lần đầu",
+                  "Mức hỗ trợ tối đa 30,000,000 đồng",
+                  "20,000,000 đồng/trường hợp",
+                  "Đơn giá tính tiền ăn trưa",
+                  "Giá tiền khách sạn",
+                  "Giá tiền thuê nhà",
+                  "Công ty hỗ trợ tiền ăn trưa với định mức",
+                  "990,000 đồng",
+                  "Hưởng trọn định mức",
+                  "Số ngày làm việc thực tế trong tháng x",
+                  "45,000 đồng",
+                  "ng ty hỗ trợ tiền gửi xe với định mức từ",
+                  "180,000 đồng",
+                  "1,200,000 đồng/tháng",
+                  "2,000,000 đồng/tháng",
+                  "Trợ cấp VNG Campus với định mức",
+                  "1,200,000 đồng",
+                  "nhân viên sẽ được hỗ trợ theo định mức",
+                  "tỷ lệ với số tháng HĐLĐ trước thời hạn",
+                  "Số tuổi của VNG x",
+                  "được nhận tiền mừng khi kết hôn hợp pháp",
+                  "tiền mừng cho em bé thứ hai trở đi",
+                  "ua thử việc được nhận tiền mừng sinh con",
+                  "ùy từng trường hợp cụ thể với mức hỗ trợ",
+                  "30,000,000 đồng",
+                  "thăm hỏi và động viên và không vượt quá",
+                  "10,000,000 đồng",
+                  "phòng ban tổ chức phúng viếng và hỗ trợ",
+                  "xét hỗ trợ phù hợp nhưng không vượt quá",
+                  "Số ngày làm việc thực tế × định mức tháng",
+                  "Ngày công tính lương của tháng",
+                  "01 chuyến bay khứ hồi",
+                  "trưa cho toàn bộ Nhân viên với định mức",
+                  "990.000 đồng",
+                  "khấu trừ lương",
+                  "500,000 đồng/tháng",
+                  "Bậc 2.3-3.3",
+                  "300,000 đồng/tháng",
+                  "200,000 đồng/tháng",
+                  "20,000,000 đồng/tháng",
+                  "15,000,000 đồng/tháng",
+                  "3,000,000 đồng/tháng",
+                  "1,500,000 đồng/tháng",
+                  "500,000 VNĐ",
+                  "BHSK người thân do Công ty tài trợ",
+                  "6,500,000 đồng/năm",
+                  "289,976 nghìn đồng",
+                  "Lương cơ bản + V_Bonus",
+                  "tỉ lệ 1:1",
+                  "4,500,000 VND/tháng",
+                  "3,000,000 VND/tháng",
+                  "1,500,000 VND/tháng",
+                  "2,000,000 VND/tháng",
+                  "500,000 VND/tháng",
+                  "300,000 VND/tháng",
+                  "200,000 VND/tháng",
+                  "10000000 VNĐ",
+                  "3000000 VNĐ",
+                  "3.000.000 VNĐ",
+                  "Số lượng ít",
+                  "khấu trừ vào lương",
+                  "Bậc 2.3–3.3",
+                  "2 bản",
+                  "Số tiền tạm ứng",
+                  "2 bản chính",
+                  "mười ba (13) Điều",
+                  "VND/tháng",
+                  "Tối đa VND/tháng",
+                  "990,000 VNĐ/tháng",
+                  "hạn mức",
+                  "234,000 đồng/tháng",
+                  "2,808,000 đồng/năm",
+                  "một lần",
+                  "Mức hỗ trợ Đoàn viên",
+                  "không quá",
+                  "234,000 đồng",
+                  "2,808,000 đồng",
+                  "3,000,000 VND",
+                  "Tổng hóa đơn tài chính",
+                  "5 triệu đồng",
+                  "VND",
+                  "bản gốc",
+                  "Ngân sách tiếp khách",
+                  "Hạn mức quà tặng",
+                  "990,000 VNĐ",
+                  "số tuổi của VNG x",
+                  "100,000 VNĐ",
+                  "990.000 VND/tháng",
+                  "Trọng tài viên",
+                  "VND 100,000",
+                  "Hỗ trợ từ Kinh phí Công đoàn",
+                  "số tiền thực tế phát sinh",
+                  "1.000.000 VND",
+                  "số tiền thực tế",
+                  "1.000.000 VND/quà",
+                  "2.000.000 VND/quà",
+                  "500.000 VND/người",
+                  "30 USD/người",
+                  "50 USD/người",
+                  "100 USD/người",
+                  "Bệnh do các nguyên nhân khác",
+                  "1,000,000 VNĐ",
+                  "đi khám ngoại trú với chi phí phát sinh",
+                  "1,500,000 VNĐ",
+                  "mức một lần khám của người được bảo hiểm",
+                  "3,100,000 VNĐ",
+                  "×",
+                  "Người được bảo hiểm tự chi trả",
+                  "700,000 VNĐ",
+                  "mức quyền lợi ngoại trú còn lại của NĐBH",
+                  "Toàn bộ phần chi phí vượt quá hạn mức",
+                  "g số tiền người được bảo hiểm tự chi trả",
+                  "Theo hạn mức tối đa",
+                  "2% Số tiền bảo hiểm tối đa",
+                  "5% STBH tối đa",
+                  "Tổng mức trách nhiệm bảo hiểm",
+                  "VNĐ 2.100.000.000/hợp đồng",
+                  "VNĐ 2.100.000.000/vụ",
+                  "2.100.000.000 VNĐ/vụ",
+                  "500,000 VNĐ/người/năm",
+                  "1,000,000 đồng/năm",
+                  "Tỷ lệ %",
+                  "300,000 VNĐ",
+                  "Bậc 4.3",
+                  "Bậc 4.2",
+                  "Bậc 4.1",
+                  "Bậc 3.1 – 3.3",
+                  "Bậc 2.3",
+                  "23,263",
+                  "23,804",
+                  "24,886",
+                  "24,345",
+                  "22,722",
+                  "25,427",
+                  "25,968",
+                  "289,976",
+                  "Chi phí xin cấp visa",
+                  "chi phí vé tham dự",
+                  "Phẫu thuật có chi phí >= 150 triệu",
+                  "Phẫu thuật có chi phí >= 100 triệu",
+                  "Phẫu thuật có chi phí >= 50 triệu",
+                  "Phẫu thuật có chi phí từ 10 - 20 triệu",
+                  "Phẫu thuật có chi phí từ 4 - 10 triệu",
+                  "Phẫu thuật có chi phí từ 0 - 4 triệu",
+                  "300.000/con",
+                  "Con đẻ, con nuôi kết hôn",
+                  "Tứ thân phụ mẫu mất",
+                  "Nghỉ do sẩy thai, nạo, hút thai",
+                  "Mức độ thiệt hại",
+                  "Tiền lương chính thức",
+                  "VND 990,000/month",
+                  "Phép năm tạm ứng",
+                  "Số ngày công chuẩn",
+                  "Ngày phép lẻ",
+                  "150 USD",
+                  "amount",
+                  "Châu Âu (các quốc gia, vùng lãnh thổ còn lại)",
+                  "USA (Các khu vực còn lại)",
+                  "Bắc Mỹ",
+                  "Nam Mỹ (Argentina)",
+                  "Nam Mỹ (các khu vực còn lại)",
+                  "Úc",
+                  "MENA",
+                  "Nhật Bản (các khu vực còn lại)",
+                  "Hàn Quốc",
+                  "Hong Kong",
+                  "UAE",
+                  "Khu vực Tây Á (*)",
+                  "Ả Rập Xê-út",
+                  "Ấn Độ",
+                  "Singapore",
+                  "Malaysia",
+                  "Thái Lan, Indonesia",
+                  "Trung Quốc (Thượng Hải, Bắc Kinh, Thâm Quyến, Quảng Châu)",
+                  "Trung Quốc (nhóm Hàng Châu, Nam Kinh, Thành Đô, Trùng Khánh, Hạ Môn, Tô Châu, Thiên Tân, Tây An, Vũ Hán, Trường Sa, Trịnh Châu, Đông Hoán, Thanh Đảo, Côn Minh, Ninh Ba, Hợp Phì)",
+                  "Khu vực Đông Nam Á (Ngoại trừ Singapore, Malaysia, Thái Lan, Indonesia, Việt Nam), Trung Quốc (ngoại trừ các thành phố được đề cập ở trên)",
+                  "Định mức thông thường",
+                  "Tỷ giá quy đổi",
+                  "Tỷ giá",
+                  "chi phí phát sinh",
+                  "3500",
+                  "23.915301",
+                  "22",
+                  "500,000/phần quà",
+                  "1500000",
+                  "3",
+                  "Tổng số tiền được bồi thường",
+                  "Mức trách nhiệm/mức giới hạn phụ",
+                  "400,000 VNĐ",
+                  "Quyền lợi bảo hiểm tử vong/TTVV do Tai nạn",
+                  "Chi phí Phẫu thuật do Bệnh",
+                  "Chi phí sinh thường",
+                  "Chi phí điều trị biến chứng thai sản",
+                  "Chi phí kiểm tra, tư vấn, chẩn đoán nha khoa"
+                ]
+              }
+            }
+          }
+        ],
+        "path_traversal": {
+          "elapsed": 2.061,
+          "seed_count": 345,
+          "expanded_nodes": 345,
+          "graph_chunks": 271,
+          "inv_rels_filter": [
+            "applies_to",
+            "has_amount",
+            "requires_condition"
+          ]
+        },
+        "total_candidates": 429,
+        "total_seeds": 27
+      },
+      "session_id": null,
+      "usage": {
+        "llm_calls": 9,
+        "input_tokens": 10861,
+        "output_tokens": 1547,
+        "total_tokens": 12408
+      },
+      "mode": "agent",
+      "sources": [
+        {
+          "chunk_id": "c5006de097dcaf467a6a8a8d36eaf2bfdba7a0a6300e713543dcfbcbc61731c9",
+          "document_id": "doc_a754da463de51e3b",
+          "score": 1.432306,
+          "content": "## Đăng ký tài khoản ủy quyền thanh toán\n\nLiên quan đến hướng dẫn đăng ký tài khoản ủy quyền thanh toán, FA xin thông báo ban hành Tool Đăng Ký Tài Khoản Ủy Quyền Thanh Toán, chính thức sử dụng từ ngày 01/08/2025. Starters vui lòng truy cập **Eform System** => mục **Khác** => chọn \"**Đề nghị đăng ký ủy quyền tài khoản**\" để đăng ký.\n\nNhững Starter đã đăng ký tạm thời qua Link “Form”, bắt buộc truy cập **Eform System** để thực hiện đăng ký lại theo đúng thông tin ban đầu để hợp thức hóa việc phê duyệt ủy quyền."
+        },
+        {
+          "chunk_id": "e9c326ecc9c6681f07f4739af7f057530253ddb05959bd0f179d40a8f2fc9ca8",
+          "document_id": "doc_a754da463de51e3b",
+          "score": 1.950733,
+          "content": "## Quy định thanh toán\n\n1. Từ ngày 01.07.2025, hóa đơn GTGT có giá trị từ 5 triệu trở lên bắt buộc áp dụng một trong những hình thức thanh toán sau:\n   - Thanh toán bằng chuyển khoản từ tài khoản công ty\n   - Thanh toán bằng thẻ tín dụng công ty\n   - Thanh toán bằng thẻ ngân hàng cá nhân/thẻ tín dụng cá nhân (áp dụng khi tài khoản cá nhân đó đã đăng ký và được duyệt, mỗi NV chỉ được đăng ký 1 tài khoản, hướng dẫn đăng ký sẽ ở luồng mail sau) và có chứng từ chứng minh thanh toán bằng chuyển khoản đến người bán (tài khoản người bán là tài khoản của tổ chức xuất hóa đơn GTGT).\n2. Trường hợp cùng một bên bán trong 01 ngày xuất nhiều hóa đơn, các hóa đơn đều dưới 05 triệu nhưng tổng các hóa đơn từ 05 triệu trở lên thì vẫn phải áp dụng thanh toán không dùng tiền mặt.\n3. Hóa đơn GTGT có giá trị dưới 5 triệu, Starter có thể thanh toán bằng tiền mặt. Tuy nhiên khuyến khích Starter thanh toán bằng chuyển khoản để tránh trường hợp (ii) xảy ra khi phát sinh nhiều hóa đơn GTGT cùng 1 người bán trong cùng 1 ngày.\n4. Hóa đơn GTGT không đạt điều kiện (i) & (ii) sẽ tính không hợp lệ và charge 120% ngân sách trên tổng giá trị hóa đơn."
+        }
+      ],
+      "ablation": {
+        "use_memory": false,
+        "use_graph_rag": true,
+        "memory": {
+          "save_turns": true,
+          "use_session_memory": true,
+          "use_long_term_memory": true,
+          "use_graph_expand": true,
+          "use_rerank": true
+        },
+        "retrieval": {
+          "use_chunk_vectors": true,
+          "use_node_vectors": true,
+          "use_triplet_vectors": true,
+          "use_community_vectors": true,
+          "use_graph_expand": true,
+          "use_graph_boost": true,
+          "use_decompose": true,
+          "use_ircot": true
+        }
+      }
+    },
+    "elapsed": 44.42,
+    "error": null
+  },
+  {
+    "qa_id": "qa-luongvh-0137",
+    "question": "Công ty có chính sách hỗ trợ chi phí đào tạo bên ngoài (khóa học chuyên môn, chứng chỉ quốc tế) cho nhân viên không và mức hỗ trợ tối đa là bao nhiêu?",
+    "request": {
+      "query": "Công ty có chính sách hỗ trợ chi phí đào tạo bên ngoài (khóa học chuyên môn, chứng chỉ quốc tế) cho nhân viên không và mức hỗ trợ tối đa là bao nhiêu?",
+      "mode": "agent",
+      "use_memory": false
+    },
+    "response": {
+      "answer": "Dựa trên các bằng chứng đã cung cấp, **không có thông tin** về chính sách hỗ trợ chi phí đào tạo bên ngoài (khóa học chuyên môn, chứng chỉ quốc tế) cho nhân viên cũng như mức hỗ trợ tối đa.\n\nCác bằng chứng hiện có chỉ đề cập đến:\n1.  Chương trình đào tạo nội bộ (không áp dụng học phí) dành cho sinh viên (Bằng chứng [1]).\n2.  Hỗ trợ chi phí đi công tác trong và ngoài nước (Bằng chứng [2]).\n3.  Hỗ trợ học phí cho con của nhân viên (Bằng chứng [3]).",
+      "answer_via_tool": true,
+      "knowledge_sources": [
+        {
+          "chunk_id": "b6870378a53acfce1188b2385ba8fefb447896c852c4f0c016daeb280fa93895",
+          "document_id": "doc_e64841688c491e06",
+          "score": 1.673677,
+          "content": "### ĐIỀU 1: PHƯƠNG THỨC TIẾN HÀNH CHƯƠNG TRÌNH ĐÀO TẠO\n### ARTICLE 1: IMPLEMENTATION OF THE TRAINING PROGRAM\nĐiều kiện tuyển chọn Bên B vào Chương Trình như sau:\nThe conditions for Party B’s selection into the Program are as follows:\n\n*   Sinh viên đại học đang theo học chuyên ngành phù hợp theo đánh giá của Công Ty.\n    *   A university student pursuing a major assessed to be appropriated by the Company.\n*   Đại lý ký thi đầu vào do Công Ty tổ chức.\n    *   Pass the entrance examination organized by the Company.\n*   Đậu vòng phỏng vấn do Công Ty thực hiện.\n\n*   Pass the interview conducted by the Company.\n*   Có tư cách đạo đức tốt, tinh thần làm việc nhóm, yêu thích phát triển trong lĩnh vực Công nghệ\nthông tin và Internet.\n    *   Have good moral character, teamwork spirit, and a passion for passion for development in the\nfield of Information Technology and the Internet.\n*   Đồng ý và ký Hợp Đồng với Công Ty.\n    *   Agree and sign the Contract with the Company.\n\n**Nghề đào tạo:** \\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\nTraining occupation: \\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\n\nĐịa điểm đào tạo: tại \\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_ và các địa điểm khác theo lịch phân công công tác của Công Ty.\nTraining location: at \\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_ and other locations as assigned under the Company’s work schedule.\n\n**Thời gian đào tạo:** Từ ngày \\_\\_\\_\\_\\_\\_\\_\\_\\_ đến ngày \\_\\_\\_\\_\\_\\_\\_\\_\\_ Buổi sáng từ 8 giờ 30 đến 12 giờ, buổi chiều từ 13\ngiờ 00 phút đến 17 giờ 30 phút theo thời khóa biểu của Chương Trình. Bên B phải đảm bảo có mặt ở\nCông Ty ít nhất 5 buổi/01 tuần hoặc theo hướng dẫn của người quản lý.\nTraining duration: From \\_\\_\\_\\_\\_\\_\\_\\_\\_ to \\_\\_\\_\\_\\_\\_\\_\\_\\_ Morning sessions are from 8:30 AM to 12:00 PM, and\nafternoon sessions are from 1:00 PM to 5:30 PM, according to the Program’s schedule. Party B must\nbe present at the Company for at least five (05) sessions per week or as instructed by the supervisor.\n\n**Mức học phí:** không áp dụng.\nTuition fee: not applicable.\n\n**Kết quả đào tạo:** của Chương Trình: sẽ căn cứ trên kết quả đánh giá của các giảng viên và kết quả các\nbài kiểm tra định kỳ (nếu có) trong Chương Trình.\nTraining results: shall be based on the evaluations made by lecturers and the results of periodic tests (if\nany) under the Program."
+        },
+        {
+          "chunk_id": "747f0a9821a85d979b13ef753f1ef60ab7b1f2260933ba9419dc3f96dd9c4411",
+          "document_id": "doc_ddfc2812450d2cdd",
+          "score": 1.868904,
+          "content": "## 3.4. Hỗ trợ đi công tác\n\nNhân viên khi đi công tác trong và ngoài nước theo yêu cầu công việc sẽ được hỗ trợ chi phí phục vụ công tác bao gồm:\n\n- Chi phí đi lại (vé máy bay, di chuyển)\n- Chi phí lưu trú (khách sạn)\n- Trợ cấp sinh hoạt (Per diem)\n- Chi phí công tác khác (internet, roaming, đi lại, xin visa, ...)\n- Chi tiết liên quan được quy định trong Chính sách công tác do Phòng FA ban hành."
+        },
+        {
+          "chunk_id": "a87a2812a2b734c5d9216a1f754896f787c6daa75c16ffcf5a01b03dd144963a",
+          "document_id": "doc_0e92ddd323a6b6df",
+          "score": 1.496212,
+          "content": "### 4.4. Hỗ trợ Học phí cho con học tại Việt Nam\n\n- Tùy từng trường hợp cụ thể, Công ty có thể thoả thuận gói hỗ trợ bao gồm hỗ trợ học phí cho con học tại Việt Nam từ bậc học Mầm non đến Trung học phổ thông."
+        }
+      ],
+      "memory_sources": [],
+      "reasoning_trace": [
+        {
+          "step": 1,
+          "tool": "search_knowledge",
+          "args": {
+            "query": "chính sách hỗ trợ chi phí đào tạo bên ngoài khóa học chuyên môn chứng chỉ quốc tế nhân viên"
+          },
+          "result": "[1] (chunk_id=2a53b276325205230b6f2c9c1c7da644edfef8ae324244b99ba92edb10e38546)\n### 4.4. Hỗ trợ đi công tác\n\nNhân viên khi đi công tác trong và ngoài nước theo yêu cầu công việc sẽ được hỗ trợ chi phí..."
+        },
+        {
+          "step": 2,
+          "tool": "search_knowledge",
+          "args": {
+            "query": "hỗ trợ đào tạo học phí khóa học chứng chỉ quốc tế định mức tối đa"
+          },
+          "result": "[1] (chunk_id=b6870378a53acfce1188b2385ba8fefb447896c852c4f0c016daeb280fa93895)\n### ĐIỀU 1: PHƯƠNG THỨC TIẾN HÀNH CHƯƠNG TRÌNH ĐÀO TẠO\n### ARTICLE 1: IMPLEMENTATION OF THE TRAINING PROGRAM\nĐiều kiện t..."
+        },
+        {
+          "step": 3,
+          "tool": "search_knowledge",
+          "args": {
+            "query": "chính sách đào tạo nhân viên học phí khóa học bên ngoài chứng chỉ"
+          },
+          "result": "[1] (chunk_id=747f0a9821a85d979b13ef753f1ef60ab7b1f2260933ba9419dc3f96dd9c4411)\n## 3.4. Hỗ trợ đi công tác\n\nNhân viên khi đi công tác trong và ngoài nước theo yêu cầu công việc sẽ được hỗ trợ chi phí ..."
+        },
+        {
+          "step": 4,
+          "tool": "search_knowledge",
+          "args": {
+            "query": "đào tạo nhân viên học phí chứng chỉ quốc tế khóa học bên ngoài"
+          },
+          "result": "[1] (chunk_id=747f0a9821a85d979b13ef753f1ef60ab7b1f2260933ba9419dc3f96dd9c4411)\n## 3.4. Hỗ trợ đi công tác\n\nNhân viên khi đi công tác trong và ngoài nước theo yêu cầu công việc sẽ được hỗ trợ chi phí ..."
+        },
+        {
+          "step": 5,
+          "tool": "search_knowledge",
+          "args": {
+            "query": "chính sách đào tạo phát triển nhân viên học phí khóa học"
+          },
+          "result": "[1] (chunk_id=e19cf40b64bd8b21d537fe04224e9c76b12c9ed1ec13030d56f0122031ba0b46)\n### II.8 Quy định dành riêng cho nhân viên tác nghiệp trong các sự kiện\n\nĐối với trường hợp nhân viên tác nghiệp trong c..."
+        },
+        {
+          "step": 6,
+          "tool": "search_knowledge",
+          "args": {
+            "query": "đào tạo phát triển nhân viên học phí khóa học bên ngoài chứng chỉ"
+          },
+          "result": ""
+        },
+        {
+          "step": 7,
+          "tool": "generate_answer",
+          "args": {
+            "question": "Công ty có chính sách hỗ trợ chi phí đào tạo bên ngoài (khóa học chuyên môn, chứng chỉ quốc tế) cho nhân viên không và mức hỗ trợ tối đa là bao nhiêu?",
+            "chunk_ids": [
+              "b6870378a53acfce1188b2385ba8fefb447896c852c4f0c016daeb280fa93895",
+              "747f0a9821a85d979b13ef753f1ef60ab7b1f2260933ba9419dc3f96dd9c4411",
+              "a87a2812a2b734c5d9216a1f754896f787c6daa75c16ffcf5a01b03dd144963a"
+            ]
+          },
+          "result": "Dựa trên các bằng chứng đã cung cấp, **không có thông tin** về chính sách hỗ trợ chi phí đào tạo bên ngoài (khóa học chuyên môn, chứng chỉ quốc tế) cho nhân viên cũng như mức hỗ trợ tối đa.\n\nCác bằng ..."
+        }
+      ],
+      "tools_used": [
+        "search_knowledge",
+        "search_knowledge",
+        "search_knowledge",
+        "search_knowledge",
+        "search_knowledge",
+        "generate_answer"
+      ],
+      "step_timings": [
+        {
+          "step": 1,
+          "kind": "llm",
+          "name": "agent",
+          "elapsed": 2.775
+        },
+        {
+          "step": 2,
+          "kind": "retrieval",
+          "name": "search_knowledge.decompose_question",
+          "elapsed": 4.236
+        },
+        {
+          "step": 3,
+          "kind": "retrieval",
+          "name": "search_knowledge.seed_retrieval",
+          "elapsed": 13.692
+        },
+        {
+          "step": 4,
+          "kind": "retrieval",
+          "name": "search_knowledge.rerank",
+          "elapsed": 0.001
+        },
+        {
+          "step": 5,
+          "kind": "retrieval",
+          "name": "search_knowledge.ircot_step",
+          "elapsed": 1.697
+        },
+        {
+          "step": 6,
+          "kind": "retrieval",
+          "name": "search_knowledge.seed_retrieval",
+          "elapsed": 3.536
+        },
+        {
+          "step": 7,
+          "kind": "retrieval",
+          "name": "search_knowledge.rerank",
+          "elapsed": 0.001
+        },
+        {
+          "step": 8,
+          "kind": "retrieval",
+          "name": "search_knowledge.ircot_step",
+          "elapsed": 1.637
+        },
+        {
+          "step": 9,
+          "kind": "retrieval",
+          "name": "search_knowledge.seed_retrieval",
+          "elapsed": 4.345
+        },
+        {
+          "step": 10,
+          "kind": "retrieval",
+          "name": "search_knowledge.rerank",
+          "elapsed": 0.001
+        },
+        {
+          "step": 11,
+          "kind": "retrieval",
+          "name": "search_knowledge.ircot_step",
+          "elapsed": 2.899
+        },
+        {
+          "step": 12,
+          "kind": "retrieval",
+          "name": "search_knowledge.format_results",
+          "elapsed": 0.0
+        },
+        {
+          "step": 13,
+          "kind": "tool",
+          "name": "search_knowledge",
+          "elapsed": 32.059
+        },
+        {
+          "step": 14,
+          "kind": "llm",
+          "name": "agent",
+          "elapsed": 1.123
+        },
+        {
+          "step": 15,
+          "kind": "retrieval",
+          "name": "search_knowledge.decompose_question",
+          "elapsed": 1.357
+        },
+        {
+          "step": 16,
+          "kind": "retrieval",
+          "name": "search_knowledge.seed_retrieval",
+          "elapsed": 12.9
+        },
+        {
+          "step": 17,
+          "kind": "retrieval",
+          "name": "search_knowledge.rerank",
+          "elapsed": 0.001
+        },
+        {
+          "step": 18,
+          "kind": "retrieval",
+          "name": "search_knowledge.ircot_step",
+          "elapsed": 1.69
+        },
+        {
+          "step": 19,
+          "kind": "retrieval",
+          "name": "search_knowledge.seed_retrieval",
+          "elapsed": 2.581
+        },
+        {
+          "step": 20,
+          "kind": "retrieval",
+          "name": "search_knowledge.rerank",
+          "elapsed": 0.001
+        },
+        {
+          "step": 21,
+          "kind": "retrieval",
+          "name": "search_knowledge.ircot_step",
+          "elapsed": 1.563
+        },
+        {
+          "step": 22,
+          "kind": "retrieval",
+          "name": "search_knowledge.seed_retrieval",
+          "elapsed": 3.108
+        },
+        {
+          "step": 23,
+          "kind": "retrieval",
+          "name": "search_knowledge.rerank",
+          "elapsed": 0.001
+        },
+        {
+          "step": 24,
+          "kind": "retrieval",
+          "name": "search_knowledge.ircot_step",
+          "elapsed": 3.619
+        },
+        {
+          "step": 25,
+          "kind": "retrieval",
+          "name": "search_knowledge.format_results",
+          "elapsed": 0.0
+        },
+        {
+          "step": 26,
+          "kind": "tool",
+          "name": "search_knowledge",
+          "elapsed": 26.833
+        },
+        {
+          "step": 27,
+          "kind": "llm",
+          "name": "agent",
+          "elapsed": 2.465
+        },
+        {
+          "step": 28,
+          "kind": "retrieval",
+          "name": "search_knowledge.decompose_question",
+          "elapsed": 1.794
+        },
+        {
+          "step": 29,
+          "kind": "retrieval",
+          "name": "search_knowledge.seed_retrieval",
+          "elapsed": 13.316
+        },
+        {
+          "step": 30,
+          "kind": "retrieval",
+          "name": "search_knowledge.rerank",
+          "elapsed": 0.001
+        },
+        {
+          "step": 31,
+          "kind": "retrieval",
+          "name": "search_knowledge.ircot_step",
+          "elapsed": 1.62
+        },
+        {
+          "step": 32,
+          "kind": "retrieval",
+          "name": "search_knowledge.seed_retrieval",
+          "elapsed": 5.213
+        },
+        {
+          "step": 33,
+          "kind": "retrieval",
+          "name": "search_knowledge.rerank",
+          "elapsed": 0.001
+        },
+        {
+          "step": 34,
+          "kind": "retrieval",
+          "name": "search_knowledge.ircot_step",
+          "elapsed": 1.715
+        },
+        {
+          "step": 35,
+          "kind": "retrieval",
+          "name": "search_knowledge.seed_retrieval",
+          "elapsed": 3.159
+        },
+        {
+          "step": 36,
+          "kind": "retrieval",
+          "name": "search_knowledge.rerank",
+          "elapsed": 0.001
+        },
+        {
+          "step": 37,
+          "kind": "retrieval",
+          "name": "search_knowledge.ircot_step",
+          "elapsed": 2.84
+        },
+        {
+          "step": 38,
+          "kind": "retrieval",
+          "name": "search_knowledge.format_results",
+          "elapsed": 0.0
+        },
+        {
+          "step": 39,
+          "kind": "tool",
+          "name": "search_knowledge",
+          "elapsed": 29.671
+        },
+        {
+          "step": 40,
+          "kind": "llm",
+          "name": "agent",
+          "elapsed": 2.443
+        },
+        {
+          "step": 41,
+          "kind": "retrieval",
+          "name": "search_knowledge.decompose_question",
+          "elapsed": 1.521
+        },
+        {
+          "step": 42,
+          "kind": "retrieval",
+          "name": "search_knowledge.seed_retrieval",
+          "elapsed": 18.373
+        },
+        {
+          "step": 43,
+          "kind": "retrieval",
+          "name": "search_knowledge.rerank",
+          "elapsed": 0.002
+        },
+        {
+          "step": 44,
+          "kind": "retrieval",
+          "name": "search_knowledge.ircot_step",
+          "elapsed": 1.667
+        },
+        {
+          "step": 45,
+          "kind": "retrieval",
+          "name": "search_knowledge.seed_retrieval",
+          "elapsed": 3.307
+        },
+        {
+          "step": 46,
+          "kind": "retrieval",
+          "name": "search_knowledge.rerank",
+          "elapsed": 0.002
+        },
+        {
+          "step": 47,
+          "kind": "retrieval",
+          "name": "search_knowledge.ircot_step",
+          "elapsed": 2.738
+        },
+        {
+          "step": 48,
+          "kind": "retrieval",
+          "name": "search_knowledge.seed_retrieval",
+          "elapsed": 3.001
+        },
+        {
+          "step": 49,
+          "kind": "retrieval",
+          "name": "search_knowledge.rerank",
+          "elapsed": 0.001
+        },
+        {
+          "step": 50,
+          "kind": "retrieval",
+          "name": "search_knowledge.ircot_step",
+          "elapsed": 1.563
+        },
+        {
+          "step": 51,
+          "kind": "retrieval",
+          "name": "search_knowledge.format_results",
+          "elapsed": 0.0
+        },
+        {
+          "step": 52,
+          "kind": "tool",
+          "name": "search_knowledge",
+          "elapsed": 32.187
+        },
+        {
+          "step": 53,
+          "kind": "llm",
+          "name": "agent",
+          "elapsed": 1.951
+        },
+        {
+          "step": 54,
+          "kind": "retrieval",
+          "name": "search_knowledge.decompose_question",
+          "elapsed": 1.474
+        },
+        {
+          "step": 55,
+          "kind": "retrieval",
+          "name": "search_knowledge.seed_retrieval",
+          "elapsed": 18.522
+        },
+        {
+          "step": 56,
+          "kind": "retrieval",
+          "name": "search_knowledge.rerank",
+          "elapsed": 0.002
+        },
+        {
+          "step": 57,
+          "kind": "retrieval",
+          "name": "search_knowledge.ircot_step",
+          "elapsed": 3.309
+        },
+        {
+          "step": 58,
+          "kind": "retrieval",
+          "name": "search_knowledge.seed_retrieval",
+          "elapsed": 3.21
+        },
+        {
+          "step": 59,
+          "kind": "retrieval",
+          "name": "search_knowledge.rerank",
+          "elapsed": 0.002
+        },
+        {
+          "step": 60,
+          "kind": "retrieval",
+          "name": "search_knowledge.ircot_step",
+          "elapsed": 1.735
+        },
+        {
+          "step": 61,
+          "kind": "retrieval",
+          "name": "search_knowledge.seed_retrieval",
+          "elapsed": 4.466
+        },
+        {
+          "step": 62,
+          "kind": "retrieval",
+          "name": "search_knowledge.rerank",
+          "elapsed": 0.002
+        },
+        {
+          "step": 63,
+          "kind": "retrieval",
+          "name": "search_knowledge.ircot_step",
+          "elapsed": 1.668
+        },
+        {
+          "step": 64,
+          "kind": "retrieval",
+          "name": "search_knowledge.format_results",
+          "elapsed": 0.0
+        },
+        {
+          "step": 65,
+          "kind": "tool",
+          "name": "search_knowledge",
+          "elapsed": 34.406
+        },
+        {
+          "step": 66,
+          "kind": "llm",
+          "name": "agent",
+          "elapsed": 2.139
+        },
+        {
+          "step": 67,
+          "kind": "llm",
+          "name": "force_answer",
+          "elapsed": 4.067
+        },
+        {
+          "step": 68,
+          "kind": "tool",
+          "name": "generate_answer",
+          "elapsed": 1.358
+        }
+      ],
+      "total_step_time": 173.477,
+      "retrieval_detail": {
+        "sub_questions": [
+          {
+            "q": "Tìm kiếm chính sách đào tạo và phát triển nhân viên, cụ thể là quy định về học phí khóa học.",
+            "embed_elapsed": 0.488,
+            "routes": {
+              "chunk": {
+                "elapsed": 0.009,
+                "hits": 10,
+                "chunk_ids": [
+                  "d26a052218800e133a6f54d5724a9a15015db83869421994405f5b56f1eae612",
+                  "5bbfb7b70225267f2cdf8c09745a0a0e0fbc6cc2b13cee784091e4a0b26ec1d0",
+                  "b6870378a53acfce1188b2385ba8fefb447896c852c4f0c016daeb280fa93895",
+                  "f402f1708df906fcbcd761482ed556cbde87273292551c62bcdd51afa0c85680",
+                  "cb16c2c7fff8c01f8ff9abfecb3f8f51c03707dc8976bb737e57c774a7786003",
+                  "7dea529a346e303a8d439427d8d600309cc73d19ad3c126a7030eba079af71f3",
+                  "bdce0a1c725149b8a5e85f3cb0df15d4c3201bc5f1001e1393a7ac0f426317ea",
+                  "6909562c663b4113bd4c3de1021d01ba28651ce5b32f8fcb9ac801dc5304c6b8",
+                  "dd3ea09df3635cc2c9f28a2b25361d63e28b4c04fe7778197352f37ce7246c4f",
+                  "e19cf40b64bd8b21d537fe04224e9c76b12c9ed1ec13030d56f0122031ba0b46"
+                ]
+              },
+              "entity": {
+                "elapsed": 0.011,
+                "hits": 10,
+                "seeds_added": [
+                  "Chế độ đào tạo",
+                  "Chính sách thời gian làm việc và nghỉ ngơi",
+                  "Chính sách chuyển vùng làm việc",
+                  "Chính sách thăm hỏi và động viên",
+                  "Chi phí vượt định mức",
+                  "chi phí công tác",
+                  "Chính sách làm việc theo ca",
+                  "Chính sách",
+                  "Chính sách tạm ứng lương",
+                  "Chính sách tạm ứng thu nhập"
+                ],
+                "type_filter": [
+                  "benefit",
+                  "condition",
+                  "organization",
+                  "policy"
+                ]
+              },
+              "triple": {
+                "elapsed": 0.012,
+                "hits": 10,
+                "seeds_added": [
+                  "Người Lao Động",
+                  "Chế độ đào tạo",
+                  "Hợp đồng đào tạo",
+                  "Hệ thống HR",
+                  "Định mức lưu trú và trợ cấp sinh hoạt",
+                  "Chi phí lưu trú",
+                  "Chính sách",
+                  "chi phí công tác",
+                  "Quyết định xử lý kỷ luật lao động",
+                  "Nội quy lao động",
+                  "tạm ứng thu nhập",
+                  "Nhân viên tác nghiệp",
+                  "Chính sách thời gian làm việc và nghỉ ngơi",
+                  "đảm bảo quyền lợi cá nhân",
+                  "không sử dụng hóa đơn",
+                  "Trợ cấp"
+                ],
+                "type_filter": [
+                  "has_benefit",
+                  "issued_by",
+                  "requires_condition"
+                ]
+              },
+              "community": {
+                "elapsed": 0.005,
+                "hits": 3,
+                "seeds_added": [
+                  "Thủ tục xuất nhập cảnh",
+                  "Nghị quyết",
+                  "Quyết định",
+                  "Giám đốc Nhân sự",
+                  "thủ tục xuất nhập cảnh",
+                  "Luật định",
+                  "Chính sách này",
+                  "Quy định này",
+                  "Chính sách an ninh thông tin",
+                  "quy định",
+                  "chính sách",
+                  "Luật sư",
+                  "Người đại diện theo pháp luật",
+                  "các văn bản liên quan trước đây",
+                  "văn bản liên quan trước đây",
+                  "Giám Đốc Nhân sự",
+                  "Chính sách 1.2",
+                  "Chính sách",
+                  "quyền lợi cá nhân",
+                  "quy định nội bộ",
+                  "luật hiện hành",
+                  "luật định",
+                  "Quy định chênh lệch",
+                  "vị trí quy định",
+                  "các đơn vị trực thuộc",
+                  "Tòa án có thẩm quyền của Việt Nam",
+                  "Quyền/Rights",
+                  "Văn bản",
+                  "Quyết định sửa đổi",
+                  "quy chế chi tiêu nội bộ",
+                  "Quyền sở hữu trí tuệ",
+                  "Văn bản của cơ quan có thẩm quyền bắt tạm giam, tạm giữ",
+                  "Văn bản kết luận của cơ quan có thẩm quyền",
+                  "Chính sách Chống tham nhũng và Hối lộ",
+                  "Bộ phận Pháp Lý",
+                  "Quy trình Quản lý Tài sản",
+                  "Bộ quy tắc hành xử",
+                  "Quy tắc bảo mật",
+                  "người được ủy quyền",
+                  "Cơ quan có thẩm quyền",
+                  "Đương sự",
+                  "Sở NV/Vũ/Cơ quan Nhà nước có thẩm quyền",
+                  "Người đại diện theo pháp luật của Công Ty",
+                  "Thẩm quyền đánh giá mức độ thiệt hại vật chất",
+                  "Người được Người đại diện theo pháp luật ủy quyền",
+                  "quyết định kỷ luật",
+                  "các quy định mới",
+                  "Quyết định tạm đình chỉ công việc",
+                  "Quy định của pháp luật",
+                  "thẩm quyền đánh giá",
+                  "Giấy ủy quyền của người đại diện theo pháp luật NSĐLĐ",
+                  "Cấp thẩm quyền",
+                  "Người được NSĐLĐ ủy quyền",
+                  "Quyết định kỷ luật",
+                  "Chính sách ESOP",
+                  "Thỏa Thuận về Bảo Mật Thông Tin, Không Cạnh Tranh, Quyền Sở Hữu Trí Tuệ Và Sử Dụng Tài Sản",
+                  "quy định chung",
+                  "Quyền và Nghĩa Vụ",
+                  "Bộ luật Dân sự",
+                  "Quyền",
+                  "Quyết Định",
+                  "Tài khoản ủy quyền",
+                  "Bộ luật Lao động số 45/2019/QH14",
+                  "Nghị định số 145/2020/NĐ-CP",
+                  "Quy phép năm",
+                  "báo cáo",
+                  "Cơ quan chức năng",
+                  "Chính quyền địa phương",
+                  "Thông tư 26/2025/TT-BYT",
+                  "Thông tư 25/2025/TT-BYT",
+                  "Người đại diện",
+                  "Thuế TNCN",
+                  "Thẻ taxi",
+                  "Tài khoản app taxi",
+                  "chi phí",
+                  "Thẻ tạm trú (TRC)",
+                  "Chi phí xin TRC",
+                  "Ngân sách Công đoàn Công ty",
+                  "Chi phí chung của toàn đoàn",
+                  "Phép năm bảo lưu",
+                  "Chi phí",
+                  "Chi phí phát sinh",
+                  "Chi phí làm lại thẻ",
+                  "Chi phí vượt định mức",
+                  "ZaloPay",
+                  "Lương",
+                  "Tiền lương thử việc",
+                  "Ngân sách",
+                  "Chương trình Taxi Allowance",
+                  "Các khoản trả bổ sung",
+                  "CHƯƠNG TRÌNH/SỰ KIỆN THỂ THAO 2025",
+                  "chi phí khách sạn",
+                  "Thu nhập trước thuế",
+                  "Hình thức trừ qua lương",
+                  "định mức hàng tháng",
+                  "Chi phí lưu trú",
+                  "ngân sách Công đoàn",
+                  "chi phí công",
+                  "Đoàn phí",
+                  "tài trợ kinh phí",
+                  "Hóa đơn VAT",
+                  "Thuế được khấu trừ",
+                  "Hóa đơn",
+                  "Thuế quốc gia",
+                  "Khoản hoàn trả",
+                  "Số tháng HĐLĐ trước thời hạn cam kết",
+                  "Ngân sách Teambuilding",
+                  "Ngân sách được chuyển",
+                  "Chi phí khách sạn",
+                  "Chi phí đi chuyển",
+                  "Chi phí vé về thăm nhà",
+                  "Định mức phê duyệt",
+                  "Ngân sách taxi",
+                  "Chi phí thuê nhà",
+                  "ngân sách",
+                  "Chính sách tạm ứng lương",
+                  "Chính sách trợ cấp điện thoại",
+                  "Tạm ứng lương",
+                  "Ngày Nhân viên không có lịch làm việc",
+                  "Đơn giá tiền lương",
+                  "CHÍNH SÁCH HỖ TRỢ TAXI",
+                  "Đối tượng sử dụng",
+                  "Chính sách taxi",
+                  "thanh toán đúng thời gian",
+                  "Chi phí điện thoại cá nhân",
+                  "Ngân hàng Vietcombank",
+                  "Thẻ cá nhân",
+                  "Định mức mục 2.3",
+                  "Định mức taxi",
+                  "Thẻ taxi truyền thống",
+                  "ngân sách điện thoại",
+                  "Định mức sử dụng roaming",
+                  "Chính sách cập nhật ngưỡng tự mua",
+                  "dịch vụ",
+                  "Giao dịch tự mua",
+                  "Hóa đơn tài chính",
+                  "Tài khoản ủy quyền thanh toán",
+                  "số tiền dịch vụ",
+                  "Dịch vụ khai giá",
+                  "Cước chuyển hoàn",
+                  "Chi phí chênh lệch",
+                  "Kỳ lương tháng",
+                  "chi phí chênh lệch",
+                  "tiền lương",
+                  "Chính sách tạm ứng thu nhập",
+                  "Tiền lương",
+                  "Kinh phí Công đoàn",
+                  "Nguồn thu khác",
+                  "Ngân sách Công đoàn",
+                  "Trường hợp mua vé theo nhóm",
+                  "Đoàn Phí",
+                  "tài sản",
+                  "Tiền lương làm thêm",
+                  "Thuế Thu Nhập Cá Nhân",
+                  "Thu nhập thực nhận",
+                  "Phí Dịch Vụ",
+                  "Thuế thu nhập cá nhân",
+                  "Chuyển khoản cho NCC",
+                  "Tài khoản cá nhân thông thường",
+                  "chi phí lưu trú",
+                  "Định mức sử dụng sim 3G/4G/Internet",
+                  "qui trình phê duyệt tài chính",
+                  "Thanh toán",
+                  "Kế toán thanh toán",
+                  "Chi phí vận chuyển",
+                  "khách sạn",
+                  "Định mức chi phí tiếp khách",
+                  "Kế toán công nợ",
+                  "Hóa đơn GTGT",
+                  "Thanh toán bằng thẻ ngân hàng cá nhân/thẻ tín dụng cá nhân",
+                  "Tài khoản cá nhân",
+                  "1",
+                  "Eform đăng ký tài khoản ủy quyền",
+                  "Ngân hàng",
+                  "Dịch vụ bảo lãnh viện phí",
+                  "Chi phí y tế do tai nạn",
+                  "Tiền bồi thường",
+                  "Chuyển khoản",
+                  "Bảng kê viện phí",
+                  "số tiền",
+                  "Bảng sao kê lương",
+                  "Bảng lương BHXH",
+                  "Phúc lợi nhân dịp đặc biệt",
+                  "Điều chỉnh thời gian nghỉ thai sản",
+                  "Điều chỉnh chính sách trích quỹ xe",
+                  "Phí quá cước",
+                  "Tổng thu nhập những ngày nghỉ tính theo Lương cơ bản và V_Bonus tối đa trên HĐLĐ - Số tiền trợ cấp BHXH chi trả",
+                  "ngày Thứ Bảy và Chủ nhật",
+                  "Chính sách ưu đãi đặc biệt",
+                  "nghỉ phát sinh",
+                  "Thời gian còn lại của vợ cho đến khi con đủ 06 tháng tuổi",
+                  "500",
+                  "với định mức phụ",
+                  "ngân sách từng năm",
+                  "visa dài hạn",
+                  "sau đây gọi",
+                  "Số lần tạm ứng tối đa",
+                  "1 lần cho một trường hợp điều trị bệnh",
+                  "i gian làm ngoài giờ tối thiểu được tính",
+                  "1 giờ làm việc",
+                  "n ngay nghỉ việc dưới nửa ngày được tính",
+                  "nửa ngày",
+                  "nghỉ việc từ nửa ngày trở lên được tính",
+                  "60 phút và được tính vào thời gian làm v",
+                  "ít nhất 30 phút",
+                  "ợc nghỉ tính bình quân một tháng ít nhất",
+                  "bốn ngày",
+                  "định mức hàng tháng Định mức hỗ trợ tùy",
+                  "vào cấp bậc",
+                  "Định mức hưởng hỗ trợ điện thoại sẽ tùy",
+                  "và cuối cùng",
+                  "danh sách người nhận đã được thêm",
+                  "iên được duyệt theo tháng nhưng dưới đây",
+                  "ngân sách tương ứng sẽ là",
+                  "Công ty Cổ phần VNG bầu ra với nhiệm kỳ",
+                  "ủa Ban Chấp hành được phổ biến chậm nhất",
+                  "một",
+                  "Marathon 2024 vì cả hai sự kiện này cùng",
+                  "Nhóm A",
+                  "tháng ít nhất",
+                  "bốn",
+                  "01 tháng làm việc để tính ngày nghỉ hằng",
+                  "03 ngày trong một tháng được hưởng nguyê",
+                  "ngày hết hiệu lực của HĐLĐ hiện tại tùy",
+                  "thời hiệu xử lý kỷ luật lao động tối đa",
+                  "mười hai",
+                  "Bonus",
+                  "khoản thưởng dựa vào đánh giá mức độ hoà",
+                  "Chị",
+                  "____________ ngày theo chính sách Công t",
+                  "lương và các khoản chi trả khác nếu trên",
+                  "thu nhập trước thuế và sẽ được trích nộp",
+                  "theo Hợp Đồng này",
+                  "thu nhập trước thuế",
+                  "với điều kiện",
+                  "thông tin đó được Bên Thứ Ba có được một",
+                  "được Công Ty thanh toán một khoản hỗ trợ",
+                  "______ VNĐ mỗi tháng trong thời gian thự",
+                  "tiền công và phúc lợi mà Công Ty chi trả",
+                  "điều kiện nhận khoản hỗ trợ này",
+                  "cam kết làm việc đủ 12 tháng kể từ thời",
+                  "rợ chi phí xăng xe đi làm cho một số NLĐ",
+                  "một số văn phòng không nằm tại trung tâm",
+                  "Thưởng khác sẽ phụ",
+                  "vào từng chương trình cụ thể và ngân sác",
+                  "nghỉ việc dưới nửa ngày được tính",
+                  "bận việc riêng đột xuất",
+                  "Chi phí lưu trú Chi phí lưu trú",
+                  "giá tiền khách sạn hoặc giá tiền thuê nh",
+                  "số tiền được trừ khỏi giá trị tổng cộng",
+                  "phương tiện di chuyển có thể",
+                  "máy bay",
+                  "cấp bảng kê chi phí thì số ngày nằm viện",
+                  "ngày xuất viện trừ đi ngày nhập viện",
+                  "nếu có",
+                  "một trong hai điều kiện sau",
+                  "trừ khi",
+                  "hành khách mua vé trên máy bay của một h",
+                  "hành động cứu người",
+                  "ột nơi đặc biệt chỉ có mục đích duy nhất",
+                  "phục vụ cho người già",
+                  "ngày thời hạn bảo hiểm",
+                  "ngày tái tục hợp đồng",
+                  "bất kể số tiền yêu cầu bồi thường",
+                  "bao nhiêu",
+                  "Nếu ngày ghi hóa đơn không",
+                  "giá trị 05 ngày phải nộp kèm hóa đơn bán"
+                ]
+              }
+            }
+          }
+        ],
+        "path_traversal": {
+          "elapsed": 1.815,
+          "seed_count": 284,
+          "expanded_nodes": 284,
+          "graph_chunks": 282,
+          "inv_rels_filter": [
+            "has_benefit",
+            "issued_by",
+            "requires_condition"
+          ]
+        },
+        "total_candidates": 560,
+        "total_seeds": 28
+      },
+      "session_id": null,
+      "usage": {
+        "llm_calls": 28,
+        "input_tokens": 56738,
+        "output_tokens": 4890,
+        "total_tokens": 61628
+      },
+      "mode": "agent",
+      "sources": [
+        {
+          "chunk_id": "b6870378a53acfce1188b2385ba8fefb447896c852c4f0c016daeb280fa93895",
+          "document_id": "doc_e64841688c491e06",
+          "score": 1.673677,
+          "content": "### ĐIỀU 1: PHƯƠNG THỨC TIẾN HÀNH CHƯƠNG TRÌNH ĐÀO TẠO\n### ARTICLE 1: IMPLEMENTATION OF THE TRAINING PROGRAM\nĐiều kiện tuyển chọn Bên B vào Chương Trình như sau:\nThe conditions for Party B’s selection into the Program are as follows:\n\n*   Sinh viên đại học đang theo học chuyên ngành phù hợp theo đánh giá của Công Ty.\n    *   A university student pursuing a major assessed to be appropriated by the Company.\n*   Đại lý ký thi đầu vào do Công Ty tổ chức.\n    *   Pass the entrance examination organized by the Company.\n*   Đậu vòng phỏng vấn do Công Ty thực hiện.\n\n*   Pass the interview conducted by the Company.\n*   Có tư cách đạo đức tốt, tinh thần làm việc nhóm, yêu thích phát triển trong lĩnh vực Công nghệ\nthông tin và Internet.\n    *   Have good moral character, teamwork spirit, and a passion for passion for development in the\nfield of Information Technology and the Internet.\n*   Đồng ý và ký Hợp Đồng với Công Ty.\n    *   Agree and sign the Contract with the Company.\n\n**Nghề đào tạo:** \\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\nTraining occupation: \\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\n\nĐịa điểm đào tạo: tại \\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_ và các địa điểm khác theo lịch phân công công tác của Công Ty.\nTraining location: at \\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_ and other locations as assigned under the Company’s work schedule.\n\n**Thời gian đào tạo:** Từ ngày \\_\\_\\_\\_\\_\\_\\_\\_\\_ đến ngày \\_\\_\\_\\_\\_\\_\\_\\_\\_ Buổi sáng từ 8 giờ 30 đến 12 giờ, buổi chiều từ 13\ngiờ 00 phút đến 17 giờ 30 phút theo thời khóa biểu của Chương Trình. Bên B phải đảm bảo có mặt ở\nCông Ty ít nhất 5 buổi/01 tuần hoặc theo hướng dẫn của người quản lý.\nTraining duration: From \\_\\_\\_\\_\\_\\_\\_\\_\\_ to \\_\\_\\_\\_\\_\\_\\_\\_\\_ Morning sessions are from 8:30 AM to 12:00 PM, and\nafternoon sessions are from 1:00 PM to 5:30 PM, according to the Program’s schedule. Party B must\nbe present at the Company for at least five (05) sessions per week or as instructed by the supervisor.\n\n**Mức học phí:** không áp dụng.\nTuition fee: not applicable.\n\n**Kết quả đào tạo:** của Chương Trình: sẽ căn cứ trên kết quả đánh giá của các giảng viên và kết quả các\nbài kiểm tra định kỳ (nếu có) trong Chương Trình.\nTraining results: shall be based on the evaluations made by lecturers and the results of periodic tests (if\nany) under the Program."
+        },
+        {
+          "chunk_id": "747f0a9821a85d979b13ef753f1ef60ab7b1f2260933ba9419dc3f96dd9c4411",
+          "document_id": "doc_ddfc2812450d2cdd",
+          "score": 1.868904,
+          "content": "## 3.4. Hỗ trợ đi công tác\n\nNhân viên khi đi công tác trong và ngoài nước theo yêu cầu công việc sẽ được hỗ trợ chi phí phục vụ công tác bao gồm:\n\n- Chi phí đi lại (vé máy bay, di chuyển)\n- Chi phí lưu trú (khách sạn)\n- Trợ cấp sinh hoạt (Per diem)\n- Chi phí công tác khác (internet, roaming, đi lại, xin visa, ...)\n- Chi tiết liên quan được quy định trong Chính sách công tác do Phòng FA ban hành."
+        },
+        {
+          "chunk_id": "a87a2812a2b734c5d9216a1f754896f787c6daa75c16ffcf5a01b03dd144963a",
+          "document_id": "doc_0e92ddd323a6b6df",
+          "score": 1.496212,
+          "content": "### 4.4. Hỗ trợ Học phí cho con học tại Việt Nam\n\n- Tùy từng trường hợp cụ thể, Công ty có thể thoả thuận gói hỗ trợ bao gồm hỗ trợ học phí cho con học tại Việt Nam từ bậc học Mầm non đến Trung học phổ thông."
+        }
+      ],
+      "ablation": {
+        "use_memory": false,
+        "use_graph_rag": true,
+        "memory": {
+          "save_turns": true,
+          "use_session_memory": true,
+          "use_long_term_memory": true,
+          "use_graph_expand": true,
+          "use_rerank": true
+        },
+        "retrieval": {
+          "use_chunk_vectors": true,
+          "use_node_vectors": true,
+          "use_triplet_vectors": true,
+          "use_community_vectors": true,
+          "use_graph_expand": true,
+          "use_graph_boost": true,
+          "use_decompose": true,
+          "use_ircot": true
+        }
+      }
+    },
+    "elapsed": 173.55,
+    "error": null
+  },
+  {
+    "qa_id": "qa-khoiva-0026",
+    "question": "Nếu lao động nữ ở 2MoreBits đang mang thai hoặc nuôi con dưới 12 tháng tuổi có liên quan đến vụ việc kỷ luật, chính sách yêu cầu tránh điều gì và hồ sơ xử lý kỷ luật cần bổ sung chứng từ gì?",
+    "request": {
+      "query": "Nếu lao động nữ ở 2MoreBits đang mang thai hoặc nuôi con dưới 12 tháng tuổi có liên quan đến vụ việc kỷ luật, chính sách yêu cầu tránh điều gì và hồ sơ xử lý kỷ luật cần bổ sung chứng từ gì?",
+      "mode": "agent",
+      "use_memory": false
+    },
+    "response": {
+      "answer": "Dựa trên các bằng chứng đã cung cấp:\n\n1. **Chính sách yêu cầu tránh:** Công ty **không được xử lý kỷ luật lao động** đối với lao động nữ đang mang thai hoặc nuôi con dưới 12 tháng tuổi (theo Điều 32 khoản 6 điểm d và Điều 19 khoản 2).\n\n2. **Hồ sơ xử lý kỷ luật cần bổ sung chứng từ:** Nếu có liên quan đến vụ việc (ví dụ: để xác minh tình trạng), hồ sơ cần bổ sung **giấy khám thai** và **giấy khai sinh** (theo mục 8.1.4).",
+      "answer_via_tool": true,
+      "knowledge_sources": [
+        {
+          "chunk_id": "06ec09270fa5a00b8b99663549d4191cb681f81cbc6be9f09f28c614cee9f570",
+          "document_id": "doc_90bc23e34a3c4d99",
+          "score": 1.395166,
+          "content": "#### Điều 32. Nguyên tắc xử lý kỷ luật lao động\n\n1. Việc xử lý kỷ luật lao động được áp dụng đối với NLĐ vi phạm các quy định trong NQLĐ này, pháp luật và các quy định khác của Công Ty. Việc xử lý kỷ luật lao động được quy định như sau:\n\n    a. Công Ty phải chứng minh được lỗi của NLĐ;\n\n    b. Phải có sự tham gia của tổ chức đại diện tập thể lao động tại cơ sở;\n\n    c. NLĐ phải có mặt và có quyền tự bào chữa, nhờ luật sư hoặc người khác bào chữa; trường hợp là người dưới 15 tuổi thì phải có sự tham gia của người đại diện theo pháp luật;\n\n    d. Việc xử lý kỷ luật lao động phải được lập thành biên bản.\n\n2. Mỗi hành vi vi phạm kỷ luật lao động chỉ bị xử lý một hình thức kỷ luật. Khi NLĐ có nhiều hành vi vi phạm kỷ luật đồng thời thì chỉ áp dụng hình thức kỷ luật cao nhất tương ứng với hành vi vi phạm nặng nhất.\n\n3. Không áp dụng các biện pháp xâm hại thân thể, nhân phẩm của NLĐ khi xử lý vi phạm kỷ luật lao động.\n\n4. Không được áp dụng hình thức phạt tiền, cắt lương thay việc xử lý kỷ luật lao động.\n\n5. NLĐ có hành vi vi phạm kỷ luật lao động, tùy theo mức độ và tính chất vi phạm sẽ bị xử lý kỷ luật theo quy định và phải bồi thường thiệt hại theo quy định (nếu có); đồng thời Công Ty có thể điều chỉnh hoặc không xem xét xét thưởng hàng năm.\n\n6. Không được xử lý kỷ luật lao động đối với NLĐ đang trong thời gian sau đây:\n\n    a. Nghỉ ốm đau, điều dưỡng; nghỉ việc được sự đồng ý của Công Ty;\n\n    b. Đang bị tạm giữ, tạm giam;\n\n    c. Đang chờ kết quả của cơ quan có thẩm quyền điều tra xác minh và kết luận đối với hành vi vi phạm được quy định tại khoản 1 và khoản 2 Điều 125 BLLĐ 2019;\n\n    d. Lao động nữ có thai, nghỉ thai sản; người lao động nuôi con nhỏ dưới 12 tháng tuổi.\n\n7. Không xử lý kỷ luật lao động đối với NLĐ vi phạm kỷ luật lao động trong khi mắc bệnh tâm thần hoặc một bệnh khác làm mất khả năng nhận thức hoặc khả năng điều khiển hành vi của mình."
+        },
+        {
+          "chunk_id": "4d1b0ae9aeca9d20f3fa28a55de25beb8f76c9a9e161491296bff76891d03326",
+          "document_id": "doc_b8a1e08191f021bb",
+          "score": 1.932334,
+          "content": "### Điều 19. Quy định đối với Lao động nữ\n\n1. NLĐ có trách nhiệm:\n   - Bảo đảm thực hiện bình đẳng giới và các biện pháp thúc đẩy bình đẳng giới trong tuyển dụng, bố trí, sắp xếp việc làm, đào tạo, thời giờ làm việc, thời giờ nghỉ ngơi, tiền lương và các chế độ khác của Lao động nữ theo quy định của Pháp luật hiện hành.\n   - Bảo đảm môi trường làm việc cho lao động nữ tại nơi làm việc.\n2. NLĐ không được xử lý kỷ luật, sa thải hoặc đơn phương chấm dứt hợp đồng lao động đối với lao động nữ vì lý do kết hôn, mang thai, nghỉ thai sản, nuôi con nhỏ dưới 12 tháng tuổi."
+        },
+        {
+          "chunk_id": "e07d9950a783d08a02ac790c665c044cbe09e9b0dac7e1a4b57a47b3632f46a0",
+          "document_id": "doc_6ce13b6db1b8a05c",
+          "score": 1.888578,
+          "content": "#### 8.1.4. Hồ sơ xử lý kỷ luật lao động\n\n- Bản tường trình của NLĐ.\n- Đề nghị kỷ luật NLĐ từ Công ty.\n- Các tài liệu liên quan gồm có: Biên bản sự việc xảy ra; đơn tố cáo, chứng từ hóa đơn và các tài liệu khác (nếu có).\n- Hồ sơ được bổ sung thêm trong các trường hợp sau:\n  - Trường hợp đương sự vắng mặt: văn bản thông báo ba (03) lần có đính kèm thư bảo phát có người ký nhận.\n  - Trường hợp đương sự bị tạm giam, tạm giữ: văn bản của cơ quan có thẩm quyền bắt tạm giam, tạm giữ; văn bản kết luận của cơ quan có thẩm quyền khi hết thời hạn tạm giam, tạm giữ.\n  - Trường hợp NLĐ nghỉ việc: đơn xin nghỉ việc được phê duyệt.\n  - Trường hợp NLĐ ốm đau, tai nạn: xác nhận của cơ sở khám chữa bệnh có thẩm quyền (ví dụ: giấy chứng nhận nghỉ ốm, hưởng Bảo hiểm xã hội, giấy ra viện...).\n  - NLĐ nữ có thai; NLĐ nghỉ thai sản, NLĐ nuôi con nhỏ dưới 12 tháng tuổi: giấy khám thai, giấy khai sinh.\n  - NLĐ mắc bệnh tâm thần hoặc bệnh khác làm mất khả năng nhận thức hoặc điều khiển hành vi của mình: giấy xác nhận của cơ sở khám chữa bệnh có thẩm quyền.\n- Giấy ủy quyền của người đại diện theo pháp luật NLĐLD cho người chủ trì họp xử lý kỷ luật.\n- Biên bản xử lý vi phạm kỷ luật lao động.\n- Quyết định xử lý kỷ luật NLĐ."
+        }
+      ],
+      "memory_sources": [],
+      "reasoning_trace": [
+        {
+          "step": 1,
+          "tool": "search_knowledge",
+          "args": {
+            "query": "lao động nữ mang thai nuôi con dưới 12 tháng tuổi xử lý kỷ luật chính sách"
+          },
+          "result": "[1] (chunk_id=4d1b0ae9aeca9d20f3fa28a55de25beb8f76c9a9e161491296bff76891d03326)\n### Điều 19. Quy định đối với Lao động nữ\n\n1. NLĐ có trách nhiệm:\n   - Bảo đảm thực hiện bình đẳng giới và các biện pháp..."
+        },
+        {
+          "step": 2,
+          "tool": "search_knowledge",
+          "args": {
+            "query": "hồ sơ xử lý kỷ luật lao động nữ mang thai nuôi con chứng từ giấy tờ"
+          },
+          "result": "[1] (chunk_id=e07d9950a783d08a02ac790c665c044cbe09e9b0dac7e1a4b57a47b3632f46a0)\n#### 8.1.4. Hồ sơ xử lý kỷ luật lao động\n\n- Bản tường trình của NLĐ.\n- Đề nghị kỷ luật NLĐ từ Công ty.\n- Các tài liệu li..."
+        },
+        {
+          "step": 3,
+          "tool": "generate_answer",
+          "args": {
+            "question": "Nếu lao động nữ ở 2MoreBits đang mang thai hoặc nuôi con dưới 12 tháng tuổi có liên quan đến vụ việc kỷ luật, chính sách yêu cầu tránh điều gì và hồ sơ xử lý kỷ luật cần bổ sung chứng từ gì?",
+            "chunk_ids": [
+              "06ec09270fa5a00b8b99663549d4191cb681f81cbc6be9f09f28c614cee9f570",
+              "4d1b0ae9aeca9d20f3fa28a55de25beb8f76c9a9e161491296bff76891d03326",
+              "e07d9950a783d08a02ac790c665c044cbe09e9b0dac7e1a4b57a47b3632f46a0"
+            ]
+          },
+          "result": "Dựa trên các bằng chứng đã cung cấp:\n\n1. **Chính sách yêu cầu tránh:** Công ty **không được xử lý kỷ luật lao động** đối với lao động nữ đang mang thai hoặc nuôi con dưới 12 tháng tuổi (theo Điều 32 k..."
+        }
+      ],
+      "tools_used": [
+        "search_knowledge",
+        "search_knowledge",
+        "generate_answer"
+      ],
+      "step_timings": [
+        {
+          "step": 1,
+          "kind": "llm",
+          "name": "agent",
+          "elapsed": 1.664
+        },
+        {
+          "step": 2,
+          "kind": "retrieval",
+          "name": "search_knowledge.decompose_question",
+          "elapsed": 1.561
+        },
+        {
+          "step": 3,
+          "kind": "retrieval",
+          "name": "search_knowledge.seed_retrieval",
+          "elapsed": 11.301
+        },
+        {
+          "step": 4,
+          "kind": "retrieval",
+          "name": "search_knowledge.rerank",
+          "elapsed": 0.001
+        },
+        {
+          "step": 5,
+          "kind": "retrieval",
+          "name": "search_knowledge.ircot_step",
+          "elapsed": 2.025
+        },
+        {
+          "step": 6,
+          "kind": "retrieval",
+          "name": "search_knowledge.format_results",
+          "elapsed": 0.0
+        },
+        {
+          "step": 7,
+          "kind": "tool",
+          "name": "search_knowledge",
+          "elapsed": 14.899
+        },
+        {
+          "step": 8,
+          "kind": "llm",
+          "name": "agent",
+          "elapsed": 1.305
+        },
+        {
+          "step": 9,
+          "kind": "retrieval",
+          "name": "search_knowledge.decompose_question",
+          "elapsed": 1.946
+        },
+        {
+          "step": 10,
+          "kind": "retrieval",
+          "name": "search_knowledge.seed_retrieval",
+          "elapsed": 10.993
+        },
+        {
+          "step": 11,
+          "kind": "retrieval",
+          "name": "search_knowledge.rerank",
+          "elapsed": 0.001
+        },
+        {
+          "step": 12,
+          "kind": "retrieval",
+          "name": "search_knowledge.ircot_step",
+          "elapsed": 2.266
+        },
+        {
+          "step": 13,
+          "kind": "retrieval",
+          "name": "search_knowledge.format_results",
+          "elapsed": 0.0
+        },
+        {
+          "step": 14,
+          "kind": "tool",
+          "name": "search_knowledge",
+          "elapsed": 15.214
+        },
+        {
+          "step": 15,
+          "kind": "llm",
+          "name": "agent",
+          "elapsed": 14.01
+        },
+        {
+          "step": 16,
+          "kind": "tool",
+          "name": "generate_answer",
+          "elapsed": 1.439
+        }
+      ],
+      "total_step_time": 48.531,
+      "retrieval_detail": {
+        "sub_questions": [
+          {
+            "q": "Quy trình xử lý kỷ luật đối với lao động nữ mang thai và nuôi con như thế nào?",
+            "embed_elapsed": 1.052,
+            "routes": {
+              "chunk": {
+                "elapsed": 0.006,
+                "hits": 10,
+                "chunk_ids": [
+                  "4d1b0ae9aeca9d20f3fa28a55de25beb8f76c9a9e161491296bff76891d03326",
+                  "29a991dbd54ce6ab3a96319d72398a567d74dfa8935d7e8eb629773025182e96",
+                  "06ec09270fa5a00b8b99663549d4191cb681f81cbc6be9f09f28c614cee9f570",
+                  "e3704d75f2ed0a8e5ea0c4f9f48656e456eba324a1e03f9affce0c04d3e7cdce",
+                  "6ca0badc1a291bee6c1fa72444d11f05b424743169ce814089739205fd796c40",
+                  "9eccdc770c3638bcac16d4e5b34358090f4cfdb52e27e635f22b7c7cdfd6dff9",
+                  "23d38793e78ef10d0ae918d225e5836496af316139fd4c2257cc86e49066d146",
+                  "cf5b48574eef24d5dbb42a8ad1e485233714cf9b68d00a76f7bff8f842132b92",
+                  "3f0d45ed2f27b418d30b7de6e3dd6c6f36df867725a10fc03510a36a01a5ead5",
+                  "1fa4c8f9c54170fe9dc4d0d77ae78f2d35838f4a19b9ee1fb03d9a2e3049cfe4"
+                ]
+              },
+              "entity": {
+                "elapsed": 0.005,
+                "hits": 10,
+                "seeds_added": [
+                  "Việc xử lý kỷ luật lao động",
+                  "Quy trình xử lý kỷ luật",
+                  "Quy trình xử lý vi phạm kỷ luật lao động",
+                  "NLĐ nữ có thai",
+                  "Quy trình xử lý kỷ luật lao động",
+                  "hình thức xử lý kỷ luật",
+                  "kỷ luật lao động",
+                  "Xử lý kỷ luật lao động",
+                  "Cuộc họp xử lý kỷ luật lao động",
+                  "Quyết định xử lý kỷ luật lao động"
+                ],
+                "type_filter": [
+                  "disciplinaryaction",
+                  "document",
+                  "incidentreport",
+                  "maternityprotection",
+                  "person",
+                  "process"
+                ]
+              },
+              "triple": {
+                "elapsed": 0.005,
+                "hits": 10,
+                "seeds_added": [
+                  "Quyết định xử lý kỷ luật lao động",
+                  "xử lý kỷ luật lao động",
+                  "Việc xử lý kỷ luật lao động",
+                  "Quy trình Xử lý Kỷ luật",
+                  "Quy trình xử lý vi phạm kỷ luật lao động",
+                  "Cuộc họp xử lý kỷ luật lao động",
+                  "Quy trình xử lý kỷ luật",
+                  "Hồ sơ xử lý kỷ luật lao động",
+                  "Xử lý kỷ luật lao động",
+                  "vi phạm kỷ luật lao động",
+                  "Thẩm quyền xử lý vi phạm kỷ luật lao động",
+                  "Nguyên tắc xử lý vi phạm kỷ luật lao động",
+                  "Quy trình xử lý kỷ luật của Công ty",
+                  "Người lao động"
+                ],
+                "type_filter": [
+                  "applies_to",
+                  "issued_by",
+                  "requires_document",
+                  "step_of"
+                ]
+              },
+              "community": {
+                "elapsed": 0.003,
+                "hits": 3,
+                "seeds_added": [
+                  "Phúc lợi nhân dịp đặc biệt",
+                  "Điều chỉnh thời gian nghỉ thai sản",
+                  "Điều chỉnh chính sách trích quỹ xe",
+                  "Phí quá cước",
+                  "Tổng thu nhập những ngày nghỉ tính theo Lương cơ bản và V_Bonus tối đa trên HĐLĐ - Số tiền trợ cấp BHXH chi trả",
+                  "ngày Thứ Bảy và Chủ nhật",
+                  "Chính sách ưu đãi đặc biệt",
+                  "nghỉ phát sinh",
+                  "Thời gian còn lại của vợ cho đến khi con đủ 06 tháng tuổi",
+                  "500",
+                  "với định mức phụ",
+                  "ngân sách từng năm",
+                  "visa dài hạn",
+                  "sau đây gọi",
+                  "Số lần tạm ứng tối đa",
+                  "1 lần cho một trường hợp điều trị bệnh",
+                  "i gian làm ngoài giờ tối thiểu được tính",
+                  "1 giờ làm việc",
+                  "n ngay nghỉ việc dưới nửa ngày được tính",
+                  "nửa ngày",
+                  "nghỉ việc từ nửa ngày trở lên được tính",
+                  "60 phút và được tính vào thời gian làm v",
+                  "ít nhất 30 phút",
+                  "ợc nghỉ tính bình quân một tháng ít nhất",
+                  "bốn ngày",
+                  "định mức hàng tháng Định mức hỗ trợ tùy",
+                  "vào cấp bậc",
+                  "Định mức hưởng hỗ trợ điện thoại sẽ tùy",
+                  "và cuối cùng",
+                  "danh sách người nhận đã được thêm",
+                  "iên được duyệt theo tháng nhưng dưới đây",
+                  "ngân sách tương ứng sẽ là",
+                  "Công ty Cổ phần VNG bầu ra với nhiệm kỳ",
+                  "ủa Ban Chấp hành được phổ biến chậm nhất",
+                  "một",
+                  "Marathon 2024 vì cả hai sự kiện này cùng",
+                  "Nhóm A",
+                  "tháng ít nhất",
+                  "bốn",
+                  "01 tháng làm việc để tính ngày nghỉ hằng",
+                  "03 ngày trong một tháng được hưởng nguyê",
+                  "ngày hết hiệu lực của HĐLĐ hiện tại tùy",
+                  "thời hiệu xử lý kỷ luật lao động tối đa",
+                  "mười hai",
+                  "Bonus",
+                  "khoản thưởng dựa vào đánh giá mức độ hoà",
+                  "Chị",
+                  "____________ ngày theo chính sách Công t",
+                  "lương và các khoản chi trả khác nếu trên",
+                  "thu nhập trước thuế và sẽ được trích nộp",
+                  "theo Hợp Đồng này",
+                  "thu nhập trước thuế",
+                  "với điều kiện",
+                  "thông tin đó được Bên Thứ Ba có được một",
+                  "được Công Ty thanh toán một khoản hỗ trợ",
+                  "______ VNĐ mỗi tháng trong thời gian thự",
+                  "tiền công và phúc lợi mà Công Ty chi trả",
+                  "điều kiện nhận khoản hỗ trợ này",
+                  "cam kết làm việc đủ 12 tháng kể từ thời",
+                  "rợ chi phí xăng xe đi làm cho một số NLĐ",
+                  "một số văn phòng không nằm tại trung tâm",
+                  "Thưởng khác sẽ phụ",
+                  "vào từng chương trình cụ thể và ngân sác",
+                  "nghỉ việc dưới nửa ngày được tính",
+                  "bận việc riêng đột xuất",
+                  "Chi phí lưu trú Chi phí lưu trú",
+                  "giá tiền khách sạn hoặc giá tiền thuê nh",
+                  "số tiền được trừ khỏi giá trị tổng cộng",
+                  "phương tiện di chuyển có thể",
+                  "máy bay",
+                  "cấp bảng kê chi phí thì số ngày nằm viện",
+                  "ngày xuất viện trừ đi ngày nhập viện",
+                  "nếu có",
+                  "một trong hai điều kiện sau",
+                  "trừ khi",
+                  "hành khách mua vé trên máy bay của một h",
+                  "hành động cứu người",
+                  "ột nơi đặc biệt chỉ có mục đích duy nhất",
+                  "phục vụ cho người già",
+                  "ngày thời hạn bảo hiểm",
+                  "ngày tái tục hợp đồng",
+                  "bất kể số tiền yêu cầu bồi thường",
+                  "bao nhiêu",
+                  "Nếu ngày ghi hóa đơn không",
+                  "giá trị 05 ngày phải nộp kèm hóa đơn bán",
+                  "Tai nạn lao động",
+                  "Người lao động",
+                  "người lao động",
+                  "Thỏa ước lao động tập thể",
+                  "pháp luật lao động",
+                  "Qui định hiện hành của luật pháp",
+                  "Người Lao Động",
+                  "biện pháp",
+                  "Hợp đồng lao động",
+                  "Nội quy lao động",
+                  "Điều 77 Bộ luật Lao động 2019",
+                  "Pháp luật hiện hành",
+                  "Xử lý kỷ luật lao động",
+                  "tai nạn lao động",
+                  "Tranh chấp lao động",
+                  "Nội quy Lao động",
+                  "Nội Quy Lao Động",
+                  "Phạt tiền",
+                  "Cắt lương",
+                  "Tạm giữ",
+                  "Tạm giam",
+                  "pháp luật",
+                  "Giấy phép lao động",
+                  "Bộ Luật Lao động",
+                  "các bản Nội quy trước đây",
+                  "Hình thức kỷ luật lao động",
+                  "Luật Lao động hiện hành",
+                  "hợp đồng lao động",
+                  "Pháp luật Việt Nam",
+                  "vi phạm kỷ luật lao động",
+                  "Người sử dụng lao động",
+                  "Pháp luật lao động",
+                  "Xoá kỷ luật",
+                  "Kỷ luật lao động",
+                  "Hỗ trợ xử lý kỷ luật lao động",
+                  "Bộ Luật Lao Động số 45/2019/QH14",
+                  "Trình tự xử lý kỷ luật lao động",
+                  "Thỏa Ước Lao Động Tập thể",
+                  "kỷ luật lao động",
+                  "người sử dụng lao động",
+                  "Lao động nữ",
+                  "Việc xử lý kỷ luật lao động",
+                  "Pháp Luật hiện hành",
+                  "Bộ Luật Lao Động",
+                  "Người khiếu giác/tố giác",
+                  "Đánh giá thành tích",
+                  "Hình thức kỷ luật",
+                  "Bộ luật lao động 2019",
+                  "Hành vi vi phạm kỷ luật lao động",
+                  "Điều 34. Các hình thức xử lý kỷ luật lao động",
+                  "cách chức",
+                  "xóa kỷ luật",
+                  "thời hiệu xử lý việc bồi thường thiệt hại vật chất",
+                  "Bộ Luật Lao Động hiện hành",
+                  "Bồi thường thiệt hại theo trách nhiệm vật chất",
+                  "Nguyên tắc xử lý vi phạm kỷ luật lao động",
+                  "Thẩm quyền xử lý vi phạm kỷ luật lao động",
+                  "Thời hiệu xử lý kỷ luật lao động",
+                  "Hành vi vi phạm liên quan trực tiếp đến tài chính, tài sản, tiết lộ bí mật công nghệ, bí mật kinh doanh",
+                  "Người đại diện theo pháp luật NSĐLĐ",
+                  "Quyết định xóa kỷ luật lao động",
+                  "Hình thức phạt tiền",
+                  "pháp luật lao động Việt Nam",
+                  "Bộ luật Lao động",
+                  "THỎA ƯỚC LAO ĐỘNG TẬP THỂ",
+                  "tập thể lao động",
+                  "Quy trình Xử lý Kỷ luật Lao động",
+                  "Hành động cứu người, bảo vệ tài sản hoặc tự vệ",
+                  "Điều kiện Trợ cấp Thai sản Nữ",
+                  "Nhân viên không đơn phương chấm dứt HĐLĐ trước 12 tháng tính từ ngày nghỉ thai sản",
+                  "Nghỉ sẩy thai, nạo hút thai, thai chết lưu hoặc phá thai bệnh lý",
+                  "Nghỉ dưỡng sức sau thai sản",
+                  "Chế độ thai sản dành cho nữ",
+                  "Chế độ thai sản dành cho nam",
+                  "Đi làm lại trước khi hết thời hạn nghỉ thai sản",
+                  "Đã nghỉ thai sản ít nhất 04 tháng",
+                  "nghỉ thai sản ít nhất 04 tháng",
+                  "Điều kiện hưởng Trợ cấp thai sản VNG",
+                  "Điều kiện hưởng trợ cấp thai sản",
+                  "Hoàn trả trợ cấp thai sản",
+                  "Hoàn trả Trợ cấp thai sản",
+                  "sinh đôi hoặc nhiều hơn",
+                  "cả cha và mẹ cùng tham gia BHXH",
+                  "Sinh một lần từ 2 con trở lên",
+                  "Sức khỏe còn yếu trong vòng 30 ngày kể từ ngày kết thúc kỳ nghỉ thai sản",
+                  "Vợ sinh con",
+                  "sinh mổ",
+                  "sinh thường",
+                  "các vấn đề về thai nhi",
+                  "Người mẹ nhờ mang thai hộ",
+                  "Thai dưới 05 tuần tuổi",
+                  "Thai từ 05 tuần tuổi – dưới 13 tuần tuổi",
+                  "Thai từ 13 tuần tuổi – dưới 22 tuần tuổi",
+                  "Thai từ 22 tuần tuổi trở lên",
+                  "Chế độ thai sản",
+                  "sinh con",
+                  "Trợ cấp Thai sản Nữ",
+                  "Nhân viên không đơn phương chấm dứt HĐLĐ trước 12 tháng",
+                  "Mất có thai",
+                  "Mang thai",
+                  "chế độ thai sản",
+                  "Nghỉ thực hiện các biện pháp tránh thai",
+                  "Nhân viên nữ đặt vòng tránh thai",
+                  "Thực hiện các biện pháp triệt sản",
+                  "đặt vòng tránh thai",
+                  "triệt sản",
+                  "Chăm sóc thai sản",
+                  "45 ngày kể từ ngày bị biến chứng thai sản"
+                ]
+              }
+            }
+          },
+          {
+            "q": "Những loại giấy tờ nào là bắt buộc trong hồ sơ xử lý kỷ luật lao động nữ mang thai nuôi con?",
+            "embed_elapsed": 0.39,
+            "routes": {
+              "chunk": {
+                "elapsed": 0.006,
+                "hits": 10,
+                "chunk_ids": [
+                  "e07d9950a783d08a02ac790c665c044cbe09e9b0dac7e1a4b57a47b3632f46a0",
+                  "b763a1aa7d593eaa433f7191b4e6f9058afb3b7116a3812725742bc7a8087949",
+                  "d2cd694b65dbb2a3071c3c718471ba27dff79bd9a4850ea412c6ddf9601303bf",
+                  "23c3d851d3adbcf5c0c17324934d54fcac45a15505aec54599691076993a8656",
+                  "f85b60fe646a24c9c80f5ad0db1b21af1afe787e5a1d79d02ad0aa3ca0639e1c",
+                  "aa94803c3779f23fa46a96f0fedd6cfb17b2256b0de09e8f0b58baa2fcd281f7",
+                  "e3388cf8133d8f57481ff0500c80ef8b34455d8cd07cad4a28e8b32db3e8a2ac",
+                  "e326930e7f998ca519d0a6a7a5c88fa575854c42b5f8563c392c60347e907815",
+                  "60a9edad54ea13aced10ce9c701cfe553dbc21b2b91615de90ef5bc9fdaba48d",
+                  "ce4271723e77876b43f148997fe18e97cbce98d0beb66dd8a31a14cad6bf5504"
+                ]
+              },
+              "entity": {
+                "elapsed": 0.007,
+                "hits": 10,
+                "seeds_added": [
+                  "Hồ sơ xử lý kỷ luật lao động",
+                  "Hồ sơ vụ việc",
+                  "Hồ sơ thai sản",
+                  "Tài liệu 3. Biểu mẫu thư mời họp xử lý kỷ luật",
+                  "Tài liệu 5. Biểu mẫu quyết định xử lý kỷ luật lao động",
+                  "Tài liệu 1. Biểu mẫu biên bản sự việc",
+                  "Tài liệu 4. Biểu mẫu biên bản họp xử lý kỷ luật",
+                  "Biên bản xử lý vi phạm kỷ luật lao động",
+                  "Biên bản họp xử lý kỷ luật lao động",
+                  "Tài liệu 2. Biểu mẫu bản tường trình sự việc"
+                ],
+                "type_filter": [
+                  "disciplinaryaction",
+                  "document",
+                  "incidentreport",
+                  "maternityprotection",
+                  "person",
+                  "process"
+                ]
+              },
+              "triple": {
+                "elapsed": 0.005,
+                "hits": 10,
+                "seeds_added": [
+                  "Hồ sơ xử lý kỷ luật lao động",
+                  "Giấy khai sinh",
+                  "Giấy khám thai",
+                  "Biên bản xử lý vi phạm kỷ luật lao động",
+                  "Giấy ủy quyền",
+                  "Tổ chức phiên họp xử lý vi phạm kỷ luật lao động",
+                  "Giấy ra viện",
+                  "Cuộc họp xử lý kỷ luật lao động",
+                  "Hồ sơ vụ việc",
+                  "Văn bản của cơ quan có thẩm quyền bắt tạm giam, tạm giữ",
+                  "Đơn tố cáo",
+                  "Giấy chứng nhận nghỉ ốm"
+                ],
+                "type_filter": [
+                  "applies_to",
+                  "issued_by",
+                  "requires_document",
+                  "step_of"
+                ]
+              },
+              "community": {
+                "elapsed": 0.003,
+                "hits": 3,
+                "seeds_added": [
+                  "Quy trình xử lý kỷ luật lao động",
+                  "Hồ sơ xử lý kỷ luật lao động",
+                  "Xử lý vi phạm kỷ luật lao động",
+                  "Biên bản họp xử lý kỷ luật lao động",
+                  "Thông báo mời họp xử lý kỷ luật",
+                  "Họp xử lý kỷ luật",
+                  "Quy trình xử lý kỷ luật",
+                  "Hồ sơ xử lý",
+                  "Lập Quyết định xử lý kỷ luật",
+                  "Tổ chức họp xử lý kỷ luật",
+                  "Ra quyết định kỷ luật",
+                  "xử lý vi phạm",
+                  "Bản tường trình của NLĐ",
+                  "Biên bản sự việc xảy ra",
+                  "Đơn tố cáo",
+                  "Biên bản xử lý vi phạm kỷ luật lao động",
+                  "Quyết định xử lý kỷ luật NLĐ",
+                  "Hình thức xử lý kỷ luật",
+                  "xử lý kỷ luật",
+                  "Cuộc họp xử lý kỷ luật lao động",
+                  "Quyết định xử lý kỷ luật lao động",
+                  "Quy trình Xử lý Kỷ luật",
+                  "xử lý kỷ luật lao động",
+                  "xử lý vi phạm kỷ luật lao động",
+                  "Biểu mẫu Biên bản sự việc",
+                  "Biểu mẫu Bản tường trình sự việc",
+                  "Biểu mẫu Thư mời họp xử lý kỷ luật",
+                  "Biểu mẫu Biên bản họp xử lý kỷ luật",
+                  "Biểu mẫu Quyết định xử lý kỷ luật lao động",
+                  "Biểu mẫu Quyết định xoá kỷ luật lao động",
+                  "Hình thức xử lý kỷ luật và thời gian xóa kỷ luật",
+                  "Quy trình xử lý vi phạm kỷ luật lao động",
+                  "Tổ chức phiên họp xử lý vi phạm kỷ luật lao động",
+                  "Tài liệu 1. Biểu mẫu biên bản sự việc",
+                  "Tài liệu 2. Biểu mẫu bản tường trình sự việc",
+                  "Tài liệu 3. Biểu mẫu thư mời họp xử lý kỷ luật",
+                  "Tài liệu 4. Biểu mẫu biên bản họp xử lý kỷ luật",
+                  "Tài liệu 5. Biểu mẫu quyết định xử lý kỷ luật lao động",
+                  "Tài liệu 6. Biểu mẫu quyết định xóa kỷ luật lao động",
+                  "Quy trình xử lý kỷ luật của Công ty",
+                  "hình thức xử lý kỷ luật",
+                  "Người chủ trì họp xử lý kỷ luật",
+                  "Quyết định xử lý kỷ luật",
+                  "Ký ban hành Quyết định xử lý kỷ luật",
+                  "Quy trình xác minh vi phạm kỷ luật",
+                  "Phiên họp xử lý",
+                  "Hội đồng kỷ luật",
+                  "Thư mời họp xử lý kỷ luật",
+                  "Biên bản họp xử lý kỷ luật",
+                  "Quyết định xoá kỷ luật lao động",
+                  "Thời gian xóa kỷ luật",
+                  "Giấy phép lao động (Work Permit)",
+                  "Thư mời làm việc",
+                  "chuyến công tác",
+                  "Đăng ký làm việc tại nhà",
+                  "Ngày công đi làm thực tế",
+                  "Nhân viên chuyên vùng",
+                  "Nhân viên chuyển vùng",
+                  "làm việc tại nhà",
+                  "Làm việc tại nhà",
+                  "Chuyến công tác",
+                  "Chính sách chuyển vùng làm việc",
+                  "eform Đăng ký làm việc tại nhà",
+                  "Quyết toán thôi việc",
+                  "Đi công tác",
+                  "Thỏa thuận công việc",
+                  "Con vợ và chồng cùng làm việc tại Công ty",
+                  "nhu cầu công việc",
+                  "Đăng ký và phê duyệt",
+                  "nơi làm việc",
+                  "mức hỗ trợ chỉ áp dụng cho một người (chồng hoặc vợ)",
+                  "Bảng lương",
+                  "Thâm niên làm việc",
+                  "Hệ thống HRIS",
+                  "Phụ lục Hướng dẫn thiết lập ca làm việc",
+                  "nhóm làm việc theo ca",
+                  "Nhóm làm việc theo ca, dự án",
+                  "Chính sách làm việc theo ca",
+                  "Lịch làm việc",
+                  "Trưởng dự án",
+                  "Công việc",
+                  "thâm niên làm việc",
+                  "Chính sách chuyến vùng làm việc",
+                  "Tạm đình chỉ công việc",
+                  "Nghĩa vụ/Obligations",
+                  "Chế Độ Làm Việc",
+                  "Trật tự tại nơi làm việc",
+                  "Nơi làm việc",
+                  "Chức vụ",
+                  "Địa điểm làm việc",
+                  "vị trí công việc",
+                  "làm việc ngoài giờ",
+                  "vị trí làm việc",
+                  "ngày công tác",
+                  "Phẫu thuật ngoài giờ làm việc",
+                  "Bảng chấm công",
+                  "thủ tục",
+                  "Chứng từ yêu cầu",
+                  "Chồng",
+                  "Hồ sơ bệnh án",
+                  "Hóa đơn chứng từ điều trị bệnh",
+                  "Giấy chứng sinh em bé",
+                  "Hồ sơ giải quyết chế độ BHXH",
+                  "Đơn tạm ứng lương",
+                  "Hồ sơ yêu cầu tiền hỗ trợ",
+                  "Chứng từ khám chữa bệnh",
+                  "Tiền mừng kết hôn",
+                  "Giấy chứng nhận kết hôn",
+                  "thông tin kết hôn",
+                  "Hồ sơ yêu cầu bồi thường",
+                  "Yêu cầu nộp tiền mừng kết hôn",
+                  "Chứng từ yêu cầu hỗ trợ",
+                  "Giấy yêu cầu bồi thường",
+                  "thông tin cá nhân",
+                  "chữ ký",
+                  "Hồ sơ yêu cầu bồi thường tai nạn",
+                  "Hồ sơ yêu cầu bồi thường tử vong",
+                  "Đơn tạm ứng",
+                  "Đơn xin tạm ứng",
+                  "Mừng kết hôn",
+                  "Photo Chờ nhận Kết hôn",
+                  "Photo Chứng nhận Kết hôn",
+                  "Mừng sinh con",
+                  "Chia buồn tang chế",
+                  "Quà Ngày Quốc tế thiếu nhi cho con Đoàn viên",
+                  "Hình ảnh tham gia cuộc thi",
+                  "Giấy ra viện",
+                  "Kết hôn",
+                  "Hồ sơ bồi thường",
+                  "phòng giải Quyết bồi thường",
+                  "Giấy chuyển viện",
+                  "lý do chuyển viện",
+                  "Quy trình bồi thường",
+                  "Hồ sơ khám ngoại trú",
+                  "Hồ sơ khám nội trú",
+                  "Hồ sơ khám răng"
+                ]
+              }
+            }
+          }
+        ],
+        "path_traversal": {
+          "elapsed": 1.776,
+          "seed_count": 337,
+          "expanded_nodes": 337,
+          "graph_chunks": 262,
+          "inv_rels_filter": [
+            "applies_to",
+            "issued_by",
+            "requires_document",
+            "step_of"
+          ]
+        },
+        "total_candidates": 266,
+        "total_seeds": 20
+      },
+      "session_id": null,
+      "usage": {
+        "llm_calls": 8,
+        "input_tokens": 17349,
+        "output_tokens": 3002,
+        "total_tokens": 20351
+      },
+      "mode": "agent",
+      "sources": [
+        {
+          "chunk_id": "06ec09270fa5a00b8b99663549d4191cb681f81cbc6be9f09f28c614cee9f570",
+          "document_id": "doc_90bc23e34a3c4d99",
+          "score": 1.395166,
+          "content": "#### Điều 32. Nguyên tắc xử lý kỷ luật lao động\n\n1. Việc xử lý kỷ luật lao động được áp dụng đối với NLĐ vi phạm các quy định trong NQLĐ này, pháp luật và các quy định khác của Công Ty. Việc xử lý kỷ luật lao động được quy định như sau:\n\n    a. Công Ty phải chứng minh được lỗi của NLĐ;\n\n    b. Phải có sự tham gia của tổ chức đại diện tập thể lao động tại cơ sở;\n\n    c. NLĐ phải có mặt và có quyền tự bào chữa, nhờ luật sư hoặc người khác bào chữa; trường hợp là người dưới 15 tuổi thì phải có sự tham gia của người đại diện theo pháp luật;\n\n    d. Việc xử lý kỷ luật lao động phải được lập thành biên bản.\n\n2. Mỗi hành vi vi phạm kỷ luật lao động chỉ bị xử lý một hình thức kỷ luật. Khi NLĐ có nhiều hành vi vi phạm kỷ luật đồng thời thì chỉ áp dụng hình thức kỷ luật cao nhất tương ứng với hành vi vi phạm nặng nhất.\n\n3. Không áp dụng các biện pháp xâm hại thân thể, nhân phẩm của NLĐ khi xử lý vi phạm kỷ luật lao động.\n\n4. Không được áp dụng hình thức phạt tiền, cắt lương thay việc xử lý kỷ luật lao động.\n\n5. NLĐ có hành vi vi phạm kỷ luật lao động, tùy theo mức độ và tính chất vi phạm sẽ bị xử lý kỷ luật theo quy định và phải bồi thường thiệt hại theo quy định (nếu có); đồng thời Công Ty có thể điều chỉnh hoặc không xem xét xét thưởng hàng năm.\n\n6. Không được xử lý kỷ luật lao động đối với NLĐ đang trong thời gian sau đây:\n\n    a. Nghỉ ốm đau, điều dưỡng; nghỉ việc được sự đồng ý của Công Ty;\n\n    b. Đang bị tạm giữ, tạm giam;\n\n    c. Đang chờ kết quả của cơ quan có thẩm quyền điều tra xác minh và kết luận đối với hành vi vi phạm được quy định tại khoản 1 và khoản 2 Điều 125 BLLĐ 2019;\n\n    d. Lao động nữ có thai, nghỉ thai sản; người lao động nuôi con nhỏ dưới 12 tháng tuổi.\n\n7. Không xử lý kỷ luật lao động đối với NLĐ vi phạm kỷ luật lao động trong khi mắc bệnh tâm thần hoặc một bệnh khác làm mất khả năng nhận thức hoặc khả năng điều khiển hành vi của mình."
+        },
+        {
+          "chunk_id": "4d1b0ae9aeca9d20f3fa28a55de25beb8f76c9a9e161491296bff76891d03326",
+          "document_id": "doc_b8a1e08191f021bb",
+          "score": 1.932334,
+          "content": "### Điều 19. Quy định đối với Lao động nữ\n\n1. NLĐ có trách nhiệm:\n   - Bảo đảm thực hiện bình đẳng giới và các biện pháp thúc đẩy bình đẳng giới trong tuyển dụng, bố trí, sắp xếp việc làm, đào tạo, thời giờ làm việc, thời giờ nghỉ ngơi, tiền lương và các chế độ khác của Lao động nữ theo quy định của Pháp luật hiện hành.\n   - Bảo đảm môi trường làm việc cho lao động nữ tại nơi làm việc.\n2. NLĐ không được xử lý kỷ luật, sa thải hoặc đơn phương chấm dứt hợp đồng lao động đối với lao động nữ vì lý do kết hôn, mang thai, nghỉ thai sản, nuôi con nhỏ dưới 12 tháng tuổi."
+        },
+        {
+          "chunk_id": "e07d9950a783d08a02ac790c665c044cbe09e9b0dac7e1a4b57a47b3632f46a0",
+          "document_id": "doc_6ce13b6db1b8a05c",
+          "score": 1.888578,
+          "content": "#### 8.1.4. Hồ sơ xử lý kỷ luật lao động\n\n- Bản tường trình của NLĐ.\n- Đề nghị kỷ luật NLĐ từ Công ty.\n- Các tài liệu liên quan gồm có: Biên bản sự việc xảy ra; đơn tố cáo, chứng từ hóa đơn và các tài liệu khác (nếu có).\n- Hồ sơ được bổ sung thêm trong các trường hợp sau:\n  - Trường hợp đương sự vắng mặt: văn bản thông báo ba (03) lần có đính kèm thư bảo phát có người ký nhận.\n  - Trường hợp đương sự bị tạm giam, tạm giữ: văn bản của cơ quan có thẩm quyền bắt tạm giam, tạm giữ; văn bản kết luận của cơ quan có thẩm quyền khi hết thời hạn tạm giam, tạm giữ.\n  - Trường hợp NLĐ nghỉ việc: đơn xin nghỉ việc được phê duyệt.\n  - Trường hợp NLĐ ốm đau, tai nạn: xác nhận của cơ sở khám chữa bệnh có thẩm quyền (ví dụ: giấy chứng nhận nghỉ ốm, hưởng Bảo hiểm xã hội, giấy ra viện...).\n  - NLĐ nữ có thai; NLĐ nghỉ thai sản, NLĐ nuôi con nhỏ dưới 12 tháng tuổi: giấy khám thai, giấy khai sinh.\n  - NLĐ mắc bệnh tâm thần hoặc bệnh khác làm mất khả năng nhận thức hoặc điều khiển hành vi của mình: giấy xác nhận của cơ sở khám chữa bệnh có thẩm quyền.\n- Giấy ủy quyền của người đại diện theo pháp luật NLĐLD cho người chủ trì họp xử lý kỷ luật.\n- Biên bản xử lý vi phạm kỷ luật lao động.\n- Quyết định xử lý kỷ luật NLĐ."
+        }
+      ],
+      "ablation": {
+        "use_memory": false,
+        "use_graph_rag": true,
+        "memory": {
+          "save_turns": true,
+          "use_session_memory": true,
+          "use_long_term_memory": true,
+          "use_graph_expand": true,
+          "use_rerank": true
+        },
+        "retrieval": {
+          "use_chunk_vectors": true,
+          "use_node_vectors": true,
+          "use_triplet_vectors": true,
+          "use_community_vectors": true,
+          "use_graph_expand": true,
+          "use_graph_boost": true,
+          "use_decompose": true,
+          "use_ircot": true
+        }
+      }
+    },
+    "elapsed": 48.58,
+    "error": null
+  },
+  {
+    "qa_id": "qa-luongvh-0130",
+    "question": "Chu kỳ xét tăng lương thường niên tại Công ty thường diễn ra vào thời điểm nào trong năm và điều kiện để được xét là gì?",
+    "request": {
+      "query": "Chu kỳ xét tăng lương thường niên tại Công ty thường diễn ra vào thời điểm nào trong năm và điều kiện để được xét là gì?",
+      "mode": "agent",
+      "use_memory": false
+    },
+    "response": {
+      "answer": "Dựa trên bằng chứng được cung cấp:\n\n*   **Thời điểm:** Chu kỳ xét tăng lương diễn ra **định kỳ hàng năm**.\n*   **Điều kiện:** Bằng chứng **không nêu rõ** các điều kiện cụ thể để được xét tăng lương (chỉ đề cập chung chung là dựa trên tình hình kinh doanh, so sánh thị trường và hiệu quả lâu dài/cạnh tranh).",
+      "answer_via_tool": true,
+      "knowledge_sources": [
+        {
+          "chunk_id": "30a233e2e132cc80a853565860f1045e2d10e2d42fa8559a43bd0d88ae56e75b",
+          "document_id": "doc_b8a1e08191f021bb",
+          "score": 1.901417,
+          "content": "### Điều 16. Xét duyệt điều chỉnh lương\n\n1. Định kỳ hàng năm, dựa trên tình hình kinh doanh, so sánh với thị trường, đảm bảo hiệu quả lâu dài và cạnh tranh, Công ty tiến hành xem xét điều chỉnh bao gồm: Lương, Phụ cấp, Trợ cấp và định mức tối đa Thưởng V_Bonus cho toàn bộ Nhân viên chính thức làm việc tại Công ty.\n2. Bên cạnh đó, đây cũng là dịp Công ty xem xét các trường hợp điều chỉnh Cấp bậc, thăng chức hoặc giáng chức theo năng lực và hiệu quả làm việc của Nhân viên."
+        }
+      ],
+      "memory_sources": [],
+      "reasoning_trace": [
+        {
+          "step": 1,
+          "tool": "search_knowledge",
+          "args": {
+            "query": "chu kỳ xét tăng lương thường niên thời điểm điều kiện"
+          },
+          "result": "[1] (chunk_id=30a233e2e132cc80a853565860f1045e2d10e2d42fa8559a43bd0d88ae56e75b)\n### Điều 16. Xét duyệt điều chỉnh lương\n\n1. Định kỳ hàng năm, dựa trên tình hình kinh doanh, so sánh với thị trường, đảm..."
+        },
+        {
+          "step": 2,
+          "tool": "search_knowledge",
+          "args": {
+            "query": "điều kiện xét tăng lương thường niên nhân viên chính thức hiệu quả làm việc"
+          },
+          "result": "[1] (chunk_id=30a233e2e132cc80a853565860f1045e2d10e2d42fa8559a43bd0d88ae56e75b)\n### Điều 16. Xét duyệt điều chỉnh lương\n\n1. Định kỳ hàng năm, dựa trên tình hình kinh doanh, so sánh với thị trường, đảm..."
+        },
+        {
+          "step": 3,
+          "tool": "generate_answer",
+          "args": {
+            "question": "Chu kỳ xét tăng lương thường niên tại Công ty thường diễn ra vào thời điểm nào trong năm và điều kiện để được xét là gì?",
+            "chunk_ids": [
+              "30a233e2e132cc80a853565860f1045e2d10e2d42fa8559a43bd0d88ae56e75b"
+            ]
+          },
+          "result": "Dựa trên bằng chứng được cung cấp:\n\n*   **Thời điểm:** Chu kỳ xét tăng lương diễn ra **định kỳ hàng năm**.\n*   **Điều kiện:** Bằng chứng **không nêu rõ** các điều kiện cụ thể để được xét tăng lương (c..."
+        }
+      ],
+      "tools_used": [
+        "search_knowledge",
+        "search_knowledge",
+        "generate_answer"
+      ],
+      "step_timings": [
+        {
+          "step": 1,
+          "kind": "llm",
+          "name": "agent",
+          "elapsed": 1.316
+        },
+        {
+          "step": 2,
+          "kind": "retrieval",
+          "name": "search_knowledge.decompose_question",
+          "elapsed": 1.973
+        },
+        {
+          "step": 3,
+          "kind": "retrieval",
+          "name": "search_knowledge.seed_retrieval",
+          "elapsed": 10.242
+        },
+        {
+          "step": 4,
+          "kind": "retrieval",
+          "name": "search_knowledge.rerank",
+          "elapsed": 0.002
+        },
+        {
+          "step": 5,
+          "kind": "retrieval",
+          "name": "search_knowledge.ircot_step",
+          "elapsed": 2.295
+        },
+        {
+          "step": 6,
+          "kind": "retrieval",
+          "name": "search_knowledge.seed_retrieval",
+          "elapsed": 4.984
+        },
+        {
+          "step": 7,
+          "kind": "retrieval",
+          "name": "search_knowledge.rerank",
+          "elapsed": 0.001
+        },
+        {
+          "step": 8,
+          "kind": "retrieval",
+          "name": "search_knowledge.ircot_step",
+          "elapsed": 2.912
+        },
+        {
+          "step": 9,
+          "kind": "retrieval",
+          "name": "search_knowledge.seed_retrieval",
+          "elapsed": 3.854
+        },
+        {
+          "step": 10,
+          "kind": "retrieval",
+          "name": "search_knowledge.rerank",
+          "elapsed": 0.001
+        },
+        {
+          "step": 11,
+          "kind": "retrieval",
+          "name": "search_knowledge.ircot_step",
+          "elapsed": 9.644
+        },
+        {
+          "step": 12,
+          "kind": "retrieval",
+          "name": "search_knowledge.format_results",
+          "elapsed": 0.001
+        },
+        {
+          "step": 13,
+          "kind": "tool",
+          "name": "search_knowledge",
+          "elapsed": 35.927
+        },
+        {
+          "step": 14,
+          "kind": "llm",
+          "name": "agent",
+          "elapsed": 2.046
+        },
+        {
+          "step": 15,
+          "kind": "retrieval",
+          "name": "search_knowledge.decompose_question",
+          "elapsed": 1.576
+        },
+        {
+          "step": 16,
+          "kind": "retrieval",
+          "name": "search_knowledge.seed_retrieval",
+          "elapsed": 11.775
+        },
+        {
+          "step": 17,
+          "kind": "retrieval",
+          "name": "search_knowledge.rerank",
+          "elapsed": 0.001
+        },
+        {
+          "step": 18,
+          "kind": "retrieval",
+          "name": "search_knowledge.ircot_step",
+          "elapsed": 2.119
+        },
+        {
+          "step": 19,
+          "kind": "retrieval",
+          "name": "search_knowledge.seed_retrieval",
+          "elapsed": 2.268
+        },
+        {
+          "step": 20,
+          "kind": "retrieval",
+          "name": "search_knowledge.rerank",
+          "elapsed": 0.001
+        },
+        {
+          "step": 21,
+          "kind": "retrieval",
+          "name": "search_knowledge.ircot_step",
+          "elapsed": 2.273
+        },
+        {
+          "step": 22,
+          "kind": "retrieval",
+          "name": "search_knowledge.seed_retrieval",
+          "elapsed": 4.062
+        },
+        {
+          "step": 23,
+          "kind": "retrieval",
+          "name": "search_knowledge.rerank",
+          "elapsed": 0.002
+        },
+        {
+          "step": 24,
+          "kind": "retrieval",
+          "name": "search_knowledge.ircot_step",
+          "elapsed": 1.998
+        },
+        {
+          "step": 25,
+          "kind": "retrieval",
+          "name": "search_knowledge.format_results",
+          "elapsed": 0.001
+        },
+        {
+          "step": 26,
+          "kind": "tool",
+          "name": "search_knowledge",
+          "elapsed": 26.088
+        },
+        {
+          "step": 27,
+          "kind": "llm",
+          "name": "agent",
+          "elapsed": 3.634
+        },
+        {
+          "step": 28,
+          "kind": "tool",
+          "name": "generate_answer",
+          "elapsed": 1.149
+        }
+      ],
+      "total_step_time": 70.16,
+      "retrieval_detail": {
+        "sub_questions": [
+          {
+            "q": "Yêu cầu cung cấp các tiêu chí đánh giá cụ thể, thang điểm hoặc điều kiện chi tiết (ví dụ: thời gian làm việc tối thiểu, mức độ hoàn thành KPI) để nhân viên chính thức đủ điều kiện được xét tăng lương thường niên.",
+            "embed_elapsed": 0.558,
+            "routes": {
+              "chunk": {
+                "elapsed": 0.008,
+                "hits": 10,
+                "chunk_ids": [
+                  "d26a052218800e133a6f54d5724a9a15015db83869421994405f5b56f1eae612",
+                  "30a233e2e132cc80a853565860f1045e2d10e2d42fa8559a43bd0d88ae56e75b",
+                  "7dea529a346e303a8d439427d8d600309cc73d19ad3c126a7030eba079af71f3",
+                  "e19cf40b64bd8b21d537fe04224e9c76b12c9ed1ec13030d56f0122031ba0b46",
+                  "cb16c2c7fff8c01f8ff9abfecb3f8f51c03707dc8976bb737e57c774a7786003",
+                  "18b082831141a627d4fc320684fc673226a4c5528995f09d1816cc8929905802",
+                  "103d4d0d9bee67e31c21649d64c99c0da08ae1a8e950ec3776364a5d1aca5dec",
+                  "53322769e4229be158879a36c2195221ac8c98bcbab0d76cbb7177a0131e3435",
+                  "6c3fc9d0769e6414e5c0c528fd21a858d4829c160b9166de81d5b9416ad6d14e",
+                  "e5f7f9fc9292c9a111adf4c977648c7a809f6a009bbe80cd05f8f90c589f8829"
+                ]
+              },
+              "entity": {
+                "elapsed": 0.011,
+                "hits": 10,
+                "seeds_added": [
+                  "Chính sách thời gian làm việc và nghỉ ngơi",
+                  "Yêu cầu chung",
+                  "Điều kiện được tạm ứng lương",
+                  "Chi phí vượt định mức",
+                  "yêu cầu từ phía Công ty",
+                  "Yêu cầu công việc",
+                  "quy định thời gian làm việc",
+                  "không nộp đầy đủ hồ sơ theo yêu cầu",
+                  "Đơn giá tiền lương",
+                  "Yêu cầu từ Công ty"
+                ],
+                "type_filter": [
+                  "amount",
+                  "condition",
+                  "medicalcondition",
+                  "person",
+                  "policy",
+                  "role"
+                ]
+              },
+              "triple": {
+                "elapsed": 0.01,
+                "hits": 10,
+                "seeds_added": [
+                  "vi phạm quy trình nhân viên",
+                  "kéo dài thời hạn nâng lương",
+                  "vi phạm quy trình KPI",
+                  "HĐLĐ/Quyết định tăng lương",
+                  "thông tin nhân viên",
+                  "Quy trình đón tiếp Nhân viên mới",
+                  "Yêu cầu chung",
+                  "vi phạm quy trình đánh giá",
+                  "Chính sách thời gian làm việc và nghỉ ngơi",
+                  "Nhân viên",
+                  "vi phạm quy trình mô tả công việc",
+                  "Xét duyệt điều chỉnh lương",
+                  "hiệu quả làm việc",
+                  "Tiền lương thử việc",
+                  "mức lương tối thiểu vùng",
+                  "Làm thêm giờ",
+                  "yêu cầu từ phía Công ty"
+                ],
+                "type_filter": [
+                  "applies_to",
+                  "has_amount",
+                  "requires_condition"
+                ]
+              },
+              "community": {
+                "elapsed": 0.006,
+                "hits": 3,
+                "seeds_added": [
+                  "Phúc lợi nhân dịp đặc biệt",
+                  "Điều chỉnh thời gian nghỉ thai sản",
+                  "Điều chỉnh chính sách trích quỹ xe",
+                  "Phí quá cước",
+                  "Tổng thu nhập những ngày nghỉ tính theo Lương cơ bản và V_Bonus tối đa trên HĐLĐ - Số tiền trợ cấp BHXH chi trả",
+                  "ngày Thứ Bảy và Chủ nhật",
+                  "Chính sách ưu đãi đặc biệt",
+                  "nghỉ phát sinh",
+                  "Thời gian còn lại của vợ cho đến khi con đủ 06 tháng tuổi",
+                  "500",
+                  "với định mức phụ",
+                  "ngân sách từng năm",
+                  "visa dài hạn",
+                  "sau đây gọi",
+                  "Số lần tạm ứng tối đa",
+                  "1 lần cho một trường hợp điều trị bệnh",
+                  "i gian làm ngoài giờ tối thiểu được tính",
+                  "1 giờ làm việc",
+                  "n ngay nghỉ việc dưới nửa ngày được tính",
+                  "nửa ngày",
+                  "nghỉ việc từ nửa ngày trở lên được tính",
+                  "60 phút và được tính vào thời gian làm v",
+                  "ít nhất 30 phút",
+                  "ợc nghỉ tính bình quân một tháng ít nhất",
+                  "bốn ngày",
+                  "định mức hàng tháng Định mức hỗ trợ tùy",
+                  "vào cấp bậc",
+                  "Định mức hưởng hỗ trợ điện thoại sẽ tùy",
+                  "và cuối cùng",
+                  "danh sách người nhận đã được thêm",
+                  "iên được duyệt theo tháng nhưng dưới đây",
+                  "ngân sách tương ứng sẽ là",
+                  "Công ty Cổ phần VNG bầu ra với nhiệm kỳ",
+                  "ủa Ban Chấp hành được phổ biến chậm nhất",
+                  "một",
+                  "Marathon 2024 vì cả hai sự kiện này cùng",
+                  "Nhóm A",
+                  "tháng ít nhất",
+                  "bốn",
+                  "01 tháng làm việc để tính ngày nghỉ hằng",
+                  "03 ngày trong một tháng được hưởng nguyê",
+                  "ngày hết hiệu lực của HĐLĐ hiện tại tùy",
+                  "thời hiệu xử lý kỷ luật lao động tối đa",
+                  "mười hai",
+                  "Bonus",
+                  "khoản thưởng dựa vào đánh giá mức độ hoà",
+                  "Chị",
+                  "____________ ngày theo chính sách Công t",
+                  "lương và các khoản chi trả khác nếu trên",
+                  "thu nhập trước thuế và sẽ được trích nộp",
+                  "theo Hợp Đồng này",
+                  "thu nhập trước thuế",
+                  "với điều kiện",
+                  "thông tin đó được Bên Thứ Ba có được một",
+                  "được Công Ty thanh toán một khoản hỗ trợ",
+                  "______ VNĐ mỗi tháng trong thời gian thự",
+                  "tiền công và phúc lợi mà Công Ty chi trả",
+                  "điều kiện nhận khoản hỗ trợ này",
+                  "cam kết làm việc đủ 12 tháng kể từ thời",
+                  "rợ chi phí xăng xe đi làm cho một số NLĐ",
+                  "một số văn phòng không nằm tại trung tâm",
+                  "Thưởng khác sẽ phụ",
+                  "vào từng chương trình cụ thể và ngân sác",
+                  "nghỉ việc dưới nửa ngày được tính",
+                  "bận việc riêng đột xuất",
+                  "Chi phí lưu trú Chi phí lưu trú",
+                  "giá tiền khách sạn hoặc giá tiền thuê nh",
+                  "số tiền được trừ khỏi giá trị tổng cộng",
+                  "phương tiện di chuyển có thể",
+                  "máy bay",
+                  "cấp bảng kê chi phí thì số ngày nằm viện",
+                  "ngày xuất viện trừ đi ngày nhập viện",
+                  "nếu có",
+                  "một trong hai điều kiện sau",
+                  "trừ khi",
+                  "hành khách mua vé trên máy bay của một h",
+                  "hành động cứu người",
+                  "ột nơi đặc biệt chỉ có mục đích duy nhất",
+                  "phục vụ cho người già",
+                  "ngày thời hạn bảo hiểm",
+                  "ngày tái tục hợp đồng",
+                  "bất kể số tiền yêu cầu bồi thường",
+                  "bao nhiêu",
+                  "Nếu ngày ghi hóa đơn không",
+                  "giá trị 05 ngày phải nộp kèm hóa đơn bán",
+                  "kỳ lương",
+                  "01 giờ",
+                  "1 giờ",
+                  "năm dương lịch từ 1/1 đến 31/12",
+                  "40 giờ/tuần",
+                  "Sáng 8g30 – 12g00",
+                  "Chiều 13g00 – 17g30",
+                  "10 giờ trong một ngày",
+                  "48 giờ trong một tuần",
+                  "Hành chính chính văn phòng",
+                  "thứ hai đến thứ sáu",
+                  "Sáng 8g30 – 12g00, Chiều 13g00 – 17g30",
+                  "Thứ bảy và chủ nhật: Ngày nghỉ hàng tuần",
+                  "44 giờ trong một tuần",
+                  "dài hạn",
+                  "8h đến 20h",
+                  "thứ hai đến thứ bảy",
+                  "8h đến 12h",
+                  "buổi chiều",
+                  "Kéo dài thời hạn nâng lương",
+                  "Tối đa sáu (06) tháng",
+                  "HĐLĐ lần ba",
+                  "Thời giờ làm việc",
+                  "8:30 sáng đến 17:30 chiều",
+                  "thứ Hai đến thứ Sáu",
+                  "01 tiếng",
+                  "12:00 đến 13:00",
+                  "08:30 – 17:30",
+                  "Thứ Hai đến Thứ Sáu",
+                  "12:00-13:00",
+                  "08 giờ/ngày",
+                  "48 giờ/tuần",
+                  "7 ngày làm việc",
+                  "mười giờ trong một ngày",
+                  "bốn mươi bốn giờ trong một tuần",
+                  "Thời gian làm việc liên tục",
+                  "Tổng số giờ làm việc",
+                  "mỗi ngày dương lịch",
+                  "1 ngày làm việc",
+                  "5 ngày làm việc",
+                  "Nội trú",
+                  "Bảo lãnh ngoài giờ",
+                  "Thứ hai đến thứ bảy",
+                  "Chủ nhật",
+                  "Thứ 2 đến Thứ 7",
+                  "08h đến 20h",
+                  "08h đến 12h",
+                  "20,000,000 đồng",
+                  "2,000,000 đồng",
+                  "2/3 tổng số Ủy viên",
+                  "Mức trợ cấp",
+                  "Tổng thu nhập những ngày nghỉ",
+                  "Tổng thu nhập những ngày nghỉ tính theo Lương Cơ bản và mức thưởng V_Bonus tối đa trên HĐLĐ - Số tiền trợ cấp do BHXH chi trả",
+                  "Số tuổi của VNG x 100,000 đồng",
+                  "Số tuổi VNG × 100,000 đồng",
+                  "số tuổi VNG x 100,000 VNĐ",
+                  "Định mức hỗ trợ tiền gửi xe",
+                  "180,000 – 300,000 đồng/tháng",
+                  "990,000 đồng/tháng",
+                  "Định mức",
+                  "Công nợ",
+                  "4 bản chính",
+                  "100,000 đồng",
+                  "75% lương đóng BHXH",
+                  "55% lương đóng BHXH",
+                  "65% lương đóng BHXH",
+                  "180,000 đồng/tháng – 300,000 đồng/tháng",
+                  "Mức hỗ trợ tối thiểu",
+                  "Mức hỗ trợ tối đa",
+                  "_______ VND/tháng",
+                  "1,000,000 đồng",
+                  "500,000 đồng",
+                  "Số tiền được phân bổ",
+                  "30,000,000 đồng/tháng",
+                  "Mức hỗ trợ tối đa một (01) tháng lương",
+                  "Mức hỗ trợ tối đa lần đầu",
+                  "Mức hỗ trợ tối đa 30,000,000 đồng",
+                  "20,000,000 đồng/trường hợp",
+                  "Đơn giá tính tiền ăn trưa",
+                  "Giá tiền khách sạn",
+                  "Giá tiền thuê nhà",
+                  "Công ty hỗ trợ tiền ăn trưa với định mức",
+                  "990,000 đồng",
+                  "Hưởng trọn định mức",
+                  "Số ngày làm việc thực tế trong tháng x",
+                  "45,000 đồng",
+                  "ng ty hỗ trợ tiền gửi xe với định mức từ",
+                  "180,000 đồng",
+                  "1,200,000 đồng/tháng",
+                  "2,000,000 đồng/tháng",
+                  "Trợ cấp VNG Campus với định mức",
+                  "1,200,000 đồng",
+                  "nhân viên sẽ được hỗ trợ theo định mức",
+                  "tỷ lệ với số tháng HĐLĐ trước thời hạn",
+                  "Số tuổi của VNG x",
+                  "được nhận tiền mừng khi kết hôn hợp pháp",
+                  "tiền mừng cho em bé thứ hai trở đi",
+                  "ua thử việc được nhận tiền mừng sinh con",
+                  "ùy từng trường hợp cụ thể với mức hỗ trợ",
+                  "30,000,000 đồng",
+                  "thăm hỏi và động viên và không vượt quá",
+                  "10,000,000 đồng",
+                  "phòng ban tổ chức phúng viếng và hỗ trợ",
+                  "xét hỗ trợ phù hợp nhưng không vượt quá",
+                  "Số ngày làm việc thực tế × định mức tháng",
+                  "Ngày công tính lương của tháng",
+                  "01 chuyến bay khứ hồi",
+                  "trưa cho toàn bộ Nhân viên với định mức",
+                  "990.000 đồng",
+                  "khấu trừ lương",
+                  "500,000 đồng/tháng",
+                  "Bậc 2.3-3.3",
+                  "300,000 đồng/tháng",
+                  "200,000 đồng/tháng",
+                  "20,000,000 đồng/tháng",
+                  "15,000,000 đồng/tháng",
+                  "3,000,000 đồng/tháng",
+                  "1,500,000 đồng/tháng",
+                  "500,000 VNĐ",
+                  "BHSK người thân do Công ty tài trợ",
+                  "6,500,000 đồng/năm",
+                  "289,976 nghìn đồng",
+                  "Lương cơ bản + V_Bonus",
+                  "tỉ lệ 1:1",
+                  "4,500,000 VND/tháng",
+                  "3,000,000 VND/tháng",
+                  "1,500,000 VND/tháng",
+                  "2,000,000 VND/tháng",
+                  "500,000 VND/tháng",
+                  "300,000 VND/tháng",
+                  "200,000 VND/tháng",
+                  "10000000 VNĐ",
+                  "3000000 VNĐ",
+                  "3.000.000 VNĐ",
+                  "Số lượng ít",
+                  "khấu trừ vào lương",
+                  "Bậc 2.3–3.3",
+                  "2 bản",
+                  "Số tiền tạm ứng",
+                  "2 bản chính",
+                  "mười ba (13) Điều",
+                  "VND/tháng",
+                  "Tối đa VND/tháng",
+                  "990,000 VNĐ/tháng",
+                  "hạn mức",
+                  "234,000 đồng/tháng",
+                  "2,808,000 đồng/năm",
+                  "một lần",
+                  "Mức hỗ trợ Đoàn viên",
+                  "không quá",
+                  "234,000 đồng",
+                  "2,808,000 đồng",
+                  "3,000,000 VND",
+                  "Tổng hóa đơn tài chính",
+                  "5 triệu đồng",
+                  "VND",
+                  "bản gốc",
+                  "Ngân sách tiếp khách",
+                  "Hạn mức quà tặng",
+                  "990,000 VNĐ",
+                  "số tuổi của VNG x",
+                  "100,000 VNĐ",
+                  "990.000 VND/tháng",
+                  "Trọng tài viên",
+                  "VND 100,000",
+                  "Hỗ trợ từ Kinh phí Công đoàn",
+                  "số tiền thực tế phát sinh",
+                  "1.000.000 VND",
+                  "số tiền thực tế",
+                  "1.000.000 VND/quà",
+                  "2.000.000 VND/quà",
+                  "500.000 VND/người",
+                  "30 USD/người",
+                  "50 USD/người",
+                  "100 USD/người",
+                  "Bệnh do các nguyên nhân khác",
+                  "1,000,000 VNĐ",
+                  "đi khám ngoại trú với chi phí phát sinh",
+                  "1,500,000 VNĐ",
+                  "mức một lần khám của người được bảo hiểm",
+                  "3,100,000 VNĐ",
+                  "×",
+                  "Người được bảo hiểm tự chi trả",
+                  "700,000 VNĐ",
+                  "mức quyền lợi ngoại trú còn lại của NĐBH",
+                  "Toàn bộ phần chi phí vượt quá hạn mức",
+                  "g số tiền người được bảo hiểm tự chi trả",
+                  "Theo hạn mức tối đa",
+                  "2% Số tiền bảo hiểm tối đa",
+                  "5% STBH tối đa",
+                  "Tổng mức trách nhiệm bảo hiểm",
+                  "VNĐ 2.100.000.000/hợp đồng",
+                  "VNĐ 2.100.000.000/vụ",
+                  "2.100.000.000 VNĐ/vụ",
+                  "500,000 VNĐ/người/năm",
+                  "1,000,000 đồng/năm",
+                  "Tỷ lệ %",
+                  "300,000 VNĐ"
+                ]
+              }
+            }
+          }
+        ],
+        "path_traversal": {
+          "elapsed": 2.933,
+          "seed_count": 307,
+          "expanded_nodes": 307,
+          "graph_chunks": 238,
+          "inv_rels_filter": [
+            "applies_to",
+            "has_amount",
+            "requires_condition"
+          ]
+        },
+        "total_candidates": 301,
+        "total_seeds": 26
+      },
+      "session_id": null,
+      "usage": {
+        "llm_calls": 12,
+        "input_tokens": 26101,
+        "output_tokens": 2382,
+        "total_tokens": 28483
+      },
+      "mode": "agent",
+      "sources": [
+        {
+          "chunk_id": "30a233e2e132cc80a853565860f1045e2d10e2d42fa8559a43bd0d88ae56e75b",
+          "document_id": "doc_b8a1e08191f021bb",
+          "score": 1.901417,
+          "content": "### Điều 16. Xét duyệt điều chỉnh lương\n\n1. Định kỳ hàng năm, dựa trên tình hình kinh doanh, so sánh với thị trường, đảm bảo hiệu quả lâu dài và cạnh tranh, Công ty tiến hành xem xét điều chỉnh bao gồm: Lương, Phụ cấp, Trợ cấp và định mức tối đa Thưởng V_Bonus cho toàn bộ Nhân viên chính thức làm việc tại Công ty.\n2. Bên cạnh đó, đây cũng là dịp Công ty xem xét các trường hợp điều chỉnh Cấp bậc, thăng chức hoặc giáng chức theo năng lực và hiệu quả làm việc của Nhân viên."
+        }
+      ],
+      "ablation": {
+        "use_memory": false,
+        "use_graph_rag": true,
+        "memory": {
+          "save_turns": true,
+          "use_session_memory": true,
+          "use_long_term_memory": true,
+          "use_graph_expand": true,
+          "use_rerank": true
+        },
+        "retrieval": {
+          "use_chunk_vectors": true,
+          "use_node_vectors": true,
+          "use_triplet_vectors": true,
+          "use_community_vectors": true,
+          "use_graph_expand": true,
+          "use_graph_boost": true,
+          "use_decompose": true,
+          "use_ircot": true
+        }
+      }
+    },
+    "elapsed": 70.35,
+    "error": null
+  }
+]

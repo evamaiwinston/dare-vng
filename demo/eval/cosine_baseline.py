@@ -1,6 +1,6 @@
 """Cosine-similarity baseline for context attribution + top-k log-prob eval.
 
-Runs the context_attribution pipeline on a mock QA example at several ablation
+Runs the dare attribution pipeline on a mock QA example at several ablation
 budgets (default 32 / 64 / 128) and, alongside it, scores every source with a
 plain embedding cosine-similarity baseline. Both methods score the SAME set of
 sources (the markdown-partitioned spans of the context), so the per-source
@@ -14,10 +14,10 @@ large drop. We report the drop for k = 1, 3, 5.
     logprob_drop(method, k) = logprob(response | full context)
                             - logprob(response | context minus the method's top-k)
 
-Nothing in the context_attribution module is touched: this only imports its
-entry points (`load_mock`, `prepare_inputs`, `attribute_response`, and the
-internal `_api_response_token_logprobs` used to score a masked context) the same
-way `demo/runner.py` imports the public ones.
+Nothing in the dare attribution module is touched: this only imports its
+entry points (`load_mock`, `prepare_inputs`, `attribute_response`) plus an
+`OpenAICompatProvider` to score a masked context — the same public provider the
+attribution engine uses.
 
 Output: a JSON file under `demo/eval/results/` holding, per source, its
 context-cite score at each ablation budget and its cosine similarity to both the
@@ -42,7 +42,7 @@ from pathlib import Path
 
 import numpy as np
 
-# Make the `context_attribution` package importable from any cwd (mirrors the
+# Make the `dare` package importable from any cwd (mirrors the
 # bootstrap in demo/runner.py).
 REPO_ROOT = Path(__file__).resolve().parents[2]
 if str(REPO_ROOT) not in sys.path:
@@ -51,15 +51,15 @@ if str(REPO_ROOT) not in sys.path:
 from dotenv import load_dotenv  # noqa: E402
 from openai import OpenAI  # noqa: E402
 
-from context_attribution.context_cite import (  # noqa: E402
-    _api_response_token_logprobs,
+from dare.attribution import (  # noqa: E402
     attribute_response,
     load_mock,
     prepare_inputs,
     resolve_query,
 )
-from context_attribution.mocks import resolve_mock  # noqa: E402
-from context_attribution.partitioner import MarkdownContextPartitioner  # noqa: E402
+from dare.providers import OpenAICompatProvider  # noqa: E402
+from dare.mocks import resolve_mock  # noqa: E402
+from dare.partitioner import MarkdownContextPartitioner  # noqa: E402
 from context_cite.context_citer import DEFAULT_PROMPT_TEMPLATE  # noqa: E402
 
 load_dotenv(dotenv_path=REPO_ROOT / ".env")
@@ -116,16 +116,17 @@ def cosine(a: np.ndarray, b: np.ndarray) -> np.ndarray:
 # and ablated numbers are directly comparable.
 
 
-def response_logprob(partitioner, mask: np.ndarray, query: str, response: str) -> float:
+def response_logprob(partitioner, mask: np.ndarray, query: str, response: str, provider) -> float:
     """Total log-prob of `response` given the context kept by `mask`.
 
     `mask` is a boolean array over sources (True = keep). The kept sources are
     re-joined by the partitioner, dropped into the pipeline's prompt template,
-    and scored by summing the per-token response log-probs from the endpoint.
+    and scored by summing the per-token response log-probs the `provider`
+    returns (the same LogprobProvider the attribution engine uses).
     """
     context = partitioner.get_context(mask)
     user_content = DEFAULT_PROMPT_TEMPLATE.format(context=context, query=query)
-    token_logprobs = _api_response_token_logprobs(user_content, response)
+    token_logprobs = provider.score_response(user_content, response)
     return float(sum(lp for _, lp in token_logprobs))
 
 
@@ -135,6 +136,7 @@ def topk_logprob_drops(
     response: str,
     method_scores: dict[str, np.ndarray],
     ks: list[int],
+    provider,
 ) -> dict:
     """Drop in response log-prob after removing each method's top-k sources.
 
@@ -145,7 +147,7 @@ def topk_logprob_drops(
     """
     n = partitioner.num_sources
     full_mask = np.ones(n, dtype=bool)
-    baseline = response_logprob(partitioner, full_mask, query, response)
+    baseline = response_logprob(partitioner, full_mask, query, response, provider)
     print(f"Baseline log-prob (full context): {baseline:.3f}")
 
     cache: dict[frozenset, float] = {}
@@ -155,7 +157,7 @@ def topk_logprob_drops(
         if key not in cache:
             mask = full_mask.copy()
             mask[list(removed)] = False
-            cache[key] = baseline - response_logprob(partitioner, mask, query, response)
+            cache[key] = baseline - response_logprob(partitioner, mask, query, response, provider)
         return cache[key]
 
     methods_out: dict[str, dict] = {}
@@ -236,7 +238,8 @@ def run(
     print("\n--- Top-k log-prob drop eval ---")
     method_scores = {f"cc_{n}": np.array([cc_scores[n][s] for s in sources]) for n in ablations}
     method_scores["similarity"] = cos_response
-    eval_block = topk_logprob_drops(partitioner, query, response, method_scores, ks)
+    provider = OpenAICompatProvider()
+    eval_block = topk_logprob_drops(partitioner, query, response, method_scores, ks, provider)
     eval_block["similarity_basis"] = "cosine_response"
 
     result = {

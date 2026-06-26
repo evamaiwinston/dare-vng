@@ -1,4 +1,4 @@
-"""Adapter between the demo UI and the context_attribution module.
+"""Adapter between the demo UI and the dare package.
 
 This is the ONLY place the demo touches the pipeline. The algorithm is treated
 as a black box: we import `run_pipeline` and call it, nothing more. Isolating
@@ -17,12 +17,12 @@ import sys
 from pathlib import Path
 
 # Allow `gradio`/`python demo/app.py` to run from any cwd: ensure the repo root
-# (which contains the `context_attribution` package) is importable.
+# (which contains the `dare` package) is importable.
 REPO_ROOT = Path(__file__).resolve().parent.parent
 if str(REPO_ROOT) not in sys.path:
     sys.path.insert(0, str(REPO_ROOT))
 
-from context_attribution.context_cite import (  # noqa: E402
+from dare.attribution import (  # noqa: E402
     run_pipeline,
     load_mock,
     fetch_backend,
@@ -33,7 +33,7 @@ from context_attribution.context_cite import (  # noqa: E402
 )
 # Re-export mock discovery so the UI can import everything from `runner` (which
 # already put the repo root on sys.path) rather than re-resolving the path.
-from context_attribution.mocks import (  # noqa: E402,F401
+from dare.mocks import (  # noqa: E402,F401
     MOCK_DIR,
     list_mocks,
     resolve_mock,
