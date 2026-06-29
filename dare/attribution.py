@@ -35,8 +35,9 @@ from context_cite import ContextCiter
 from context_cite import utils as _cc_utils
 
 from dare.config import Settings
-from dare.partitioner import MarkdownContextPartitioner
+from dare.partitioner import MarkdownContextPartitioner, markdown_unit_spans
 from dare.providers import LogprobProvider, OpenAICompatProvider
+from dare.schema import Source, sources_to_context
 
 
 def _patched_color_scale(val, max_val):
@@ -302,6 +303,37 @@ def prepare_inputs(data: dict, settings: Settings | None = None) -> tuple[str, s
 
 # --- High-level entry point --------------------------------------------------
 
+def _build_citer(
+    context: str,
+    query: str,
+    response: str,
+    *,
+    num_ablations: int = 32,
+    ablation_keep_prob: float = 0.5,
+    batch_size: int = 1,
+    provider: LogprobProvider | None = None,
+    settings: Settings | None = None,
+) -> ContextCiter:
+    """Construct a ContextCiter wired to a logprob provider. Shared by the
+    whole-response and per-unit attribution paths so setup never diverges. The
+    ablation pass is lazy — it runs on the first attribution query and is cached,
+    so further queries against the returned object cost no LLM calls."""
+    settings = settings or SETTINGS
+    provider = provider or OpenAICompatProvider(settings)
+    tokenizer = make_tokenizer(settings.shell_tokenizer)
+    model = APIModel(response=response, provider=provider, tokenizer=tokenizer)
+    return ContextCiter(
+        model=model,
+        tokenizer=tokenizer,
+        context=context,
+        query=query,
+        num_ablations=num_ablations,
+        ablation_keep_prob=ablation_keep_prob,
+        batch_size=batch_size,
+        partitioner=MarkdownContextPartitioner(context),
+    )
+
+
 def attribute_response(
     context: str,
     query: str,
@@ -327,19 +359,10 @@ def attribute_response(
     character offsets into ``response``. Both None (the default) attributes the
     whole response. Pass ``provider`` / ``settings`` to override the endpoint.
     """
-    settings = settings or SETTINGS
-    provider = provider or OpenAICompatProvider(settings)
-    tokenizer = make_tokenizer(settings.shell_tokenizer)
-    model = APIModel(response=response, provider=provider, tokenizer=tokenizer)
-    cc = ContextCiter(
-        model=model,
-        tokenizer=tokenizer,
-        context=context,
-        query=query,
-        num_ablations=num_ablations,
-        ablation_keep_prob=ablation_keep_prob,
-        batch_size=batch_size,
-        partitioner=MarkdownContextPartitioner(context),
+    cc = _build_citer(
+        context, query, response,
+        num_ablations=num_ablations, ablation_keep_prob=ablation_keep_prob,
+        batch_size=batch_size, provider=provider, settings=settings,
     )
     return cc.get_attributions(
         start_idx=start_idx,
@@ -421,3 +444,90 @@ def run_pipeline(
         "num_sources": MarkdownContextPartitioner(context).num_sources,
         "attributions": attributions,
     }
+
+
+# --- Per-unit (per-sentence) attribution -------------------------------------
+
+def _map_unit_to_source(unit_text: str, sources: list[Source]) -> Source | None:
+    """Map an attribution unit (a partitioned context segment) back to the Source
+    chunk it came from, by content containment. Sources don't overlap in the
+    joined context, so containment is unambiguous in practice."""
+    t = unit_text.strip()
+    if not t:
+        return None
+    for src in sources:
+        if t in src.content:
+            return src
+    norm = " ".join(t.split())                        # whitespace-normalized retry
+    for src in sources:
+        if norm in " ".join(src.content.split()):
+            return src
+    return None
+
+
+def _attribution_rows(df, sources: list[Source]) -> list[dict]:
+    """Turn a get_attributions dataframe (Score, Source) into rows that carry the
+    originating chunk's identity + retrieval score, sorted by attribution score."""
+    rows = []
+    for score, text in zip(df["Score"], df["Source"]):
+        src = _map_unit_to_source(text, sources)
+        rows.append({
+            "score": float(score),
+            "source_text": text,
+            "chunk_id": src.chunk_id if src else None,
+            "doc_id": src.doc_id if src else None,
+            "retrieval_score": src.score if src else None,
+            "origin": src.origin if src else None,
+        })
+    rows.sort(key=lambda r: -r["score"])
+    return rows
+
+
+def attribute_by_sentence(
+    query: str,
+    response: str,
+    sources: list[Source],
+    *,
+    num_ablations: int = 32,
+    ablation_keep_prob: float = 0.5,
+    batch_size: int = 1,
+    provider: LogprobProvider | None = None,
+    settings: Settings | None = None,
+) -> dict:
+    """Attribute each response *unit* (sentence / bullet / list item / table) from
+    a single ablation pass, mapping every attribution back to its Source chunk.
+
+    The ablation pass runs once; each unit is a free re-slice of the cached
+    logit-probs (no extra LLM calls). Response units are split markdown-aware
+    (the same splitter as the context), so tables/bullets in the answer stay
+    intact rather than being chopped by naive sentence tokenization.
+
+    Returns ``{response, whole, units}`` where ``whole`` and each
+    ``units[i]["attributions"]`` is a list of rows
+    ``{score, source_text, chunk_id, doc_id, retrieval_score, origin}``. No
+    grounded/ungrounded verdict is made here — that's the diagnosis layer's job.
+    """
+    context = sources_to_context(sources)
+    cc = _build_citer(
+        context, query, response,
+        num_ablations=num_ablations, ablation_keep_prob=ablation_keep_prob,
+        batch_size=batch_size, provider=provider, settings=settings,
+    )
+    _ = cc._logit_probs                               # trigger the ablation pass once (cached)
+    resp = cc.response                                # exactly what ContextCite scored
+
+    whole = _attribution_rows(
+        cc.get_attributions(as_dataframe=True, verbose=False).data, sources
+    )
+
+    units = []
+    for s, e in markdown_unit_spans(resp):
+        try:
+            df = cc.get_attributions(start_idx=s, end_idx=e, as_dataframe=True, verbose=False).data
+            attribs = _attribution_rows(df, sources)
+        except Exception as ex:                       # noqa: BLE001 — never sink the record
+            logger.warning("per-unit attribution failed for span (%d,%d): %s", s, e, ex)
+            attribs = []
+        units.append({"text": resp[s:e], "span": [s, e], "attributions": attribs})
+
+    return {"response": resp, "whole": whole, "units": units}

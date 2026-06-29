@@ -77,6 +77,118 @@ def _sentence_spans(text: str) -> List[tuple[int, int]]:
     return spans
 
 
+# -- markdown unit splitting (shared) ----------------------------------------
+# Used both for context -> sources and for splitting a response into target
+# units, so an answer (which also carries tables/bullets) is segmented the same
+# way the context is.
+
+def _line_spans(text: str) -> List[tuple[int, int, str]]:
+    """(content_start, content_end, raw_line) per line. content_end excludes the
+    trailing newline so it falls into the separator, not the unit."""
+    out: List[tuple[int, int, str]] = []
+    idx = 0
+    for raw in text.splitlines(keepends=True):
+        content_end = idx + len(raw.rstrip("\n"))
+        out.append((idx, content_end, raw))
+        idx += len(raw)
+    return out
+
+
+def _consume_table(lines, i, spans) -> int:
+    """If lines[i:] start a real table, append one span and return the next index.
+    Otherwise return 0 to signal "not a table"."""
+    n = len(lines)
+    j = i
+    while j < n and _is_table_row(lines[j][2].strip()):
+        j += 1
+    block = lines[i:j]
+    if not any(_is_table_delim(ln[2]) for ln in block):
+        return 0
+    spans.append((block[0][0], block[-1][1]))
+    return j
+
+
+def _consume_list_item(lines, i, spans) -> int:
+    """Append one list-item span (marker line + indented continuations)."""
+    n = len(lines)
+    start = lines[i][0]
+    end = lines[i][1]
+    i += 1
+    while i < n:
+        _, c_end, raw = lines[i]
+        stripped = raw.strip()
+        if stripped == "" or _is_header(stripped) or _is_list_item(stripped):
+            break
+        if "|" in stripped:  # start of a table ends the item
+            break
+        if raw[:1] not in (" ", "\t"):  # non-indented => new block
+            break
+        end = c_end
+        i += 1
+    spans.append((start, end))
+    return i
+
+
+def _consume_paragraph(text, lines, i, spans) -> int:
+    """Gather consecutive plain-text lines and emit one span per sentence."""
+    n = len(lines)
+    start = lines[i][0]
+    end = lines[i][1]
+    i += 1
+    while i < n:
+        _, c_end, raw = lines[i]
+        stripped = raw.strip()
+        if (
+            stripped == ""
+            or _is_header(stripped)
+            or _is_list_item(stripped)
+            or "|" in stripped
+        ):
+            break
+        end = c_end
+        i += 1
+    para = text[start:end]
+    for s_start, s_end in _sentence_spans(para):
+        spans.append((start + s_start, start + s_end))
+    return i
+
+
+def markdown_unit_spans(text: str) -> List[tuple[int, int]]:
+    """(start, end) char offsets of every markdown unit in ``text``.
+
+    A unit is a sentence (within prose), a bullet / numbered list item (with its
+    indented continuations), or a whole table; headers and blank lines are
+    skipped. Shared by the context partitioner (to make sources) and by per-unit
+    response attribution (to make target spans), so both sides segment structured
+    text identically.
+    """
+    lines = _line_spans(text)
+    n = len(lines)
+    spans: List[tuple[int, int]] = []
+    i = 0
+    while i < n:
+        start, end, raw = lines[i]
+        stripped = raw.strip()
+
+        if stripped == "" or _is_header(stripped):
+            i += 1  # blank lines and headers are not units
+            continue
+
+        if _is_table_row(stripped):
+            consumed = _consume_table(lines, i, spans)
+            if consumed:
+                i = consumed
+                continue
+            # Not a real table -- fall through and treat as plain text.
+
+        if _is_list_item(stripped):
+            i = _consume_list_item(lines, i, spans)
+            continue
+
+        i = _consume_paragraph(text, lines, i, spans)
+    return spans
+
+
 class MarkdownContextPartitioner(BaseContextPartitioner):
     """Partition markdown context into header-stripped, structure-aware sources."""
 
@@ -88,7 +200,7 @@ class MarkdownContextPartitioner(BaseContextPartitioner):
     # -- splitting -----------------------------------------------------------
 
     def split_context(self) -> None:
-        spans = self._unit_spans()
+        spans = markdown_unit_spans(self.context)
         context = self.context
         parts: List[str] = []
         separators: List[str] = []
@@ -99,104 +211,6 @@ class MarkdownContextPartitioner(BaseContextPartitioner):
             prev_end = end
         self._parts = parts
         self._separators = separators
-
-    def _line_spans(self) -> List[tuple[int, int, str]]:
-        """Return (content_start, content_end, raw_line) per line, with offsets.
-
-        ``content_end`` excludes the trailing newline so it falls into the
-        separator rather than the source.
-        """
-        out: List[tuple[int, int, str]] = []
-        idx = 0
-        for raw in self.context.splitlines(keepends=True):
-            content_end = idx + len(raw.rstrip("\n"))
-            out.append((idx, content_end, raw))
-            idx += len(raw)
-        return out
-
-    def _unit_spans(self) -> List[tuple[int, int]]:
-        """Compute (start, end) content offsets of every source unit."""
-        lines = self._line_spans()
-        n = len(lines)
-        spans: List[tuple[int, int]] = []
-        i = 0
-        while i < n:
-            start, end, raw = lines[i]
-            stripped = raw.strip()
-
-            if stripped == "" or _is_header(stripped):
-                i += 1  # blank lines and headers are not sources
-                continue
-
-            if _is_table_row(stripped):
-                consumed = self._consume_table(lines, i, spans)
-                if consumed:
-                    i = consumed
-                    continue
-                # Not a real table -- fall through and treat as plain text.
-
-            if _is_list_item(stripped):
-                i = self._consume_list_item(lines, i, spans)
-                continue
-
-            i = self._consume_paragraph(lines, i, spans)
-        return spans
-
-    def _consume_table(self, lines, i, spans) -> int:
-        """If lines[i:] start a real table, append one span and return the next
-        index. Otherwise return 0 to signal "not a table"."""
-        n = len(lines)
-        j = i
-        while j < n and _is_table_row(lines[j][2].strip()):
-            j += 1
-        block = lines[i:j]
-        if not any(_is_table_delim(ln[2]) for ln in block):
-            return 0
-        spans.append((block[0][0], block[-1][1]))
-        return j
-
-    def _consume_list_item(self, lines, i, spans) -> int:
-        """Append one list-item span (marker line + indented continuations)."""
-        n = len(lines)
-        start = lines[i][0]
-        end = lines[i][1]
-        i += 1
-        while i < n:
-            _, c_end, raw = lines[i]
-            stripped = raw.strip()
-            if stripped == "" or _is_header(stripped) or _is_list_item(stripped):
-                break
-            if "|" in stripped:  # start of a table ends the item
-                break
-            if raw[:1] not in (" ", "\t"):  # non-indented => new block
-                break
-            end = c_end
-            i += 1
-        spans.append((start, end))
-        return i
-
-    def _consume_paragraph(self, lines, i, spans) -> int:
-        """Gather consecutive plain-text lines and emit one span per sentence."""
-        n = len(lines)
-        start = lines[i][0]
-        end = lines[i][1]
-        i += 1
-        while i < n:
-            _, c_end, raw = lines[i]
-            stripped = raw.strip()
-            if (
-                stripped == ""
-                or _is_header(stripped)
-                or _is_list_item(stripped)
-                or "|" in stripped
-            ):
-                break
-            end = c_end
-            i += 1
-        para = self.context[start:end]
-        for s_start, s_end in _sentence_spans(para):
-            spans.append((start + s_start, start + s_end))
-        return i
 
     # -- cached views --------------------------------------------------------
 

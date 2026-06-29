@@ -1,0 +1,53 @@
+[
+  {
+    "qa_id": "qa-luongvh-0001-en",
+    "query": "What is the maximum monthly taxi allowance for a VNG employee at job level 4.2?",
+    "answer": "A VNG employee at job level 4.2 is entitled to a maximum taxi allowance of 4,500,000 VND per month.",
+    "knowledge_sources": [
+      {
+        "chunk_id": "204adf0ff219c60f661bd8f95bff992833ab1979cefe4b1979deba7b403d892c",
+        "document_id": "doc_a2734411efe0bd06",
+        "score": 2.140087,
+        "content": "## 2.3. Eligible users and monthly allowance\n\nThe support allowance depends on job level, specified as follows:\n\n| Job level | Allowance VND/month |\n|---|---:|\n| 4.2 | 4,500,000 |\n| 4.1 |  |\n| 3.3 | 3,000,000 |\n| 3.2 |  |\n| 3.1 |  |\n| 2.3 | 1,500,000 |\n\n- For newly joined Employees, AF will grant access to the Company's Grab account and send login and usage instructions within 03 working days from the start date.\n- For traditional taxis, AF will issue a taxi card within 10-14 days from the date the Employee submits the request.\n- If card spending in a month is lower than the entitled allowance, the difference will not be refunded. If actual card spending in the month is higher than the entitled allowance, it will be deducted from that month's salary.\n- In the case of using a personal car, the Employee may request to convert the Taxi Support into a cash-only Fuel Allowance added to the monthly salary."
+      }
+    ]
+  },
+  {
+    "qa_id": "qa-luongvh-0002-en",
+    "query": "On which day of each month does the Vinasun taxi card close its accounts payable?",
+    "answer": "The Vinasun taxi card closes its accounts payable on the 24th of each month.",
+    "knowledge_sources": [
+      {
+        "chunk_id": "f5bc8ecd09fcf097bcb43b681963f6448e0f5bd53ed8c701f0f4378dbdfb2806",
+        "document_id": "doc_a2734411efe0bd06",
+        "score": 1.949388,
+        "content": "### 2.6.1. Vinasun & Mai Linh cards\n\n- The user calls a taxi using the phone number printed on the back of the card.\n- On arrival, the user confirms the fare by:\n  - The driver swipes the card through the EDC/POS machine and enters the amount to be paid.\n  - The user checks the amount & enters the PIN. The PIN is the cardholder's electronic signature and must be kept confidential.\n  - The user signs the 2 invoice copies and keeps 1 copy to reconcile accounts payable.\n\n**Note**\n\n- Vinasun closes accounts payable on the 24th of each month; April's payables aggregate costs from 25/03 to 24/04.\n- Mai Linh closes accounts payable on the 25th of each month; April's payables aggregate costs from 26/03 to 25/04."
+      }
+    ]
+  },
+  {
+    "qa_id": "qa-luongvh-0003-en",
+    "query": "A Member with 4 years of seniority at VNG needs a salary advance to treat a critical illness. What is the maximum approved advance amount and the maximum repayment period, respectively?",
+    "answer": "Based on evidence [1], for a member with 4 years of seniority (in the \"3 years or more\" group):\n\n*   **Maximum advance amount:** 06 months of gross salary.\n*   **Maximum repayment period:** 18 months (from the month following receipt of the advance).",
+    "knowledge_sources": [
+      {
+        "chunk_id": "7387464543234bf11c3f6ac08af7a823dddb6e36304c13cc6b4696ab94242825",
+        "document_id": "doc_b8a1e08191f021bb",
+        "score": 1.933228,
+        "content": "### Article 17. Salary advance\n\nThe Company applies the Salary Advance Policy to Employees who have passed probation, to provide financial support where the employee or a relative suffers a critical illness.\n\n1. Employees with seniority of 1 year or more may be advanced up to 03 months of gross salary, with a maximum repayment period of 10 months from the month following receipt of the advance.\n2. Employees with seniority of 3 years or more may be advanced up to 06 months of gross salary, with a maximum repayment period of 18 months from the month following receipt of the advance."
+      },
+      {
+        "chunk_id": "aca79e2a9fe63e8900f7a84438b6d90dde26000a7920aed66eceac06864d9eb2",
+        "document_id": "doc_1726111893d7b3d8",
+        "score": 2.009098,
+        "content": "## 2.1. Advance conditions\n\n- The Employee has an unexpected financial need to pay treatment costs for serious or critical illness (per the list of critical illnesses prescribed by the Government / Ministry of Health and the Vietnam General Confederation of Labor) for the Employee or a relative.\n- The Employee has a labor contract valid for at least three (03) months.\n- If the labor contract is about to expire, confirmation from DH on renewing the contract is required.\n- The Employee is not currently repaying another loan, has no disciplinary action in the most recent 06 months, and is not being terminated."
+      },
+      {
+        "chunk_id": "f11503960c2163b7141b745156fd51a892520004c9a42a7db6c6ff9d126a2c8a",
+        "document_id": "doc_8ce8bf746cb2d8ab",
+        "score": 1.933647,
+        "content": "### 2.1. Conditions for salary advance\n\na) The Member has an unexpected financial need to pay illness-treatment costs when the Member or a relative is critically ill (per the list of critical illnesses prescribed by the Government / Ministry of Health and the Vietnam General Confederation of Labor) and needs finances to pay those costs.\n\nb) The Member has a labor contract valid for at least three (03) months.\n\nIf the labor contract is about to expire, confirmation from DH on renewing the next contract term is required.\n\nc) The Member is not currently repaying another loan, was disciplined within the most recent 06 months, and is not being terminated."
+      }
+    ]
+  }
+]

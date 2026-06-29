@@ -20,6 +20,23 @@ from pathlib import Path
 
 
 @dataclass
+class Source:
+    """One retrieved unit, with its identity and rank preserved.
+
+    `position` is the order the RAG returned it — which is the order the model saw
+    it, so it's fidelity-critical and we never reorder by score. `origin` marks a
+    retrieved-context source vs an instruction unit (used later for instruction
+    ablation). Attribution weights map back onto these.
+    """
+    content: str
+    position: int
+    chunk_id: str | None = None
+    doc_id: str | None = None
+    score: float | None = None       # retrieval relevance score, if any
+    origin: str = "context"          # "context" | "instruction"
+
+
+@dataclass
 class RAGRecord:
     id: str
     query: str
@@ -33,6 +50,22 @@ class RAGRecord:
     @property
     def knowledge_sources(self) -> list:
         return self.payload.get("knowledge_sources") or []
+
+    @property
+    def sources(self) -> list[Source]:
+        """Typed, ordered context sources. The single adapter point that knows the
+        VNG field names (knowledge_sources / content / chunk_id / document_id / score);
+        order is preserved exactly as returned."""
+        return [
+            Source(
+                content=k.get("content", ""),
+                position=i,
+                chunk_id=k.get("chunk_id"),
+                doc_id=k.get("document_id"),
+                score=k.get("score"),
+            )
+            for i, k in enumerate(self.knowledge_sources)
+        ]
 
     @property
     def attributable(self) -> bool:
@@ -67,3 +100,13 @@ def load_corpus(path: str | Path, limit: int | None = None) -> list[RAGRecord]:
         objs = data if isinstance(data, list) else [data]
     records = [RAGRecord.from_obj(o, i) for i, o in enumerate(objs)]
     return records[:limit] if limit else records
+
+
+def sources_to_context(sources: list[Source], sep: str = "\n\n") -> str:
+    """Join source contents in order into the context string the engine attributes.
+
+    Order is preserved (never sorted) so the assembled context matches what the
+    model actually saw — re-ordering would attribute against a prompt that never
+    existed.
+    """
+    return sep.join(s.content for s in sources)

@@ -21,36 +21,49 @@ import time
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from pathlib import Path
 
-from dare.attribution import attribute_response, prepare_inputs, resolve_query
+from dare.attribution import attribute_by_sentence, resolve_query
 from dare.config import Settings
 from dare.schema import RAGRecord, load_corpus
 
 
-def attribute_record(rec: RAGRecord, *, provider, num_ablations=32, settings: Settings | None = None) -> dict:
-    """Attribute one record (whole response) and return a result dict with a few
-    rollup signals useful for surfacing weakly-grounded answers."""
-    query = resolve_query(rec.query, rec.payload)
-    context, response = prepare_inputs(rec.payload, settings=settings)
-    styler = attribute_response(
-        context, query, response,
-        num_ablations=num_ablations, provider=provider, settings=settings, verbose=False,
-    )
-    df = styler.data  # columns: Score, Source
-    rows = [{"score": float(s), "source": src} for s, src in zip(df["Score"], df["Source"])]
-    rows.sort(key=lambda r: -r["score"])
+def _unit_top_score(u: dict) -> float:
+    return u["attributions"][0]["score"] if u["attributions"] else 0.0
 
-    top_score = rows[0]["score"] if rows else 0.0
-    total_pos = sum(r["score"] for r in rows if r["score"] > 0)
+
+def attribute_record(rec: RAGRecord, *, provider, num_ablations=32, settings: Settings | None = None) -> dict:
+    """Attribute one record per-unit (sentence / bullet / table) from a single
+    ablation pass, with whole-response rollup signals. Each attribution is mapped
+    back to its Source chunk (chunk_id + retrieval score)."""
+    query = resolve_query(rec.query, rec.payload)
+    res = attribute_by_sentence(
+        query, rec.answer, rec.sources,
+        num_ablations=num_ablations, provider=provider, settings=settings,
+    )
+    whole = res["whole"]          # rows {score, source_text, chunk_id, doc_id, retrieval_score, origin}
+    units = res["units"]
+
+    top_score = whole[0]["score"] if whole else 0.0
+    total_pos = sum(r["score"] for r in whole if r["score"] > 0)
+    weakest = min(units, key=_unit_top_score) if units else None
+
     return {
         "id": rec.id,
         "query": query,
         "answer": rec.answer,
-        "num_sources": len(rows),
+        "num_sources": len(whole),
         "top_score": top_score,
-        "top_source": rows[0]["source"] if rows else "",
+        "top_source": whole[0]["source_text"] if whole else "",
+        "top_chunk_id": whole[0]["chunk_id"] if whole else None,
         # how much one source dominates the positive signal (1.0 = a single source)
         "concentration": (top_score / total_pos) if total_pos > 0 else 0.0,
-        "attributions": rows,
+        # the answer unit least supported by any chunk — the prime failure candidate
+        "weakest_unit": ({
+            "text": weakest["text"],
+            "top_score": _unit_top_score(weakest),
+            "top_chunk_id": weakest["attributions"][0]["chunk_id"] if weakest["attributions"] else None,
+        } if weakest else None),
+        "whole": whole,
+        "units": units,
     }
 
 
@@ -86,6 +99,10 @@ def aggregate(results: list[dict]) -> dict:
     ok = [r for r in results if "error" not in r]
     errs = [r for r in results if "error" in r]
     least_grounded = sorted(ok, key=lambda r: r["top_score"])
+    with_weakest = sorted(
+        (r for r in ok if r.get("weakest_unit")),
+        key=lambda r: r["weakest_unit"]["top_score"],
+    )
     return {
         "records": len(results),
         "ok": len(ok),
@@ -100,6 +117,17 @@ def aggregate(results: list[dict]) -> dict:
                 "top_source": r["top_source"][:70],
             }
             for r in least_grounded
+        ],
+        # the single weakest answer unit per record, weakest first — prime failure
+        # candidates (raw scores; the grounded/ungrounded verdict is the diagnoser's job)
+        "weakest_units": [
+            {
+                "id": r["id"],
+                "top_score": round(r["weakest_unit"]["top_score"], 3),
+                "unit": r["weakest_unit"]["text"][:70],
+                "top_chunk_id": r["weakest_unit"]["top_chunk_id"],
+            }
+            for r in with_weakest
         ],
         "error_ids": [r["id"] for r in errs],
     }
@@ -128,6 +156,35 @@ def write_report(results: list[dict], report: dict, out_dir: str | Path = "runs"
         q = r["query"].replace("|", "\\|")
         s = r["top_source"].replace("|", "\\|").replace("\n", " ")
         lines.append(f"| {r['id']} | {r['top_score']} | {r['concentration']} | {q} | {s} |")
+
+    lines += [
+        "",
+        "## Weakest answer unit per record (lowest top-attribution first)",
+        "",
+        "| id | unit top_score | answer unit | top chunk |",
+        "|----|---------------:|-------------|-----------|",
+    ]
+    for r in report.get("weakest_units", []):
+        u = r["unit"].replace("|", "\\|").replace("\n", " ")
+        lines.append(f"| {r['id']} | {r['top_score']} | {u} | {r['top_chunk_id']} |")
+
+    lines += ["", "## Per-unit attribution by record", ""]
+    for r in results:
+        if "error" in r:
+            continue
+        lines.append(f"### {r['id']} — {r['query'][:70]}")
+        for u in r.get("units", []):
+            top = u["attributions"][0] if u["attributions"] else None
+            t = u["text"].replace("\n", " ")[:70]
+            if top:
+                lines.append(
+                    f"- \"{t}\" → chunk {top['chunk_id']} attr={top['score']:.2f} "
+                    f"(retrieval={top['retrieval_score']})"
+                )
+            else:
+                lines.append(f"- \"{t}\" → (no attribution)")
+        lines.append("")
+
     (run_dir / "summary.md").write_text("\n".join(lines) + "\n")
     return run_dir
 
