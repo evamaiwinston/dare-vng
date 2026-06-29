@@ -24,7 +24,7 @@ import torch
 from pathlib import Path
 from types import SimpleNamespace
 
-from transformers import AutoTokenizer, GPT2TokenizerFast
+from transformers import AutoTokenizer
 
 # Compatibility patches
 from pandas.io.formats.style import Styler
@@ -99,13 +99,15 @@ def _extract_user_content(prompt_text: str) -> str:
     return prompt_text[start:] if end == -1 else prompt_text[start:end]
 
 
-def _align_to_gpt2_tokens(
+def _align_to_shell_tokens(
     api_tokens: list[tuple[str, float]],
     response_text: str,
-    gpt2_response_ids: list[int],
-    tokenizer: GPT2TokenizerFast,
+    shell_response_ids: list[int],
+    tokenizer,
 ) -> list[float]:
-    n = len(gpt2_response_ids)
+    """Align the API's per-token logprobs onto the shell tokenizer's token
+    boundaries (the shell tokenizer is SHELL_TOKENIZER — e.g. Qwen — not GPT-2)."""
+    n = len(shell_response_ids)
     if not api_tokens:
         return [-5.0] * n
 
@@ -150,7 +152,7 @@ def _align_to_gpt2_tokens(
 #   1. Decode prompt / response from input_ids / labels via GPT-2.
 #   2. Parse the ChatML prompt to extract user_content (masked context + query).
 #   3. Ask the provider to score the response (prompt_logprobs=1).
-#   4. Align API token logprobs onto GPT-2 token boundaries.
+#   4. Align API token logprobs onto the shell tokenizer's token boundaries.
 #   5. Build fake logits so _compute_logit_probs returns the aligned values:
 #
 #      logits[b, j, label_id] = logit_prob + log(V-1),  all others = 0
@@ -214,7 +216,7 @@ class APIModel:
             user_content  = _extract_user_content(prompt_text)
 
             api_tokens = self._provider.score_response(user_content, response_text)
-            aligned    = _align_to_gpt2_tokens(api_tokens, response_text, response_ids, self._tokenizer)
+            aligned    = _align_to_shell_tokens(api_tokens, response_text, response_ids, self._tokenizer)
 
             # Row j of the tail corresponds to old global position resp_start-1+j,
             # which is exactly what output.logits[:, -(R+1):-1] reads back.

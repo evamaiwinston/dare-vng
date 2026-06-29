@@ -3,7 +3,7 @@
 Not part of the pipeline. Makes ONE real LLM call with a representative
 context/query/response, then dumps the intermediate structures the attribution
 pipeline relies on, so a model swap (e.g. mini -> NVIDIA Qwen) can be checked
-against the assumptions in `actual_tokens` / `_align_to_gpt2_tokens`.
+against the assumptions in `actual_tokens` / `_align_to_shell_tokens`.
 
 Run:  python -m dare.inspect_logprobs
 """
@@ -16,7 +16,7 @@ import requests
 from dare.config import Settings
 from dare.providers.openai_compat import actual_tokens
 from dare.attribution import (
-    _align_to_gpt2_tokens, make_tokenizer,
+    _align_to_shell_tokens, make_tokenizer,
     load_mock, prepare_inputs,
 )
 
@@ -123,12 +123,12 @@ def main():
         for decoded, lp in api_tokens:
             print(f"  {decoded!r:>20} : {lp:.4f}")
 
-        _rule("5. Tokenizer alignment (API tokens -> GPT-2 boundaries)")
+        _rule("5. Tokenizer alignment (API tokens -> shell-tokenizer boundaries)")
         tok = make_tokenizer()
-        gpt2_ids = tok.encode(RESPONSE, add_special_tokens=False)
-        aligned = _align_to_gpt2_tokens(api_tokens, RESPONSE, gpt2_ids, tok)
-        print(f"GPT-2 response tokens : {len(gpt2_ids)}   API response tokens : {len(api_tokens)}")
-        print("gpt2_token -> aligned_logprob")
+        shell_ids = tok.encode(RESPONSE, add_special_tokens=False)
+        aligned = _align_to_shell_tokens(api_tokens, RESPONSE, shell_ids, tok)
+        print(f"shell tokenizer ({tok.name_or_path}) response tokens : {len(shell_ids)}   API response tokens : {len(api_tokens)}")
+        print("shell_token -> aligned_logprob")
         for tid, alp in zip(gpt2_ids, aligned):
             print(f"  {tok.decode([tid])!r:>20} : {alp:.4f}")
 

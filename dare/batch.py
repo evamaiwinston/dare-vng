@@ -113,8 +113,8 @@ def aggregate(results: list[dict]) -> dict:
                 "id": r["id"],
                 "top_score": round(r["top_score"], 3),
                 "concentration": round(r["concentration"], 3),
-                "query": r["query"][:70],
-                "top_source": r["top_source"][:70],
+                "query": r["query"],
+                "top_source": r["top_source"],
             }
             for r in least_grounded
         ],
@@ -124,7 +124,7 @@ def aggregate(results: list[dict]) -> dict:
             {
                 "id": r["id"],
                 "top_score": round(r["weakest_unit"]["top_score"], 3),
-                "unit": r["weakest_unit"]["text"][:70],
+                "unit": r["weakest_unit"]["text"],
                 "top_chunk_id": r["weakest_unit"]["top_chunk_id"],
             }
             for r in with_weakest
@@ -141,49 +141,60 @@ def write_report(results: list[dict], report: dict, out_dir: str | Path = "runs"
     (run_dir / "results.json").write_text(json.dumps(results, indent=2, ensure_ascii=False))
     (run_dir / "report.json").write_text(json.dumps(report, indent=2, ensure_ascii=False))
 
+    def cell(text, n=90):
+        """One-line, length-capped cell for tables."""
+        t = " ".join((text or "").split())
+        return (t[: n - 1] + "…") if len(t) > n else t
+
+    def short(cid):
+        return cid[:8] if cid else "—"
+
     lines = [
         f"# Batch report — {stamp}",
         "",
         f"- records: **{report['records']}**  (ok: {report['ok']}, errors: {report['errors']})",
         f"- avg sources/record: {report['avg_num_sources']}",
         "",
-        "## Least-grounded records (lowest top attribution score first)",
+        "_attr = attribution weight (higher ⇒ the answer relied on that source more); "
+        "retr = retrieval score. Scores are not comparable across records. Full text in results.json._",
         "",
-        "| id | top_score | concentration | query | top source |",
-        "|----|----------:|--------------:|-------|------------|",
+        "## Least-grounded records (lowest top attribution first)",
+        "",
+        "| id | top_score | concentration | top source |",
+        "|----|----------:|--------------:|------------|",
     ]
     for r in report["least_grounded"]:
-        q = r["query"].replace("|", "\\|")
-        s = r["top_source"].replace("|", "\\|").replace("\n", " ")
-        lines.append(f"| {r['id']} | {r['top_score']} | {r['concentration']} | {q} | {s} |")
+        lines.append(f"| {r['id']} | {r['top_score']} | {r['concentration']} | {cell(r['top_source'])} |")
 
     lines += [
         "",
         "## Weakest answer unit per record (lowest top-attribution first)",
         "",
-        "| id | unit top_score | answer unit | top chunk |",
-        "|----|---------------:|-------------|-----------|",
+        "| id | unit top_score | top chunk | answer unit |",
+        "|----|---------------:|-----------|-------------|",
     ]
     for r in report.get("weakest_units", []):
-        u = r["unit"].replace("|", "\\|").replace("\n", " ")
-        lines.append(f"| {r['id']} | {r['top_score']} | {u} | {r['top_chunk_id']} |")
+        lines.append(f"| {r['id']} | {r['top_score']} | `{short(r['top_chunk_id'])}` | {cell(r['unit'])} |")
 
+    # The readable centerpiece: each answer unit + the source TEXT it attributed
+    # to (full query, full unit, top-3 positive attributions).
     lines += ["", "## Per-unit attribution by record", ""]
     for r in results:
         if "error" in r:
+            lines += [f"### {r['id']} — ERROR: {r['error']}", ""]
             continue
-        lines.append(f"### {r['id']} — {r['query'][:70]}")
+        lines += [f"### {r['id']}", f"**Q:** {' '.join(r['query'].split())}", ""]
         for u in r.get("units", []):
-            top = u["attributions"][0] if u["attributions"] else None
-            t = u["text"].replace("\n", " ")[:70]
-            if top:
+            lines.append(f"**Answer unit:** \"{' '.join(u['text'].split())}\"")
+            tops = [a for a in u["attributions"] if a["score"] > 0][:3]
+            if not tops:
+                lines.append("  - _(no positive attribution — nothing in context raised this unit's likelihood)_")
+            for a in tops:
                 lines.append(
-                    f"- \"{t}\" → chunk {top['chunk_id']} attr={top['score']:.2f} "
-                    f"(retrieval={top['retrieval_score']})"
+                    f"  - attr **{a['score']:.2f}** · chunk `{short(a['chunk_id'])}` · "
+                    f"retr {a['retrieval_score']} · \"{cell(a['source_text'], 240)}\""
                 )
-            else:
-                lines.append(f"- \"{t}\" → (no attribution)")
-        lines.append("")
+            lines.append("")
 
     (run_dir / "summary.md").write_text("\n".join(lines) + "\n")
     return run_dir
