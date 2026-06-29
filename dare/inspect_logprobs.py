@@ -33,6 +33,10 @@ RESPONSE = "Nhân viên bậc 2-5 được nghỉ 16 ngày phép năm, bậc 1 �
 
 if len(sys.argv) > 1:
     _data = load_mock(sys.argv[1])
+    if isinstance(_data, list):                      # a corpus array -> pick one record
+        _idx = int(sys.argv[2]) if len(sys.argv) > 2 else 0
+        print(f"(corpus array: inspecting record [{_idx}] of {len(_data)})")
+        _data = _data[_idx]
     QUERY = _data.get("query", QUERY)
     CONTEXT, RESPONSE = prepare_inputs(_data)  # same truncation the pipeline applies
 
