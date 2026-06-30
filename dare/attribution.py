@@ -35,6 +35,7 @@ from context_cite import ContextCiter
 from context_cite import utils as _cc_utils
 
 from dare.config import Settings
+from dare.models import SourceAttribution, UnitAttribution
 from dare.partitioner import MarkdownContextPartitioner, markdown_unit_spans
 from dare.providers import LogprobProvider, OpenAICompatProvider
 from dare.schema import Source, sources_to_context
@@ -467,21 +468,22 @@ def _map_unit_to_source(unit_text: str, sources: list[Source]) -> Source | None:
     return None
 
 
-def _attribution_rows(df, sources: list[Source]) -> list[dict]:
-    """Turn a get_attributions dataframe (Score, Source) into rows that carry the
-    originating chunk's identity + retrieval score, sorted by attribution score."""
+def _attribution_rows(df, sources: list[Source]) -> list[SourceAttribution]:
+    """Turn a get_attributions dataframe (Score, Source) into SourceAttribution
+    objects carrying the originating chunk's identity + retrieval score, sorted
+    by attribution score."""
     rows = []
     for score, text in zip(df["Score"], df["Source"]):
         src = _map_unit_to_source(text, sources)
-        rows.append({
-            "score": float(score),
-            "source_text": text,
-            "chunk_id": src.chunk_id if src else None,
-            "doc_id": src.doc_id if src else None,
-            "retrieval_score": src.score if src else None,
-            "origin": src.origin if src else None,
-        })
-    rows.sort(key=lambda r: -r["score"])
+        rows.append(SourceAttribution(
+            score=float(score),
+            source_text=text,
+            chunk_id=src.chunk_id if src else None,
+            doc_id=src.doc_id if src else None,
+            retrieval_score=src.score if src else None,
+            origin=src.origin if src else "context",
+        ))
+    rows.sort(key=lambda r: -r.score)
     return rows
 
 
@@ -530,6 +532,6 @@ def attribute_by_sentence(
         except Exception as ex:                       # noqa: BLE001 — never sink the record
             logger.warning("per-unit attribution failed for span (%d,%d): %s", s, e, ex)
             attribs = []
-        units.append({"text": resp[s:e], "span": [s, e], "attributions": attribs})
+        units.append(UnitAttribution(text=resp[s:e], span=(s, e), attributions=attribs))
 
     return {"response": resp, "whole": whole, "units": units}

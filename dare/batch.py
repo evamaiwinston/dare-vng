@@ -16,6 +16,7 @@ This same `run_batch` is what a future async/live worker calls — only the feed
 from __future__ import annotations
 
 import argparse
+import dataclasses
 import json
 import time
 from concurrent.futures import ThreadPoolExecutor, as_completed
@@ -26,8 +27,8 @@ from dare.config import Settings
 from dare.schema import RAGRecord, load_corpus
 
 
-def _unit_top_score(u: dict) -> float:
-    return u["attributions"][0]["score"] if u["attributions"] else 0.0
+def _unit_top_score(u) -> float:
+    return u.attributions[0].score if u.attributions else 0.0
 
 
 def attribute_record(rec: RAGRecord, *, provider, num_ablations=32, settings: Settings | None = None) -> dict:
@@ -42,8 +43,8 @@ def attribute_record(rec: RAGRecord, *, provider, num_ablations=32, settings: Se
     whole = res["whole"]          # rows {score, source_text, chunk_id, doc_id, retrieval_score, origin}
     units = res["units"]
 
-    top_score = whole[0]["score"] if whole else 0.0
-    total_pos = sum(r["score"] for r in whole if r["score"] > 0)
+    top_score = whole[0].score if whole else 0.0
+    total_pos = sum(r.score for r in whole if r.score > 0)
     weakest = min(units, key=_unit_top_score) if units else None
 
     return {
@@ -52,15 +53,13 @@ def attribute_record(rec: RAGRecord, *, provider, num_ablations=32, settings: Se
         "answer": rec.answer,
         "num_sources": len(whole),
         "top_score": top_score,
-        "top_source": whole[0]["source_text"] if whole else "",
-        "top_chunk_id": whole[0]["chunk_id"] if whole else None,
-        # how much one source dominates the positive signal (1.0 = a single source)
+        "top_source": whole[0].source_text if whole else "",
+        "top_chunk_id": whole[0].chunk_id if whole else None,
         "concentration": (top_score / total_pos) if total_pos > 0 else 0.0,
-        # the answer unit least supported by any chunk — the prime failure candidate
         "weakest_unit": ({
-            "text": weakest["text"],
+            "text": weakest.text,
             "top_score": _unit_top_score(weakest),
-            "top_chunk_id": weakest["attributions"][0]["chunk_id"] if weakest["attributions"] else None,
+            "top_chunk_id": weakest.attributions[0].chunk_id if weakest.attributions else None,
         } if weakest else None),
         "whole": whole,
         "units": units,
@@ -138,7 +137,13 @@ def write_report(results: list[dict], report: dict, out_dir: str | Path = "runs"
     stamp = time.strftime("%Y%m%d_%H%M%S", time.localtime())
     run_dir = Path(out_dir) / f"batch_{stamp}"
     run_dir.mkdir(parents=True, exist_ok=True)
-    (run_dir / "results.json").write_text(json.dumps(results, indent=2, ensure_ascii=False))
+    class _DataclassEncoder(json.JSONEncoder):
+        def default(self, obj):
+            if dataclasses.is_dataclass(obj) and not isinstance(obj, type):
+                return dataclasses.asdict(obj)
+            return super().default(obj)
+
+    (run_dir / "results.json").write_text(json.dumps(results, cls=_DataclassEncoder, indent=2, ensure_ascii=False))
     (run_dir / "report.json").write_text(json.dumps(report, indent=2, ensure_ascii=False))
 
     def cell(text, n=90):
@@ -185,14 +190,14 @@ def write_report(results: list[dict], report: dict, out_dir: str | Path = "runs"
             continue
         lines += [f"### {r['id']}", f"**Q:** {' '.join(r['query'].split())}", ""]
         for u in r.get("units", []):
-            lines.append(f"**Answer unit:** \"{' '.join(u['text'].split())}\"")
-            tops = [a for a in u["attributions"] if a["score"] > 0][:3]
+            lines.append(f"**Answer unit:** \"{' '.join(u.text.split())}\"")
+            tops = [a for a in u.attributions if a.score > 0][:3]
             if not tops:
                 lines.append("  - _(no positive attribution — nothing in context raised this unit's likelihood)_")
             for a in tops:
                 lines.append(
-                    f"  - attr **{a['score']:.2f}** · chunk `{short(a['chunk_id'])}` · "
-                    f"retr {a['retrieval_score']} · \"{cell(a['source_text'], 240)}\""
+                    f"  - attr **{a.score:.2f}** · chunk `{short(a.chunk_id)}` · "
+                    f"retr {a.retrieval_score} · \"{cell(a.source_text, 240)}\""
                 )
             lines.append("")
 
