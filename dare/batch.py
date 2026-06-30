@@ -94,11 +94,11 @@ def run_batch(records, *, provider, limit=None, max_workers=3, num_ablations=32,
 
 
 def aggregate(results: list[dict]) -> dict:
-    """Roll up a batch: counts + the least-grounded records surfaced first
+    """Roll up a batch: counts + records sorted by ascending causal dependence
     (lowest top attribution score = no source strongly drove the answer)."""
     ok = [r for r in results if "error" not in r]
     errs = [r for r in results if "error" in r]
-    least_grounded = sorted(ok, key=lambda r: r["top_score"])
+    low_dependence = sorted(ok, key=lambda r: r["top_score"])
     with_weakest = sorted(
         (r for r in ok if r.get("weakest_unit")),
         key=lambda r: r["weakest_unit"]["top_score"],
@@ -108,7 +108,7 @@ def aggregate(results: list[dict]) -> dict:
         "ok": len(ok),
         "errors": len(errs),
         "avg_num_sources": round(sum(r["num_sources"] for r in ok) / max(len(ok), 1), 2),
-        "least_grounded": [
+        "low_dependence": [
             {
                 "id": r["id"],
                 "top_score": round(r["top_score"], 3),
@@ -116,10 +116,10 @@ def aggregate(results: list[dict]) -> dict:
                 "query": r["query"],
                 "top_source": r["top_source"],
             }
-            for r in least_grounded
+            for r in low_dependence
         ],
         # the single weakest answer unit per record, weakest first — prime failure
-        # candidates (raw scores; the grounded/ungrounded verdict is the diagnoser's job)
+        # candidates (raw scores; the causal dependence verdict is the diagnoser's job)
         "weakest_units": [
             {
                 "id": r["id"],
@@ -158,12 +158,12 @@ def write_report(results: list[dict], report: dict, out_dir: str | Path = "runs"
         "_attr = attribution weight (higher ⇒ the answer relied on that source more); "
         "retr = retrieval score. Scores are not comparable across records. Full text in results.json._",
         "",
-        "## Least-grounded records (lowest top attribution first)",
+        "## Records with lowest causal dependence (lowest top attribution first)",
         "",
         "| id | top_score | concentration | top source |",
         "|----|----------:|--------------:|------------|",
     ]
-    for r in report["least_grounded"]:
+    for r in report["low_dependence"]:
         lines.append(f"| {r['id']} | {r['top_score']} | {r['concentration']} | {cell(r['top_source'])} |")
 
     lines += [

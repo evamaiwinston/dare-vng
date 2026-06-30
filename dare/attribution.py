@@ -507,7 +507,7 @@ def attribute_by_sentence(
     Returns ``{response, whole, units}`` where ``whole`` and each
     ``units[i]["attributions"]`` is a list of rows
     ``{score, source_text, chunk_id, doc_id, retrieval_score, origin}``. No
-    grounded/ungrounded verdict is made here — that's the diagnosis layer's job.
+    causal dependence verdict is made here — that's the diagnosis layer's job.
     """
     context = sources_to_context(sources)
     cc = _build_citer(
