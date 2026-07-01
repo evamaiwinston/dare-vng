@@ -468,12 +468,23 @@ def _map_unit_to_source(unit_text: str, sources: list[Source]) -> Source | None:
     return None
 
 
-def _attribution_rows(df, sources: list[Source]) -> list[SourceAttribution]:
+def _attribution_rows(df, sources: list[Source], instruction: str | None = None) -> list[SourceAttribution]:
     """Turn a get_attributions dataframe (Score, Source) into SourceAttribution
     objects carrying the originating chunk's identity + retrieval score, sorted
-    by attribution score."""
+    by attribution score.
+
+    When ``instruction`` is folded into the ablation set, rows whose text is part
+    of it are tagged ``origin="instruction"`` (chunk_id=None) instead of being
+    mapped to a retrieved chunk — so instruction attribution is separable downstream."""
+    instr_norm = " ".join(instruction.split()) if instruction else None
     rows = []
     for score, text in zip(df["Score"], df["Source"]):
+        if instr_norm and " ".join(text.split()) in instr_norm:
+            rows.append(SourceAttribution(
+                score=float(score), source_text=text,
+                chunk_id=None, doc_id=None, retrieval_score=None, origin="instruction",
+            ))
+            continue
         src = _map_unit_to_source(text, sources)
         rows.append(SourceAttribution(
             score=float(score),
@@ -497,9 +508,16 @@ def attribute_by_sentence(
     batch_size: int = 1,
     provider: LogprobProvider | None = None,
     settings: Settings | None = None,
+    instruction: str | None = None,
 ) -> dict:
     """Attribute each response *unit* (sentence / bullet / list item / table) from
     a single ablation pass, mapping every attribution back to its Source chunk.
+
+    If ``instruction`` is given (the verbatim generation system prompt), it is
+    folded into the ablation set so its causal effect is measured in the SAME pass
+    (no extra calls); those rows come back tagged ``origin="instruction"``. Note
+    this changes the ablation prompt, so it invalidates the existing logprob cache
+    and yields different (more faithful) magnitudes than the context-only run.
 
     The ablation pass runs once; each unit is a free re-slice of the cached
     logit-probs (no extra LLM calls). Response units are split markdown-aware
@@ -512,6 +530,8 @@ def attribute_by_sentence(
     causal dependence verdict is made here — that's the diagnosis layer's job.
     """
     context = sources_to_context(sources)
+    if instruction:                                   # fold instruction into the ablatable context
+        context = instruction + "\n\n" + context
     cc = _build_citer(
         context, query, response,
         num_ablations=num_ablations, ablation_keep_prob=ablation_keep_prob,
@@ -521,14 +541,14 @@ def attribute_by_sentence(
     resp = cc.response                                # exactly what ContextCite scored
 
     whole = _attribution_rows(
-        cc.get_attributions(as_dataframe=True, verbose=False).data, sources
+        cc.get_attributions(as_dataframe=True, verbose=False).data, sources, instruction
     )
 
     units = []
     for s, e in markdown_unit_spans(resp):
         try:
             df = cc.get_attributions(start_idx=s, end_idx=e, as_dataframe=True, verbose=False).data
-            attribs = _attribution_rows(df, sources)
+            attribs = _attribution_rows(df, sources, instruction)
         except Exception as ex:                       # noqa: BLE001 — never sink the record
             logger.warning("per-unit attribution failed for span (%d,%d): %s", s, e, ex)
             attribs = []
