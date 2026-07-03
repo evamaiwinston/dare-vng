@@ -1,10 +1,10 @@
 """Static RAG prompts — lifted verbatim from the backend's own LLM traces.
 
-Source: data/luong_graph_report.html, a 195-question debug/eval capture embedding
-each question's full `llm_trace`. Verified 2026-06-30: across all 195 questions
-there is exactly ONE distinct prompt per agent role (4 total) — these are STATIC,
-not per-query or versioned. They are NOT emitted by the live endpoint (which sends
-actions only, no prompts) — see data/endpoint_output_inventory.md.
+Source: data/labels/luong_graph_report.html, a 195-question debug/eval capture
+embedding each question's full `llm_trace`. Verified 2026-06-30: across all 195
+questions there is exactly ONE distinct prompt per agent role (4 total) — these are
+STATIC, not per-query or versioned. They are NOT emitted by the live endpoint (which
+sends actions only, no prompts).
 
 DARE uses SYNTHESIS_SYSTEM + build_generation_messages to reconstruct the exact
 prompt the model saw when producing the answer we attribute, so ablation re-scoring

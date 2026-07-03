@@ -1,8 +1,16 @@
+"""Legacy single-record CLI (was `dare/__main__.py`, i.e. `python -m dare`).
+
+Old-path: attributes ONE query/mock via `run_pipeline` (whole-response Styler table),
+predating the per-unit `attribute_by_sentence` + `summary` pipeline. Superseded by the
+batch workflow — use `python -m dare.batch --corpus <file>` instead. Kept here as a dev
+tool for one-off single-record / span attribution. Run: `python tools/attribute_one.py …`.
+"""
+
 import argparse
 import sys
 
 from dare.attribution import run_pipeline
-from dare.mocks import list_mocks, mock_names, resolve_mock
+from tools.mocks import list_mocks, mock_names, resolve_mock
 
 
 def main():

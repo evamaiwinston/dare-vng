@@ -31,6 +31,18 @@ class Settings:
     # API's, making response-token alignment ~1:1.
     shell_tokenizer: str = "gpt2"
 
+    # --- Attribution fit (ContextCite Lasso) --------------------------------
+    # L1 regularization for the source-attribution Lasso. 0.01 = ContextCite's
+    # default, validated at the held-out-faithfulness knee (LOG 2026-07-03).
+    # Higher (e.g. 0.03) = sparser/cleaner report at ~equal mean faithfulness.
+    # Override per run with LASSO_ALPHA. Post-ablation → changing it is cache-free.
+    lasso_alpha: float = 0.01
+
+    # --- Embeddings (the query↔chunk cosine signal) -------------------------
+    # A local sentence-embedding model (HF id), run via transformers. Vietnamese-
+    # capable; the hosted nv-embedqa was non-discriminative here. Override w/ EMBED_MODEL.
+    embed_model: str = "intfloat/multilingual-e5-base"
+
     # --- RAG backend --------------------------------------------------------
     backend_url: str | None = None
     workspace_id: str | None = None
@@ -67,6 +79,8 @@ class Settings:
             llm_url=base + "/v1/chat/completions",
             model=os.getenv("LLM_MODEL"),
             shell_tokenizer=os.getenv("SHELL_TOKENIZER", "gpt2"),
+            lasso_alpha=float(os.getenv("LASSO_ALPHA", "0.01")),
+            embed_model=os.getenv("EMBED_MODEL", "intfloat/multilingual-e5-base"),
             backend_url=os.getenv("BACKEND_API_URL"),
             workspace_id=os.getenv("BACKEND_WORKSPACE_ID"),
             backend_token=os.getenv("BACKEND_API_KEY"),

@@ -33,7 +33,7 @@ from dare.attribution import (  # noqa: E402
 )
 # Re-export mock discovery so the UI can import everything from `runner` (which
 # already put the repo root on sys.path) rather than re-resolving the path.
-from dare.mocks import (  # noqa: E402,F401
+from tools.mocks import (  # noqa: E402,F401
     MOCK_DIR,
     list_mocks,
     resolve_mock,

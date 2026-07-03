@@ -58,7 +58,7 @@ from dare.attribution import (  # noqa: E402
     resolve_query,
 )
 from dare.providers import OpenAICompatProvider  # noqa: E402
-from dare.mocks import resolve_mock  # noqa: E402
+from tools.mocks import resolve_mock  # noqa: E402
 from dare.partitioner import MarkdownContextPartitioner  # noqa: E402
 from context_cite.context_citer import DEFAULT_PROMPT_TEMPLATE  # noqa: E402
 

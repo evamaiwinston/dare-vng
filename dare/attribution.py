@@ -33,9 +33,10 @@ if not hasattr(Styler, "applymap"):
 
 from context_cite import ContextCiter
 from context_cite import utils as _cc_utils
+from context_cite.solver import LassoRegression
 
 from dare.config import Settings
-from dare.models import SourceAttribution, UnitAttribution
+from dare.results import SourceAttribution, UnitAttribution
 from dare.partitioner import MarkdownContextPartitioner, markdown_unit_spans
 from dare.providers import LogprobProvider, OpenAICompatProvider
 from dare.schema import Source, sources_to_context
@@ -334,6 +335,7 @@ def _build_citer(
         ablation_keep_prob=ablation_keep_prob,
         batch_size=batch_size,
         partitioner=MarkdownContextPartitioner(context),
+        solver=LassoRegression(lasso_alpha=settings.lasso_alpha),
     )
 
 

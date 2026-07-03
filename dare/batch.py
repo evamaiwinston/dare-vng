@@ -28,6 +28,7 @@ from dare.attribution import attribute_by_sentence, resolve_query
 from dare.config import Settings
 from dare.schema import RAGRecord, load_corpus
 from dare.summary import summarize_record
+from dare.signals import compute_signals
 
 
 def attribute_record(
@@ -37,6 +38,7 @@ def attribute_record(
     num_ablations: int = 32,
     settings: Settings | None = None,
     instruction: str | None = None,
+    embedder=None,
 ) -> dict:
     """Attribute one record into a descriptive `RecordSummary`.
 
@@ -56,7 +58,7 @@ def attribute_record(
         num_ablations=num_ablations, provider=provider, settings=settings, instruction=instruction,
     )
     summary = summarize_record(rec.id, query, rec.answer, res["whole"], res["units"])
-    return {
+    out = {
         "id": rec.id,
         "query": query,
         "answer": rec.answer,
@@ -65,6 +67,9 @@ def attribute_record(
         "instruction_mass": summary.whole_instruction_mass,
         "summary": summary,
     }
+    if embedder is not None:
+        out["signals"] = compute_signals(summary, embedder=embedder)
+    return out
 
 
 def run_batch(
@@ -76,6 +81,7 @@ def run_batch(
     num_ablations: int = 32,
     settings: Settings | None = None,
     instruction: str | None = None,
+    embedder=None,
 ) -> list[dict]:
     """Attribute `records` (filtered to the attributable ones, capped at `limit`),
     running up to `max_workers` concurrently. Per-record failures are captured,
@@ -87,7 +93,7 @@ def run_batch(
 
     def work(i, rec):
         try:
-            return i, attribute_record(rec, provider=provider, num_ablations=num_ablations, settings=settings, instruction=instruction)
+            return i, attribute_record(rec, provider=provider, num_ablations=num_ablations, settings=settings, instruction=instruction, embedder=embedder)
         except Exception as e:  # noqa: BLE001 — capture per-record, keep the batch alive
             return i, {"id": rec.id, "error": repr(e)}
 
@@ -198,8 +204,9 @@ def write_report(results: list[dict], report: dict, out_dir: str | Path = "runs"
             lines += [f"### {r['id']} — ERROR: {r['error']}", ""]
             continue
         s = r["summary"]
+        sig = r.get("signals")
         lines += [f"### {s.record_id}", f"**Q:** {cell(s.query, 240)}", ""]
-        for u in s.units:
+        for idx, u in enumerate(s.units):
             lines.append(f"**Answer unit:** \"{cell(u.text, 240)}\"")
             lines.append(f"  - context mass **{u.context_mass:.2f}** · instruction mass **{u.instruction_mass:.2f}**")
             top_chunk = u.chunk_attributions[0] if u.chunk_attributions else None
@@ -209,6 +216,8 @@ def write_report(results: list[dict], report: dict, out_dir: str | Path = "runs"
                     f"(retr {top_chunk.retrieval_score}, mass {top_chunk.positive_mass:.2f}): "
                     f"\"{cell(top_chunk.representative_text, 240)}\""
                 )
+                if sig and idx < len(sig.units) and sig.units[idx].chunk_query_cosine is not None:
+                    lines.append(f"    · chunk↔query cosine {sig.units[idx].chunk_query_cosine:.2f}")
             else:
                 lines.append("  - _(no positive context attribution — retrieved context did not raise this unit's likelihood)_")
             for a in [x for x in u.instruction_attributions if x.score > 0][:2]:
@@ -232,6 +241,8 @@ def main():
     ap.add_argument("--instruction", action="store_true",
                     help="Fold the static SYNTHESIS_SYSTEM prompt into the ablation set (origin=instruction). "
                          "Changes the prompt -> invalidates the context-only cache, makes real API calls.")
+    ap.add_argument("--signals", action="store_true",
+                    help="Compute query↔chunk cosine per unit (runs a local embedding model).")
     args = ap.parse_args()
 
     instruction = None
@@ -243,10 +254,15 @@ def main():
     base = OpenAICompatProvider()
     provider = base if args.no_cache else CachingProvider(base)
 
+    embedder = None
+    if args.signals:
+        from dare.providers import LocalEmbeddingProvider
+        embedder = LocalEmbeddingProvider()
+
     results = run_batch(
         records, provider=provider,
         limit=args.limit, max_workers=args.max_workers, num_ablations=args.num_ablations,
-        instruction=instruction,
+        instruction=instruction, embedder=embedder,
     )
     report = aggregate(results)
     run_dir = write_report(results, report)

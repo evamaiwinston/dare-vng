@@ -33,48 +33,13 @@ chunk_id would lump instruction mass in with unmapped context as phantom chunks.
 
 from __future__ import annotations
 
-from dataclasses import dataclass
-
-from dare.models import SourceAttribution, UnitAttribution
-
-
-@dataclass
-class ChunkAttribution:
-    """One retrieved chunk's attribution, with its sources rolled up. By CHUNK."""
-    chunk_id: str | None
-    positive_mass: float          # Σ positive source scores for this chunk (reported magnitude)
-    net_score: float              # Σ ALL source scores incl negatives (collinearity/competition signal)
-    n_sources: int                # partitioned sources that rolled into this chunk
-    n_negative_sources: int       # how many of them were negative
-    representative_text: str      # text of this chunk's strongest single source row
-    doc_id: str | None
-    retrieval_score: float | None
-
-
-@dataclass
-class UnitSummary:
-    """One response unit's attribution, split by origin. Nothing filtered."""
-    text: str
-    span: tuple[int, int]
-    source_attributions: list[SourceAttribution]       # ALL raw rows, both origins — nothing hidden
-    chunk_attributions: list[ChunkAttribution]         # origin="context" only, rolled up by chunk
-    instruction_attributions: list[SourceAttribution]  # origin="instruction" raw directive-sentence rows
-    context_mass: float                                # Σ positive context rows
-    instruction_mass: float                            # Σ positive instruction rows
-
-
-@dataclass
-class RecordSummary:
-    """One record's full attribution distribution, report-ready. Descriptive only."""
-    record_id: str
-    query: str
-    response: str
-    whole_source_attributions: list[SourceAttribution]       # all raw rows, both origins
-    whole_chunk_attributions: list[ChunkAttribution]         # context only, rolled up
-    whole_instruction_attributions: list[SourceAttribution]  # instruction rows
-    whole_context_mass: float
-    whole_instruction_mass: float
-    units: list[UnitSummary]      # in RESPONSE ORDER (faithful); renderer sorts for a ranked view
+from dare.results import (
+    ChunkAttribution,
+    RecordSummary,
+    SourceAttribution,
+    UnitAttribution,
+    UnitSummary,
+)
 
 
 def _positive_mass(rows: list[SourceAttribution]) -> float:

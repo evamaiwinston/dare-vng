@@ -7,8 +7,9 @@ name = "dare"
 version = "0.1.0"
 requires-python = ">=3.10"
 
-[project.scripts]
-dare = "dare.__main__:main"
+# No console-script yet: the current workflow is `python -m dare.batch --corpus …`.
+# A `dare` command (dare.cli:main, with batch/report/serve subcommands) can be added
+# when the CLI is built. The old single-record CLI now lives in tools/attribute_one.py.
 
 [tool.setuptools.packages.find]
 include = ["dare*"]
