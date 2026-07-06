@@ -250,13 +250,6 @@ function OverallCount({ units, calibration }: OverallCountProps) {
           </span>
         ))}
       </div>
-
-      {t.unattributed > 0 && (
-        <p className="count-note">
-          "Not attributed to context" sentences may be boilerplate/framing or the model's own wording —
-          the live view doesn't run instruction analysis, so read them in context.
-        </p>
-      )}
     </div>
   );
 }
@@ -312,10 +305,6 @@ function WholeChunks({ chunks }: WholeChunksProps) {
               <div className="chunk-text">{c.chunk_text}</div>
               <div className="chunk-meta">
                 {pct}% of grounding · positive_mass {c.positive_mass.toFixed(1)}
-                {c.retrieval_score != null ? ` · retrieval ${c.retrieval_score.toFixed(2)}` : ""}
-                {c.n_negative_sources > 0
-                  ? ` · ${c.n_negative_sources} competing source${c.n_negative_sources === 1 ? "" : "s"}`
-                  : ""}
               </div>
             </div>
           );

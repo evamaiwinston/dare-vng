@@ -156,8 +156,6 @@ export const STYLES = `
 /* hero line of the descriptive count */
 .count-lead { font-size: 13.5px; color: var(--ink); margin-bottom: 8px; }
 .count-lead b { font-weight: 700; }
-/* neutral note about unattributed units — NOT a warning (see AttributionView) */
-.count-note { margin-top: 8px; font-size: 11.5px; color: var(--muted); }
 
 /* --- Annotated answer ---------------------------------------------------- */
 

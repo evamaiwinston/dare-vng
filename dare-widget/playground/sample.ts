@@ -112,7 +112,7 @@ export const SAMPLE: RecordSummary = {
       "n_negative_sources": 1,
       "doc_id": "doc_1726111893d7b3d8",
       "retrieval_score": 1.81129,
-      "chunk_text": "The employee is not currently repaying another loan, has not been subject to disciplinary action within the last 06 months, and is not in the process of termination."
+      "chunk_text": "## 2.1. Advance Eligibility Conditions\n\n- The employee has an urgent financial need to cover treatment costs for serious or critical illnesses (according to the list of critical illnesses regulated by the Government / Ministry of Health and the Vietnam General Confederation of Labor) for the employee themselves or their family members.\n- The employee has an employment contract valid for at least three (03) months.\n- If the employment contract is about to expire, confirmation from the DH (Department Head) regarding the extension of the employment contract is required.\n- The employee is not currently repaying another loan, has not been subject to disciplinary action within the last 06 months, and is not in the process of termination."
     },
     {
       "chunk_id": "7387464543234bf11c3f6ac08af7a823dddb6e36304c13cc6b4696ab94242825",
@@ -122,7 +122,7 @@ export const SAMPLE: RecordSummary = {
       "n_negative_sources": 1,
       "doc_id": "doc_b8a1e08191f021bb",
       "retrieval_score": 1.663459,
-      "chunk_text": "The Company applies the Salary Advance Policy for employees who have completed their probation period to provide financial support for cases where the employee or a family member suffers from a critical illness."
+      "chunk_text": "### Article 17. Salary Advance\n\nThe Company applies the Salary Advance Policy for employees who have completed their probation period to provide financial support for cases where the employee or a family member suffers from a critical illness.\n\n1. Employees with 1 year or more of seniority are eligible for a maximum advance of 03 gross months' salary and a maximum repayment period of 10 months starting from the month following the receipt of the salary advance.\n2. Employees with 3 years or more of seniority are eligible for a maximum advance of 06 gross months' salary and a maximum repayment period of 18 months starting from the month following the receipt of the salary advance."
     }
   ],
   "whole_instruction_attributions": [
@@ -285,7 +285,7 @@ export const SAMPLE: RecordSummary = {
           "n_negative_sources": 3,
           "doc_id": "doc_1726111893d7b3d8",
           "retrieval_score": 1.81129,
-          "chunk_text": "The employee has an employment contract valid for at least three (03) months."
+          "chunk_text": "## 2.1. Advance Eligibility Conditions\n\n- The employee has an urgent financial need to cover treatment costs for serious or critical illnesses (according to the list of critical illnesses regulated by the Government / Ministry of Health and the Vietnam General Confederation of Labor) for the employee themselves or their family members.\n- The employee has an employment contract valid for at least three (03) months.\n- If the employment contract is about to expire, confirmation from the DH (Department Head) regarding the extension of the employment contract is required.\n- The employee is not currently repaying another loan, has not been subject to disciplinary action within the last 06 months, and is not in the process of termination."
         },
         {
           "chunk_id": "7387464543234bf11c3f6ac08af7a823dddb6e36304c13cc6b4696ab94242825",
@@ -295,7 +295,7 @@ export const SAMPLE: RecordSummary = {
           "n_negative_sources": 2,
           "doc_id": "doc_b8a1e08191f021bb",
           "retrieval_score": 1.663459,
-          "chunk_text": "The Company applies the Salary Advance Policy for employees who have completed their probation period to provide financial support for cases where the employee or a family member suffers from a critical illness."
+          "chunk_text": "### Article 17. Salary Advance\n\nThe Company applies the Salary Advance Policy for employees who have completed their probation period to provide financial support for cases where the employee or a family member suffers from a critical illness.\n\n1. Employees with 1 year or more of seniority are eligible for a maximum advance of 03 gross months' salary and a maximum repayment period of 10 months starting from the month following the receipt of the salary advance.\n2. Employees with 3 years or more of seniority are eligible for a maximum advance of 06 gross months' salary and a maximum repayment period of 18 months starting from the month following the receipt of the salary advance."
         }
       ],
       "instruction_attributions": [
@@ -456,7 +456,7 @@ export const SAMPLE: RecordSummary = {
           "n_negative_sources": 1,
           "doc_id": "doc_b8a1e08191f021bb",
           "retrieval_score": 1.663459,
-          "chunk_text": "2. Employees with 3 years or more of seniority are eligible for a maximum advance of 06 gross months' salary and a maximum repayment period of 18 months starting from the month following the receipt of the salary advance."
+          "chunk_text": "### Article 17. Salary Advance\n\nThe Company applies the Salary Advance Policy for employees who have completed their probation period to provide financial support for cases where the employee or a family member suffers from a critical illness.\n\n1. Employees with 1 year or more of seniority are eligible for a maximum advance of 03 gross months' salary and a maximum repayment period of 10 months starting from the month following the receipt of the salary advance.\n2. Employees with 3 years or more of seniority are eligible for a maximum advance of 06 gross months' salary and a maximum repayment period of 18 months starting from the month following the receipt of the salary advance."
         },
         {
           "chunk_id": "aca79e2a9fe63e8900f7a84438b6d90dde26000a7920aed66eceac06864d9eb2",
@@ -466,7 +466,7 @@ export const SAMPLE: RecordSummary = {
           "n_negative_sources": 2,
           "doc_id": "doc_1726111893d7b3d8",
           "retrieval_score": 1.81129,
-          "chunk_text": "The employee is not currently repaying another loan, has not been subject to disciplinary action within the last 06 months, and is not in the process of termination."
+          "chunk_text": "## 2.1. Advance Eligibility Conditions\n\n- The employee has an urgent financial need to cover treatment costs for serious or critical illnesses (according to the list of critical illnesses regulated by the Government / Ministry of Health and the Vietnam General Confederation of Labor) for the employee themselves or their family members.\n- The employee has an employment contract valid for at least three (03) months.\n- If the employment contract is about to expire, confirmation from the DH (Department Head) regarding the extension of the employment contract is required.\n- The employee is not currently repaying another loan, has not been subject to disciplinary action within the last 06 months, and is not in the process of termination."
         }
       ],
       "instruction_attributions": [
@@ -627,7 +627,7 @@ export const SAMPLE: RecordSummary = {
           "n_negative_sources": 0,
           "doc_id": "doc_b8a1e08191f021bb",
           "retrieval_score": 1.663459,
-          "chunk_text": "1. Employees with 1 year or more of seniority are eligible for a maximum advance of 03 gross months' salary and a maximum repayment period of 10 months starting from the month following the receipt of the salary advance."
+          "chunk_text": "### Article 17. Salary Advance\n\nThe Company applies the Salary Advance Policy for employees who have completed their probation period to provide financial support for cases where the employee or a family member suffers from a critical illness.\n\n1. Employees with 1 year or more of seniority are eligible for a maximum advance of 03 gross months' salary and a maximum repayment period of 10 months starting from the month following the receipt of the salary advance.\n2. Employees with 3 years or more of seniority are eligible for a maximum advance of 06 gross months' salary and a maximum repayment period of 18 months starting from the month following the receipt of the salary advance."
         },
         {
           "chunk_id": "aca79e2a9fe63e8900f7a84438b6d90dde26000a7920aed66eceac06864d9eb2",
@@ -637,7 +637,7 @@ export const SAMPLE: RecordSummary = {
           "n_negative_sources": 1,
           "doc_id": "doc_1726111893d7b3d8",
           "retrieval_score": 1.81129,
-          "chunk_text": "If the employment contract is about to expire, confirmation from the DH (Department Head) regarding the extension of the employment contract is required."
+          "chunk_text": "## 2.1. Advance Eligibility Conditions\n\n- The employee has an urgent financial need to cover treatment costs for serious or critical illnesses (according to the list of critical illnesses regulated by the Government / Ministry of Health and the Vietnam General Confederation of Labor) for the employee themselves or their family members.\n- The employee has an employment contract valid for at least three (03) months.\n- If the employment contract is about to expire, confirmation from the DH (Department Head) regarding the extension of the employment contract is required.\n- The employee is not currently repaying another loan, has not been subject to disciplinary action within the last 06 months, and is not in the process of termination."
         }
       ],
       "instruction_attributions": [
@@ -798,7 +798,7 @@ export const SAMPLE: RecordSummary = {
           "n_negative_sources": 1,
           "doc_id": "doc_1726111893d7b3d8",
           "retrieval_score": 1.81129,
-          "chunk_text": "The employee is not currently repaying another loan, has not been subject to disciplinary action within the last 06 months, and is not in the process of termination."
+          "chunk_text": "## 2.1. Advance Eligibility Conditions\n\n- The employee has an urgent financial need to cover treatment costs for serious or critical illnesses (according to the list of critical illnesses regulated by the Government / Ministry of Health and the Vietnam General Confederation of Labor) for the employee themselves or their family members.\n- The employee has an employment contract valid for at least three (03) months.\n- If the employment contract is about to expire, confirmation from the DH (Department Head) regarding the extension of the employment contract is required.\n- The employee is not currently repaying another loan, has not been subject to disciplinary action within the last 06 months, and is not in the process of termination."
         },
         {
           "chunk_id": "7387464543234bf11c3f6ac08af7a823dddb6e36304c13cc6b4696ab94242825",
@@ -808,7 +808,7 @@ export const SAMPLE: RecordSummary = {
           "n_negative_sources": 0,
           "doc_id": "doc_b8a1e08191f021bb",
           "retrieval_score": 1.663459,
-          "chunk_text": "The Company applies the Salary Advance Policy for employees who have completed their probation period to provide financial support for cases where the employee or a family member suffers from a critical illness."
+          "chunk_text": "### Article 17. Salary Advance\n\nThe Company applies the Salary Advance Policy for employees who have completed their probation period to provide financial support for cases where the employee or a family member suffers from a critical illness.\n\n1. Employees with 1 year or more of seniority are eligible for a maximum advance of 03 gross months' salary and a maximum repayment period of 10 months starting from the month following the receipt of the salary advance.\n2. Employees with 3 years or more of seniority are eligible for a maximum advance of 06 gross months' salary and a maximum repayment period of 18 months starting from the month following the receipt of the salary advance."
         }
       ],
       "instruction_attributions": [
@@ -969,7 +969,7 @@ export const SAMPLE: RecordSummary = {
           "n_negative_sources": 2,
           "doc_id": "doc_b8a1e08191f021bb",
           "retrieval_score": 1.663459,
-          "chunk_text": "2. Employees with 3 years or more of seniority are eligible for a maximum advance of 06 gross months' salary and a maximum repayment period of 18 months starting from the month following the receipt of the salary advance."
+          "chunk_text": "### Article 17. Salary Advance\n\nThe Company applies the Salary Advance Policy for employees who have completed their probation period to provide financial support for cases where the employee or a family member suffers from a critical illness.\n\n1. Employees with 1 year or more of seniority are eligible for a maximum advance of 03 gross months' salary and a maximum repayment period of 10 months starting from the month following the receipt of the salary advance.\n2. Employees with 3 years or more of seniority are eligible for a maximum advance of 06 gross months' salary and a maximum repayment period of 18 months starting from the month following the receipt of the salary advance."
         },
         {
           "chunk_id": "aca79e2a9fe63e8900f7a84438b6d90dde26000a7920aed66eceac06864d9eb2",
@@ -979,7 +979,7 @@ export const SAMPLE: RecordSummary = {
           "n_negative_sources": 3,
           "doc_id": "doc_1726111893d7b3d8",
           "retrieval_score": 1.81129,
-          "chunk_text": "The employee has an employment contract valid for at least three (03) months."
+          "chunk_text": "## 2.1. Advance Eligibility Conditions\n\n- The employee has an urgent financial need to cover treatment costs for serious or critical illnesses (according to the list of critical illnesses regulated by the Government / Ministry of Health and the Vietnam General Confederation of Labor) for the employee themselves or their family members.\n- The employee has an employment contract valid for at least three (03) months.\n- If the employment contract is about to expire, confirmation from the DH (Department Head) regarding the extension of the employment contract is required.\n- The employee is not currently repaying another loan, has not been subject to disciplinary action within the last 06 months, and is not in the process of termination."
         }
       ],
       "instruction_attributions": [
