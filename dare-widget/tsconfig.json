@@ -1,0 +1,30 @@
+{
+  "compilerOptions": {
+    // --- Language level & module system ---
+    "target": "ES2020",
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
+    "lib": ["ES2020", "DOM", "DOM.Iterable"],
+
+    // --- React ---
+    "jsx": "react-jsx",
+
+    // --- Type safety ---
+    "strict": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noFallthroughCasesInSwitch": true,
+
+    // --- Interop & ergonomics ---
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "isolatedModules": true,
+
+    // --- Emit ---
+    // tsup produces the shipped JS + .d.ts. tsc here is used only for
+    // type-checking (`npm run typecheck`), so it emits nothing itself.
+    "noEmit": true
+  },
+  "include": ["src"]
+}

@@ -1,0 +1,9 @@
+# dependencies (reinstalled via `npm install` — never committed)
+node_modules/
+
+# build output (produced by `npm run build`; consumers get it from npm, not git)
+dist/
+
+# vite dev-server cache + logs
+.vite/
+*.log
