@@ -30,7 +30,7 @@ from pydantic import BaseModel
 from dare.attribution import attribute_by_sentence
 from dare.config import Settings
 from dare.providers import CachingProvider, OpenAICompatProvider
-from dare.schema import Source
+from dare.schema import Chunk
 from dare.summary import summarize_record
 
 logger = logging.getLogger(__name__)
@@ -59,7 +59,7 @@ app.add_middleware(
 
 class ChunkIn(BaseModel):
     """One retrieved chunk. Field names mirror `knowledge_sources` entries
-    (see dare.schema.RAGRecord.sources) so the frontend can forward the chunk
+    (see dare.schema.RAGRecord.chunks) so the frontend can forward the chunk
     objects it already has from its own RAG call, unchanged."""
     content: str
     chunk_id: str | None = None
@@ -79,9 +79,9 @@ def attribute(req: AttributeRequest) -> dict:
         raise HTTPException(status_code=400, detail="at least one chunk is required")
 
     # Order preserved exactly as received — position is the order the model
-    # saw the chunks, which is fidelity-critical (see dare.schema.Source).
-    sources = [
-        Source(
+    # saw the chunks, which is fidelity-critical (see dare.schema.Chunk).
+    chunks = [
+        Chunk(
             content=c.content,
             position=i,
             chunk_id=c.chunk_id,
@@ -93,7 +93,7 @@ def attribute(req: AttributeRequest) -> dict:
 
     try:
         result = attribute_by_sentence(
-            req.query, req.answer, sources,
+            req.query, req.answer, chunks,
             provider=_PROVIDER, settings=_SETTINGS,
         )
     except Exception as e:  # noqa: BLE001 — surface as a clean HTTP error, not a stack trace
@@ -106,6 +106,7 @@ def attribute(req: AttributeRequest) -> dict:
         response=result["response"],
         whole=result["whole"],
         units=result["units"],
+        chunks=chunks,
     )
     return dataclasses.asdict(summary)
 

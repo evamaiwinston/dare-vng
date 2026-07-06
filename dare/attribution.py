@@ -39,7 +39,7 @@ from dare.config import Settings
 from dare.results import SourceAttribution, UnitAttribution
 from dare.partitioner import MarkdownContextPartitioner, markdown_unit_spans
 from dare.providers import LogprobProvider, OpenAICompatProvider
-from dare.schema import Source, sources_to_context
+from dare.schema import Chunk
 
 
 def _patched_color_scale(val, max_val):
@@ -453,49 +453,71 @@ def run_pipeline(
 
 # --- Per-unit (per-sentence) attribution -------------------------------------
 
-def _map_unit_to_source(unit_text: str, sources: list[Source]) -> Source | None:
-    """Map an attribution unit (a partitioned context segment) back to the Source
-    chunk it came from, by content containment. Sources don't overlap in the
-    joined context, so containment is unambiguous in practice."""
-    t = unit_text.strip()
-    if not t:
-        return None
-    for src in sources:
-        if t in src.content:
-            return src
-    norm = " ".join(t.split())                        # whitespace-normalized retry
-    for src in sources:
-        if norm in " ".join(src.content.split()):
-            return src
-    return None
+# The separator that assembles chunk contents (and the folded instruction) into
+# one context string. MUST match the join below in _assemble_context so the
+# per-segment character ranges line up with the string the partitioner splits.
+# A sentinel marks the instruction lane (a folded system prompt, not a chunk).
+_CONTEXT_SEP = "\n\n"
+_INSTRUCTION = object()
 
 
-def _attribution_rows(df, sources: list[Source], instruction: str | None = None) -> list[SourceAttribution]:
-    """Turn a get_attributions dataframe (Score, Source) into SourceAttribution
-    objects carrying the originating chunk's identity + retrieval score, sorted
-    by attribution score.
+def _assemble_context(chunks: list[Chunk], instruction: str | None) -> tuple[str, list[tuple[int, int, object]]]:
+    """Build the ablation context AND every segment's ``(start, end, owner)`` range
+    from one source of truth, so each partitioned part's provenance is known by
+    construction — no reverse-mapping a part back to a chunk by matching text.
 
-    When ``instruction`` is folded into the ablation set, rows whose text is part
-    of it are tagged ``origin="instruction"`` (chunk_id=None) instead of being
-    mapped to a retrieved chunk — so instruction attribution is separable downstream."""
-    instr_norm = " ".join(instruction.split()) if instruction else None
+    ``owner`` is the retrieved ``Chunk`` for a chunk, or ``_INSTRUCTION`` for the
+    folded system prompt. The assembled string is byte-identical to the previous
+    ``chunks_to_context`` (plus instruction prepend), so the context the model is
+    scored against — and therefore the attribution — is unchanged.
+    """
+    segments: list[tuple[object, str]] = []
+    if instruction:                                   # folded instruction leads the context
+        segments.append((_INSTRUCTION, instruction))
+    segments.extend((c, c.content) for c in chunks)
+
+    context = _CONTEXT_SEP.join(content for _, content in segments)
+
+    ranges: list[tuple[int, int, object]] = []
+    pos = 0
+    for owner, content in segments:
+        ranges.append((pos, pos + len(content), owner))
+        pos += len(content) + len(_CONTEXT_SEP)
+    return context, ranges
+
+
+def _owner_at(pos: int, ranges: list[tuple[int, int, object]]) -> object | None:
+    """The chunk/instruction whose character range contains ``pos``. Ranges
+    partition the assembled context, so a segment's start offset resolves to
+    exactly one owner — collision-free even when two chunks share identical text.
+    Returns ``None`` for the (unexpected) unmapped case, surfaced not dropped."""
+    return next((owner for start, end, owner in ranges if start <= pos < end), None)
+
+
+def _attribution_rows(scores, spans: list[tuple[int, int]], context: str,
+                      ranges: list[tuple[int, int, object]]) -> list[SourceAttribution]:
+    """Turn the per-source score array (``get_attributions(as_dataframe=False)`` —
+    element i is the score of source i) into SourceAttribution rows, each carrying
+    the provenance of the chunk it *physically* came from, resolved by character
+    position (not by matching text, so byte-identical chunk content can't be
+    mis-assigned). Instruction-lane parts are tagged ``origin="instruction"``.
+    Sorted by attribution score.
+    """
     rows = []
-    for score, text in zip(df["Score"], df["Source"]):
-        if instr_norm and " ".join(text.split()) in instr_norm:
+    for score, (start, end) in zip(scores, spans):
+        owner = _owner_at(start, ranges)
+        if isinstance(owner, Chunk):                  # a retrieved chunk
             rows.append(SourceAttribution(
-                score=float(score), source_text=text,
-                chunk_id=None, doc_id=None, retrieval_score=None, origin="instruction",
+                score=float(score), source_text=context[start:end],
+                chunk_id=owner.chunk_id, doc_id=owner.doc_id,
+                retrieval_score=owner.score, origin=owner.origin,
             ))
-            continue
-        src = _map_unit_to_source(text, sources)
-        rows.append(SourceAttribution(
-            score=float(score),
-            source_text=text,
-            chunk_id=src.chunk_id if src else None,
-            doc_id=src.doc_id if src else None,
-            retrieval_score=src.score if src else None,
-            origin=src.origin if src else "context",
-        ))
+        else:                                         # _INSTRUCTION sentinel or unmapped
+            rows.append(SourceAttribution(
+                score=float(score), source_text=context[start:end], chunk_id=None,
+                doc_id=None, retrieval_score=None,
+                origin="instruction" if owner is _INSTRUCTION else "context",
+            ))
     rows.sort(key=lambda r: -r.score)
     return rows
 
@@ -503,7 +525,7 @@ def _attribution_rows(df, sources: list[Source], instruction: str | None = None)
 def attribute_by_sentence(
     query: str,
     response: str,
-    sources: list[Source],
+    chunks: list[Chunk],
     *,
     num_ablations: int = 32,
     ablation_keep_prob: float = 0.5,
@@ -513,7 +535,7 @@ def attribute_by_sentence(
     instruction: str | None = None,
 ) -> dict:
     """Attribute each response *unit* (sentence / bullet / list item / table) from
-    a single ablation pass, mapping every attribution back to its Source chunk.
+    a single ablation pass, mapping every attribution back to its Chunk.
 
     If ``instruction`` is given (the verbatim generation system prompt), it is
     folded into the ablation set so its causal effect is measured in the SAME pass
@@ -531,9 +553,9 @@ def attribute_by_sentence(
     ``{score, source_text, chunk_id, doc_id, retrieval_score, origin}``. No
     causal dependence verdict is made here — that's the diagnosis layer's job.
     """
-    context = sources_to_context(sources)
-    if instruction:                                   # fold instruction into the ablatable context
-        context = instruction + "\n\n" + context
+    # Assemble the context and each segment's owning chunk in one pass, so a
+    # part's provenance is attached by construction (see _assemble_context).
+    context, ranges = _assemble_context(chunks, instruction)
     cc = _build_citer(
         context, query, response,
         num_ablations=num_ablations, ablation_keep_prob=ablation_keep_prob,
@@ -542,15 +564,19 @@ def attribute_by_sentence(
     _ = cc._logit_probs                               # trigger the ablation pass once (cached)
     resp = cc.response                                # exactly what ContextCite scored
 
+    # context parts, in the SAME order as the per-source score array from
+    # get_attributions(as_dataframe=False) — the partitioner splits on these spans.
+    ctx_spans = markdown_unit_spans(context)
+
     whole = _attribution_rows(
-        cc.get_attributions(as_dataframe=True, verbose=False).data, sources, instruction
+        cc.get_attributions(as_dataframe=False, verbose=False), ctx_spans, context, ranges,
     )
 
     units = []
     for s, e in markdown_unit_spans(resp):
         try:
-            df = cc.get_attributions(start_idx=s, end_idx=e, as_dataframe=True, verbose=False).data
-            attribs = _attribution_rows(df, sources, instruction)
+            scores = cc.get_attributions(start_idx=s, end_idx=e, as_dataframe=False, verbose=False)
+            attribs = _attribution_rows(scores, ctx_spans, context, ranges)
         except Exception as ex:                       # noqa: BLE001 — never sink the record
             logger.warning("per-unit attribution failed for span (%d,%d): %s", s, e, ex)
             attribs = []

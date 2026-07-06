@@ -9,7 +9,7 @@ consumes. `load_corpus` normalizes the on-disk shapes we have:
   (e.g. ``data/raw_responses.jsonl``)
 * bare payload — ``{answer, knowledge_sources, query?}`` (e.g. the mock files)
 
-Deliberately small for now; `Source` / `Attribution` / `Explanation` join it later.
+Deliberately small for now; `Chunk` / `Attribution` / `Explanation` join it later.
 """
 
 from __future__ import annotations
@@ -20,13 +20,13 @@ from pathlib import Path
 
 
 @dataclass
-class Source:
-    """One retrieved unit, with its identity and rank preserved.
+class Chunk:
+    """One retrieved chunk, with its identity and rank preserved.
 
-    `position` is the order the RAG returned it — which is the order the model saw
-    it, so it's fidelity-critical and we never reorder by score. `origin` marks a
-    retrieved-context source vs an instruction unit (used later for instruction
-    ablation). Attribution weights map back onto these.
+    `content` is the whole chunk verbatim, as the model saw it. `position` is the
+    order the RAG returned it — fidelity-critical, so we never reorder by score.
+    `origin` marks a retrieved-context chunk vs a folded instruction unit (used for
+    instruction ablation). Attribution segments map back onto these by position.
     """
     content: str
     position: int
@@ -52,12 +52,12 @@ class RAGRecord:
         return self.payload.get("knowledge_sources") or []
 
     @property
-    def sources(self) -> list[Source]:
-        """Typed, ordered context sources. The single adapter point that knows the
+    def chunks(self) -> list[Chunk]:
+        """Typed, ordered retrieved chunks. The single adapter point that knows the
         VNG field names (knowledge_sources / content / chunk_id / document_id / score);
         order is preserved exactly as returned."""
         return [
-            Source(
+            Chunk(
                 content=k.get("content", ""),
                 position=i,
                 chunk_id=k.get("chunk_id"),
@@ -102,11 +102,12 @@ def load_corpus(path: str | Path, limit: int | None = None) -> list[RAGRecord]:
     return records[:limit] if limit else records
 
 
-def sources_to_context(sources: list[Source], sep: str = "\n\n") -> str:
-    """Join source contents in order into the context string the engine attributes.
+def chunks_to_context(chunks: list[Chunk], sep: str = "\n\n") -> str:
+    """Join chunk contents in order into the context string the engine attributes.
 
     Order is preserved (never sorted) so the assembled context matches what the
     model actually saw — re-ordering would attribute against a prompt that never
-    existed.
+    existed. (Currently unused — attribution assembles context inline; kept as the
+    canonical chunk→context join.)
     """
-    return sep.join(s.content for s in sources)
+    return sep.join(c.content for c in chunks)

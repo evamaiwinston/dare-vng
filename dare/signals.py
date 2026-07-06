@@ -42,10 +42,9 @@ def _grounding_text(unit) -> tuple[str | None, str | None]:
     """(chunk_id, whole-chunk text) of the unit's top positive-mass chunk, else (None, None).
 
     Whole chunk = every partitioned source row sharing the top chunk's ``chunk_id``,
-    joined — not just the single strongest row (`representative_text`). The fuller
-    text is a more stable topical signal for the query↔chunk cosine; a lone table
-    row or form step is too sparse to embed meaningfully. Falls back to
-    ``representative_text`` if no rows are recoverable.
+    joined — a more stable topical signal for the query↔chunk cosine than a lone table
+    row or form step, which is too sparse to embed meaningfully. Falls back to the
+    chunk's verbatim ``chunk_text`` if no rows are recoverable.
     """
     if not unit.chunk_attributions:
         return None, None
@@ -56,7 +55,7 @@ def _grounding_text(unit) -> tuple[str | None, str | None]:
         a.source_text for a in unit.source_attributions
         if a.origin != "instruction" and a.chunk_id == top.chunk_id and a.source_text
     ]
-    return top.chunk_id, "\n".join(rows) or top.representative_text
+    return top.chunk_id, "\n".join(rows) or top.chunk_text
 
 
 def compute_signals(summary: RecordSummary, *, embedder) -> RecordSignals:

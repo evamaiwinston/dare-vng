@@ -54,10 +54,10 @@ def attribute_record(
     """
     query = resolve_query(rec.query, rec.payload)
     res = attribute_by_sentence(
-        query, rec.answer, rec.sources,
+        query, rec.answer, rec.chunks,
         num_ablations=num_ablations, provider=provider, settings=settings, instruction=instruction,
     )
-    summary = summarize_record(rec.id, query, rec.answer, res["whole"], res["units"])
+    summary = summarize_record(rec.id, query, rec.answer, res["whole"], res["units"], rec.chunks)
     out = {
         "id": rec.id,
         "query": query,
@@ -214,7 +214,7 @@ def write_report(results: list[dict], report: dict, out_dir: str | Path = "runs"
                 lines.append(
                     f"  - grounded in chunk `{short(top_chunk.chunk_id)}` "
                     f"(retr {top_chunk.retrieval_score}, mass {top_chunk.positive_mass:.2f}): "
-                    f"\"{cell(top_chunk.representative_text, 240)}\""
+                    f"\"{cell(top_chunk.chunk_text, 240)}\""
                 )
                 if sig and idx < len(sig.units) and sig.units[idx].chunk_query_cosine is not None:
                     lines.append(f"    · chunk↔query cosine {sig.units[idx].chunk_query_cosine:.2f}")

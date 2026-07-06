@@ -55,7 +55,10 @@ class ChunkAttribution:
     net_score: float              # Σ ALL source scores incl negatives (collinearity/competition signal)
     n_sources: int                # partitioned sources that rolled into this chunk
     n_negative_sources: int       # how many of them were negative
-    representative_text: str      # text of this chunk's strongest single source row
+    chunk_text: str               # the WHOLE retrieved chunk, verbatim as fed into attribution — the
+                                  # honest chunk, NOT truncated to its top-scoring segment. The most
+                                  # influential segment, if ever needed, is derivable from the matching
+                                  # source_attributions (max score for this chunk_id).
     doc_id: str | None
     retrieval_score: float | None
 
