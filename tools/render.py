@@ -104,7 +104,7 @@ def render_record(r: dict) -> tuple[str, dict]:
         # instruction lane, each as its own contributor bar
         breakdown = [
             {"label": "chunk " + (c["chunk_id"] or "—")[:8], "mass": round(c["positive_mass"], 2),
-             "kind": "ctx", "retr": c["retrieval_score"], "text": en(c["representative_text"])}
+             "kind": "ctx", "retr": c["retrieval_score"], "text": en(c["chunk_text"])}
             for c in (u.get("chunk_attributions") or []) if c["positive_mass"] > 0
         ]
         if u["instruction_mass"] > 0:
