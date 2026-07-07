@@ -51,15 +51,17 @@ def attribute_one(
     provider=None,
     settings: Settings | None = None,
     instruction: str | None = None,
+    max_workers: int = 1,
 ) -> dict:
     """Drop-in for `dare.attribution.attribute_by_sentence` — same args, same
     ``{response, whole, units}`` return, one ablation pass giving both the whole
     response and every unit.
 
-    Today this delegates verbatim, so it IS the engine. It's the seam for later:
-    to prototype ablation concurrency, replace the body below with a copy of the
-    engine's `_build_citer` / `_ForwardShim` path that threads the ablation calls
-    (add a ``max_workers`` param here) — the notebook keeps calling this unchanged.
+    ``max_workers`` > 1 runs the ablation calls concurrently (default 1 = serial,
+    identical to today). This is the knob to A/B in the notebook: time
+    ``max_workers=1`` vs ``=8`` and assert the attributions match (they must —
+    scoring is deterministic). The concurrency itself lives in the engine's
+    `APIModel`; this just forwards the flag.
 
     ``provider`` left None => the engine builds a bare `OpenAICompatProvider`
     (cache OFF), which is what you want for honest timings.
@@ -72,6 +74,7 @@ def attribute_one(
         provider=provider,
         settings=settings,
         instruction=instruction,
+        max_workers=max_workers,
     )
 
 

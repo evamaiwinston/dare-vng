@@ -18,6 +18,7 @@ Pass `settings=` / `provider=` to override the endpoint, throttle, or backend.
 import json
 import math
 import logging
+from concurrent.futures import ThreadPoolExecutor
 import numpy as np
 import requests
 import torch
@@ -184,10 +185,17 @@ class APIModel:
         response: str,
         provider: LogprobProvider | None = None,
         tokenizer=None,
+        max_workers: int = 1,
     ):
         self._response  = response
         self._provider  = provider or OpenAICompatProvider()
         self._tokenizer = tokenizer or make_tokenizer()
+        # >1 fires the per-batch ablation rows concurrently (each row is an
+        # independent score_response call). Default 1 = serial, unchanged. Scoring
+        # is deterministic (temperature 0), so concurrency changes only wall-clock,
+        # not the logit-probs — provided every row keeps writing its OWN logits[b]
+        # slot (index-addressed below), never appending in completion order.
+        self._max_workers = max_workers
 
     def generate(self, input_ids: torch.Tensor, **kwargs) -> torch.Tensor:
         resp_ids = self._tokenizer.encode(self._response, add_special_tokens=False)
@@ -205,7 +213,9 @@ class APIModel:
         R      = sum(1 for l in labels[0].tolist() if l != -100)
         logits = torch.zeros(bs, R + 1, V)
 
-        for b in range(bs):
+        def score_row(b: int) -> None:
+            """Score ablation row b and write ITS slot logits[b]. Index-addressed,
+            so it's safe to run rows concurrently — no cross-row shared state."""
             ids = input_ids[b].tolist()
             lbs = labels[b].tolist()
 
@@ -228,6 +238,14 @@ class APIModel:
                 # log(1-p) stable for tiny p; clamp near p=1 to avoid -inf.
                 log1m = math.log(-math.expm1(alp)) if alp < -1e-7 else math.log(1e-7)
                 logits[b, j, rid] = (alp - log1m) + log_V1
+
+        if self._max_workers > 1 and bs > 1:
+            with ThreadPoolExecutor(max_workers=self._max_workers) as ex:
+                # list() forces every future so exceptions propagate here, not silently.
+                list(ex.map(score_row, range(bs)))
+        else:
+            for b in range(bs):
+                score_row(b)
 
         return SimpleNamespace(logits=logits)
 
@@ -317,6 +335,7 @@ def _build_citer(
     batch_size: int = 1,
     provider: LogprobProvider | None = None,
     settings: Settings | None = None,
+    max_workers: int = 1,
 ) -> ContextCiter:
     """Construct a ContextCiter wired to a logprob provider. Shared by the
     whole-response and per-unit attribution paths so setup never diverges. The
@@ -325,7 +344,7 @@ def _build_citer(
     settings = settings or SETTINGS
     provider = provider or OpenAICompatProvider(settings)
     tokenizer = make_tokenizer(settings.shell_tokenizer)
-    model = APIModel(response=response, provider=provider, tokenizer=tokenizer)
+    model = APIModel(response=response, provider=provider, tokenizer=tokenizer, max_workers=max_workers)
     return ContextCiter(
         model=model,
         tokenizer=tokenizer,
@@ -533,6 +552,7 @@ def attribute_by_sentence(
     provider: LogprobProvider | None = None,
     settings: Settings | None = None,
     instruction: str | None = None,
+    max_workers: int = 1,
 ) -> dict:
     """Attribute each response *unit* (sentence / bullet / list item / table) from
     a single ablation pass, mapping every attribution back to its Chunk.
@@ -548,11 +568,23 @@ def attribute_by_sentence(
     (the same splitter as the context), so tables/bullets in the answer stay
     intact rather than being chopped by naive sentence tokenization.
 
+    ``max_workers`` > 1 runs the ablation calls concurrently (default 1 = serial,
+    unchanged results). Because ContextCite feeds masks in batches of
+    ``batch_size``, concurrency only bites when a batch holds >1 row — so when the
+    caller leaves ``batch_size`` at its default of 1, it's raised to ``max_workers``
+    here (an explicit ``batch_size`` is respected). Scoring is deterministic
+    (temperature 0), so this changes wall-clock only, not the attributions.
+
     Returns ``{response, whole, units}`` where ``whole`` and each
     ``units[i]["attributions"]`` is a list of rows
     ``{score, source_text, chunk_id, doc_id, retrieval_score, origin}``. No
     causal dependence verdict is made here — that's the diagnosis layer's job.
     """
+    # Concurrency needs >1 mask per batch to overlap; lift the default-1 batch to
+    # match the worker count so the ThreadPoolExecutor in APIModel has rows to fan out.
+    if max_workers > 1 and batch_size == 1:
+        batch_size = max_workers
+
     # Assemble the context and each segment's owning chunk in one pass, so a
     # part's provenance is attached by construction (see _assemble_context).
     context, ranges = _assemble_context(chunks, instruction)
@@ -560,6 +592,7 @@ def attribute_by_sentence(
         context, query, response,
         num_ablations=num_ablations, ablation_keep_prob=ablation_keep_prob,
         batch_size=batch_size, provider=provider, settings=settings,
+        max_workers=max_workers,
     )
     _ = cc._logit_probs                               # trigger the ablation pass once (cached)
     resp = cc.response                                # exactly what ContextCite scored
