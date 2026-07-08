@@ -2,10 +2,12 @@
 
 One endpoint: POST /attribute. Takes {query, answer, chunks} — the same three
 things a frontend already has in hand right after rendering a RAG answer — and
-returns a RecordSummary as JSON. This module owns HTTP concerns only (request
-shape, CORS, error mapping); the computation is exactly the
-attribute_by_sentence -> summarize_record chain dare.batch.attribute_record
-already calls, just driven by one live request instead of a corpus row.
+returns a RecordSummary plus a per-record `relative` view as JSON. This module
+owns HTTP concerns only (request shape, CORS, error mapping); the computation is
+exactly the attribute_by_sentence -> summarize_record -> relativize_record chain
+dare.batch runs, just driven by one live request instead of a corpus row. The
+synthesis instruction is folded into the ablation set (origin="instruction"),
+same as batch's --instruction, so the widget reports the instruction lane too.
 
 Run: uvicorn dare.api:app --host 0.0.0.0 --port 8000
 
@@ -29,9 +31,10 @@ from pydantic import BaseModel
 
 from dare.attribution import attribute_by_sentence
 from dare.config import Settings
+from dare.prompts import SYNTHESIS_SYSTEM
 from dare.providers import CachingProvider, OpenAICompatProvider
 from dare.schema import Chunk
-from dare.summary import summarize_record
+from dare.summary import relativize_record, summarize_record
 
 logger = logging.getLogger(__name__)
 
@@ -94,7 +97,7 @@ def attribute(req: AttributeRequest) -> dict:
     try:
         result = attribute_by_sentence(
             req.query, req.answer, chunks,
-            provider=_PROVIDER, settings=_SETTINGS,
+            provider=_PROVIDER, settings=_SETTINGS, instruction=SYNTHESIS_SYSTEM,
         )
     except Exception as e:  # noqa: BLE001 — surface as a clean HTTP error, not a stack trace
         logger.exception("attribution failed for query=%r", req.query)
@@ -108,7 +111,14 @@ def attribute(req: AttributeRequest) -> dict:
         units=result["units"],
         chunks=chunks,
     )
-    return dataclasses.asdict(summary)
+    # The per-record RELATIVE view (support normalized within this response, one
+    # dominant lane per unit) — the same measurement batch's renderer uses,
+    # computed here so the widget paints it rather than recomputing. Carried
+    # alongside the RecordSummary fields under "relative".
+    return {
+        **dataclasses.asdict(summary),
+        "relative": [dataclasses.asdict(r) for r in relativize_record(summary)],
+    }
 
 
 if __name__ == "__main__":

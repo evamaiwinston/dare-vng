@@ -1025,5 +1025,77 @@ export const SAMPLE: RecordSummary = {
         }
       ]
     }
+  ],
+  "relative": [
+    {
+      "index": 0,
+      "text": "Based on the evidence provided:",
+      "span": [
+        0,
+        31
+      ],
+      "support": 12.08293679076007,
+      "against": 18.158736459056655,
+      "relative_strength": 0.12130480057551023,
+      "dominant_lane": "instruction",
+      "context_mass": 0,
+      "instruction_mass": 12.08293679076007
+    },
+    {
+      "index": 1,
+      "text": "1.  **Eligibility criteria:** The employee has 2 years of seniority (eligible with 1 year or more according to Article 17) and suffers from Parkinson's disease (classified as a critical illness according to Article 2.1).",
+      "span": [
+        33,
+        253
+      ],
+      "support": 19.423597891919226,
+      "against": 54.297908833378514,
+      "relative_strength": 0.19500024783212894,
+      "dominant_lane": "context",
+      "context_mass": 19.33880115809687,
+      "instruction_mass": 0.0847967338223543
+    },
+    {
+      "index": 2,
+      "text": "2.  **Maximum advance amount:** **03 gross months' salary**.",
+      "span": [
+        254,
+        314
+      ],
+      "support": 8.005515148582123,
+      "against": 4.677134532527719,
+      "relative_strength": 0.08037014803765216,
+      "dominant_lane": "context",
+      "context_mass": 5.051055995161043,
+      "instruction_mass": 2.95445915342108
+    },
+    {
+      "index": 3,
+      "text": "*Note: To complete the procedure, employees must also ensure other conditions such as an employment contract valid for at least 3 months, not currently repaying another loan, not having been subject to disciplinary action in the last 6 months, and not being in the process of termination (according to Article 2.1).",
+      "span": [
+        316,
+        631
+      ],
+      "support": 99.60806772225509,
+      "against": 22.781783600128385,
+      "relative_strength": 1.0,
+      "dominant_lane": "context",
+      "context_mass": 97.81976898087515,
+      "instruction_mass": 1.7882987413799303
+    },
+    {
+      "index": 4,
+      "text": "*",
+      "span": [
+        631,
+        632
+      ],
+      "support": 1.2531806353862254,
+      "against": 1.7792126918659639,
+      "relative_strength": 0.012581115807612757,
+      "dominant_lane": "context",
+      "context_mass": 0.7229995916162155,
+      "instruction_mass": 0.5301810437700097
+    }
   ]
 };

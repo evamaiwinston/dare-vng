@@ -1,9 +1,10 @@
 """Adapter between the demo UI and the dare package.
 
-This is the ONLY place the demo touches the pipeline. The algorithm is treated
-as a black box: we import `run_pipeline` and call it, nothing more. Isolating
-the call here means the LLM-endpoint policy (live now, possibly cached /
-precomputed later) and the source selection can change without touching the UI.
+This is the ONLY place the demo touches the pipeline. `run_pipeline` (defined
+here) orchestrates dare's public building blocks — fetch/load, prepare_inputs,
+attribute_response — into one blocking call. Isolating that here means the
+LLM-endpoint policy (live now, possibly cached / precomputed later) and the
+source selection can change without touching the UI.
 
 Progress is NOT handled here. The ablation loop inside the pipeline drives a
 `tqdm` bar (context_cite.utils), which the Gradio layer tracks directly via
@@ -23,12 +24,15 @@ if str(REPO_ROOT) not in sys.path:
     sys.path.insert(0, str(REPO_ROOT))
 
 from dare.attribution import (  # noqa: E402
-    run_pipeline,
     load_mock,
     fetch_backend,
     prepare_inputs,
     attribute_response,
     resolve_query,
+    MarkdownContextPartitioner,
+    SETTINGS,
+    Settings,
+    LogprobProvider,
     _patched_color_scale,
 )
 # Re-export mock discovery so the UI can import everything from `runner` (which
@@ -41,6 +45,80 @@ from tools.mocks import (  # noqa: E402,F401
 
 # Default mock used when the UI/caller names none.
 DEFAULT_MOCK_PATH = MOCK_DIR / "demo_mock_data.json"
+
+
+# --- Full pipeline (fetch + attribute in one call) ---------------------------
+
+def run_pipeline(
+    query: str | None = None,
+    *,
+    source: str = "backend",
+    mock_path: str | Path | None = None,
+    num_ablations: int = 32,
+    ablation_keep_prob: float = 0.5,
+    batch_size: int = 1,
+    as_dataframe: bool = True,
+    verbose: bool = True,
+    start_idx: int | None = None,
+    end_idx: int | None = None,
+    provider: LogprobProvider | None = None,
+    settings: Settings | None = None,
+) -> dict:
+    """Run the full attribution pipeline; the single entry point the demo UI calls.
+
+    Two modes, selected explicitly via ``source`` (not by backend availability):
+
+    * ``source="backend"`` -- send ``query`` to the live RAG backend, then
+      attribute the answer. ``query`` is required.
+    * ``source="mock"`` -- skip the backend and load ``mock_path`` instead, for
+      demo consistency. ``query`` may be omitted only if the mock file carries
+      its own ``query`` field; with neither, the run is refused (see
+      ``resolve_query``). The ablation logprobs still come from the live LLM
+      endpoint either way.
+
+    ``start_idx`` / ``end_idx`` cite a sub-span of the response, as character
+    offsets into ``response``. Both None (the default) attributes the whole
+    response. ``provider`` / ``settings`` override the endpoint and backend.
+
+    Returns a dict with everything the UI needs to render:
+    ``{source, query, answer, context, response, num_sources, attributions}``.
+    """
+    settings = settings or SETTINGS
+    if source == "mock":
+        if mock_path is None:
+            raise ValueError("source='mock' requires mock_path")
+        data = load_mock(mock_path)
+        query = resolve_query(query, data)          # explicit > mock's own field
+    elif source == "backend":
+        query = resolve_query(query)                # backend: explicit query only
+        data = fetch_backend(query, settings=settings)
+    else:
+        raise ValueError(f"unknown source {source!r} (use 'backend' or 'mock')")
+
+    context, response = prepare_inputs(data, settings=settings)
+    attributions = attribute_response(
+        context,
+        query,
+        response,
+        num_ablations=num_ablations,
+        ablation_keep_prob=ablation_keep_prob,
+        batch_size=batch_size,
+        as_dataframe=as_dataframe,
+        verbose=verbose,
+        start_idx=start_idx,
+        end_idx=end_idx,
+        provider=provider,
+        settings=settings,
+    )
+    return {
+        "source": source,
+        "query": query,
+        "answer": data["answer"],
+        "context": context,
+        "response": response,
+        "num_sources": MarkdownContextPartitioner(context).num_sources,
+        "attributions": attributions,
+    }
 
 
 def style_scores(df, green_max: float):

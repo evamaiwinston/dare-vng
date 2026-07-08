@@ -112,10 +112,8 @@ export const STYLES = `
   cursor: pointer;
 }
 
-/* --- Overall descriptive count ------------------------------------------- */
-
-.overall { margin-bottom: 12px; }
-.overall h4, .chunks h4 {
+/* --- Whole-response chunks (part-to-whole shares) ------------------------ */
+.chunks h4 {
   margin: 0 0 8px;
   font-size: 12px;
   font-weight: 600;
@@ -123,39 +121,13 @@ export const STYLES = `
   letter-spacing: 0.4px;
   color: var(--muted);
 }
-
-/* --- Whole-response chunks (part-to-whole shares) ------------------------ */
-.chunks { margin-top: 14px; border-top: 1px solid var(--line); padding-top: 12px; }
 .chunk-doc { color: var(--ink); font-size: 12.5px; word-break: break-word; }
 .chunk-share { font-variant-numeric: tabular-nums; font-weight: 700; white-space: nowrap; }
-/* stacked proportion bar: one segment per bucket. WIDTHS are set inline from
-   the bucket tallies (data); the segment COLOURS below are fixed bucket keys. */
-.count-bar {
-  display: flex;
-  height: 8px;
-  border-radius: 5px;
-  overflow: hidden;
-  background: var(--panel);
-}
-.count-bar span { display: block; height: 100%; }
-.seg-strong    { background: rgba(var(--grn), 0.9); }
-.seg-moderate  { background: rgba(var(--grn), 0.55); }
-.seg-weak      { background: rgba(var(--grn), 0.25); }
-.seg-unattributed{ background: repeating-linear-gradient(45deg, #e7ebef, #e7ebef 3px, #fff 3px, #fff 6px); }
 
-.count-legend {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 4px 14px;
-  margin-top: 8px;
-  font-size: 12.5px;
-  color: var(--muted);
-}
-.count-legend b { color: var(--ink); font-variant-numeric: tabular-nums; }
-.count-legend .sw { display: inline-block; width: 10px; height: 10px; border-radius: 2px; margin-right: 5px; vertical-align: middle; }
-/* hero line of the descriptive count */
-.count-lead { font-size: 13.5px; color: var(--ink); margin-bottom: 8px; }
-.count-lead b { font-weight: 700; }
+/* --- Instruction lane (drawer) ------------------------------------------ */
+/* The folded synthesis prompt's lane, amber to echo the in-answer shading. */
+.instr-lane { margin-bottom: 12px; padding-left: 8px; border-left: 3px solid rgba(242, 200, 121, 0.9); }
+.instr-lane h5 { margin-top: 0; }
 
 /* --- Annotated answer ---------------------------------------------------- */
 

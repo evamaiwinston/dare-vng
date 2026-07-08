@@ -15,6 +15,7 @@ Two families, in dependency order:
     ChunkAttribution   — SourceAttributions rolled up to one retrieved chunk, by positive mass.
     UnitSummary        — one unit, split by origin (context chunks vs instruction), nothing hidden.
     RecordSummary      — one record's full distribution, report-ready. Descriptive only.
+    UnitRelative       — one unit's per-record RELATIVE view (support normalized within the record).
 
 This module imports nothing but stdlib — it's a leaf everything else depends on.
 """
@@ -87,3 +88,26 @@ class RecordSummary:
     whole_context_mass: float
     whole_instruction_mass: float
     units: list[UnitSummary]      # in RESPONSE ORDER (faithful); renderer sorts for a ranked view
+
+
+# --- Derived relative view (built by dare.summary.relativize_record) ---------
+
+@dataclass
+class UnitRelative:
+    """One unit's per-record RELATIVE view: support normalized within the record,
+    plus which lane drove it. Presentation-free — no colors, no HTML. A renderer maps
+    ``relative_strength`` to opacity and ``dominant_lane`` to hue.
+
+    ``support`` is the positive mass across BOTH lanes (the shaded "for" magnitude);
+    ``against`` is the competing negative mass. Normalization is WITHIN the record
+    (never across records), so ``relative_strength`` is comparable only among a single
+    record's units — the strongest unit is 1.0."""
+    index: int                  # position in response order
+    text: str
+    span: tuple[int, int]
+    support: float              # Σ positive mass, both lanes (context_mass + instruction_mass)
+    against: float              # Σ |negative source scores| — competing evidence
+    relative_strength: float    # support / record's max support, in [0, 1]
+    dominant_lane: str          # "context" | "instruction" | "none"
+    context_mass: float
+    instruction_mass: float

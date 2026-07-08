@@ -16,7 +16,6 @@ import type { ReactNode } from "react";
 import { createPortal } from "react-dom";
 
 import { AttributionView } from "./AttributionView";
-import type { Calibration } from "./AttributionView";
 import { STYLES } from "./styles";
 import type { DareChunk } from "./types";
 import { useAttribution } from "./useAttribution";
@@ -63,11 +62,9 @@ export interface DareWidgetProps {
   answer: string;
   /** The retrieved chunks — pass the RAG response's `knowledge_sources` as-is. */
   chunks: DareChunk[];
-  /** Override the provisional bucket/shade thresholds (see DEFAULT_CALIBRATION). */
-  calibration?: Calibration;
 }
 
-export function DareWidget({ apiUrl, query, answer, chunks, calibration }: DareWidgetProps) {
+export function DareWidget({ apiUrl, query, answer, chunks }: DareWidgetProps) {
   const { status, summary, error, run, reset } = useAttribution({ apiUrl, query, answer, chunks });
 
   return (
@@ -103,7 +100,7 @@ export function DareWidget({ apiUrl, query, answer, chunks, calibration }: DareW
                 ✕
               </button>
             </div>
-            <AttributionView summary={summary} calibration={calibration} />
+            <AttributionView summary={summary} />
             <div className="footer">Descriptive attribution, relative to this answer · powered by DARE</div>
           </>
         )}

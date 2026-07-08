@@ -38,6 +38,7 @@ from dare.results import (
     RecordSummary,
     SourceAttribution,
     UnitAttribution,
+    UnitRelative,
     UnitSummary,
 )
 from dare.schema import Chunk
@@ -145,3 +146,45 @@ def summarize_record(
         whole_instruction_mass=_positive_mass(whole_instr),
         units=unit_summaries,
     )
+
+
+def relativize_record(summary: RecordSummary) -> list[UnitRelative]:
+    """Per-record RELATIVE measurement, one ``UnitRelative`` per unit in response order.
+
+    Each unit's ``support`` (Σ positive mass, both lanes) is normalized against the
+    record's strongest unit, so ``relative_strength`` lands in ``[0, 1]`` with the
+    strongest unit at 1.0. Normalization is WITHIN the record only — strengths are NOT
+    comparable across records. ``dominant_lane`` names what drove the unit: "instruction"
+    when the instruction lane matches or beats the strongest single chunk, else "context";
+    "none" for a unit with no positive support.
+
+    Pure and presentation-free: this is the structured measurement a renderer turns into
+    ink (opacity from ``relative_strength``) and hue (from ``dominant_lane``). A record
+    with no positive mass yields all-zero strengths — no division by zero.
+    """
+    supports = [u.context_mass + u.instruction_mass for u in summary.units]
+    max_support = max(supports, default=0.0) or 1.0   # floor so an all-zero record can't /0
+
+    out: list[UnitRelative] = []
+    for i, u in enumerate(summary.units):
+        support = supports[i]
+        against = sum(-a.score for a in u.source_attributions if a.score < 0)
+        max_chunk = max((c.positive_mass for c in u.chunk_attributions), default=0.0)
+        if support <= 0:
+            lane = "none"
+        elif u.instruction_mass > 0 and u.instruction_mass >= max_chunk:
+            lane = "instruction"
+        else:
+            lane = "context"
+        out.append(UnitRelative(
+            index=i,
+            text=u.text,
+            span=u.span,
+            support=support,
+            against=against,
+            relative_strength=support / max_support,
+            dominant_lane=lane,
+            context_mass=u.context_mass,
+            instruction_mass=u.instruction_mass,
+        ))
+    return out

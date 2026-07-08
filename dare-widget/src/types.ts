@@ -41,9 +41,8 @@ export interface AttributeRequest {
 
 /**
  * Where an attribution row came from. Locked vocabulary (see dare/summary.py):
- * "context" = a retrieved chunk, "instruction" = the folded system prompt.
- * The current endpoint never folds the instruction, so in practice every row is
- * "context" — but we type both to stay faithful to the contract.
+ * "context" = a retrieved chunk, "instruction" = the folded system prompt. The
+ * endpoint folds the synthesis instruction (api.py), so both origins appear.
  */
 export type AttributionOrigin = "context" | "instruction";
 
@@ -81,23 +80,45 @@ export interface ChunkAttribution {
 /**
  * One response unit (sentence / bullet / list item / table) and its attribution,
  * split by origin (mirrors `UnitSummary`). `span` is a [start, end] character
- * range into `RecordSummary.response`. `context_mass` is this unit's total
- * positive grounding from retrieved chunks — the number the widget shades by.
+ * range into `RecordSummary.response`. The widget shades by the per-record
+ * relative view (see `UnitRelative`), not by these raw masses directly.
  */
 export interface UnitSummary {
   text: string;
   span: [number, number];
   source_attributions: SourceAttribution[]; // all raw rows, both origins
   chunk_attributions: ChunkAttribution[]; // context only, rolled up by chunk
-  instruction_attributions: SourceAttribution[]; // always empty today
+  instruction_attributions: SourceAttribution[]; // folded synthesis-instruction rows
+  context_mass: number; // Σ positive context rows
+  instruction_mass: number; // Σ positive instruction rows
+}
+
+/**
+ * One unit's per-record RELATIVE view (mirrors `UnitRelative` in dare/results.py,
+ * built by `relativize_record` and returned under `RecordSummary.relative`).
+ * `support` is the positive mass across both lanes; `relative_strength` is that
+ * support normalized against the strongest unit in THIS response (∈ [0, 1], so it
+ * is comparable only within one answer); `dominant_lane` names the driving lane.
+ * The widget shades opacity by `relative_strength` and hue by `dominant_lane`.
+ */
+export interface UnitRelative {
+  index: number;
+  text: string;
+  span: [number, number];
+  support: number;
+  against: number;
+  relative_strength: number; // ∈ [0, 1], normalized within this response
+  dominant_lane: "context" | "instruction" | "none";
   context_mass: number;
-  instruction_mass: number; // always 0 today
+  instruction_mass: number;
 }
 
 /**
  * One record's full attribution distribution — the top-level object returned by
- * `POST /attribute` (mirrors `RecordSummary`). `response` is the exact answer
- * string the engine scored; `units` are in response order.
+ * `POST /attribute`. Mirrors `RecordSummary`, PLUS a `relative` array that the
+ * endpoint attaches alongside the dataclass fields (api.py, via relativize_record).
+ * `response` is the exact answer string the engine scored; `units`/`relative` are
+ * both in response order and index-aligned.
  */
 export interface RecordSummary {
   record_id: string;
@@ -109,4 +130,5 @@ export interface RecordSummary {
   whole_context_mass: number;
   whole_instruction_mass: number;
   units: UnitSummary[];
+  relative: UnitRelative[]; // per-unit relative view, index-aligned with `units`
 }
