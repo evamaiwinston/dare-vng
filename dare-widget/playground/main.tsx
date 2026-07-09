@@ -1,9 +1,11 @@
 /**
- * Playground entry — renders the REAL <DareWidget> against a MOCKED backend, so
- * you see the true end-to-end flow (button → loading → shadow-DOM'd view) with
- * no server. We intercept `fetch` for POST .../attribute and return the bundled
- * sample RecordSummary after a short fake delay; every other request passes
- * through. This exercises the actual component code in src/, not a mockup.
+ * Playground entry — renders the REAL <DareWidget> against the REAL local
+ * backend (uvicorn dare.api:app on :8000). Clicking "Explain this answer" now
+ * makes a genuine POST to /attribute — there is no mock. It uses the sample
+ * record's own query/answer/chunks as the inputs.
+ *
+ * Requires: the backend running on :8000, and "http://localhost:5173" added to
+ * api.py's CORS allow_origins (otherwise the browser blocks the response).
  */
 
 import { StrictMode } from "react";
@@ -11,19 +13,6 @@ import { createRoot } from "react-dom/client";
 
 import { DareWidget } from "../src";
 import { SAMPLE } from "./sample";
-
-const realFetch = window.fetch.bind(window);
-window.fetch = async (input: RequestInfo | URL, init?: RequestInit): Promise<Response> => {
-  const url = typeof input === "string" ? input : input instanceof URL ? input.href : input.url;
-  if (url.endsWith("/attribute") && (init?.method ?? "GET").toUpperCase() === "POST") {
-    await new Promise((r) => setTimeout(r, 1200)); // simulate attribution latency
-    return new Response(JSON.stringify(SAMPLE), {
-      status: 200,
-      headers: { "Content-Type": "application/json" },
-    });
-  }
-  return realFetch(input, init);
-};
 
 const page: React.CSSProperties = {
   maxWidth: 1120,
@@ -59,10 +48,15 @@ createRoot(document.getElementById("root")!).render(
       </div>
 
       <DareWidget
-        apiUrl="https://mock.local"
+        apiUrl="http://localhost:8000"
         query={SAMPLE.query}
         answer={SAMPLE.response}
-        chunks={[{ content: "(mocked — the intercepted fetch ignores the body)" }]}
+        chunks={SAMPLE.whole_chunk_attributions.map((c) => ({
+          content: c.chunk_text,
+          chunk_id: c.chunk_id,
+          document_id: c.doc_id,
+          score: c.retrieval_score,
+        }))}
       />
     </div>
   </StrictMode>,

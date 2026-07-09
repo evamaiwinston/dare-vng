@@ -64,6 +64,13 @@ class Settings:
     api_retry_backoff: float = 10.0        # linear: wait = backoff * attempt
     api_timeout: tuple[int, int] = (10, 90)  # (connect, read) seconds
 
+    # --- Serving concurrency (the live /attribute endpoint) -----------------
+    # dare/api.py runs each request's ablation calls concurrently at this width
+    # (the 06 notebook measured ~3.7x at 8). Only the serving path passes this
+    # to attribute_by_sentence; dare.batch leaves its own call serial. Override
+    # with WIDGET_MAX_WORKERS.
+    widget_max_workers: int = 8
+
     @classmethod
     def from_env(cls, dotenv_path: str | Path | None = None) -> "Settings":
         """Build Settings from environment variables, loading `.env` first.
@@ -84,4 +91,5 @@ class Settings:
             backend_url=os.getenv("BACKEND_API_URL"),
             workspace_id=os.getenv("BACKEND_WORKSPACE_ID"),
             backend_token=os.getenv("BACKEND_API_KEY"),
+            widget_max_workers=int(os.getenv("WIDGET_MAX_WORKERS", "8")),
         )

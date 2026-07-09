@@ -98,6 +98,9 @@ def attribute(req: AttributeRequest) -> dict:
         result = attribute_by_sentence(
             req.query, req.answer, chunks,
             provider=_PROVIDER, settings=_SETTINGS, instruction=SYNTHESIS_SYSTEM,
+            # Run this request's ablation calls concurrently (serving path only;
+            # batch stays serial). Configurable via WIDGET_MAX_WORKERS, default 8.
+            max_workers=_SETTINGS.widget_max_workers,
         )
     except Exception as e:  # noqa: BLE001 — surface as a clean HTTP error, not a stack trace
         logger.exception("attribution failed for query=%r", req.query)
