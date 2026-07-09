@@ -1,8 +1,11 @@
 /**
  * Playground entry — renders the REAL <DareWidget> against the REAL local
- * backend (uvicorn dare.api:app on :8000). Clicking "Explain this answer" now
- * makes a genuine POST to /attribute — there is no mock. It uses the sample
- * record's own query/answer/chunks as the inputs.
+ * backend (uvicorn dare.api:app on :8000). Clicking "Explain this answer" makes
+ * a genuine POST to /attribute — there is no mock.
+ *
+ * Inputs are the REAL qa-0164 record in its VIETNAMESE original (playground/
+ * inputs.ts) — the text the model actually generated — so attribution runs on
+ * the real answer, not the English gloss in sample.ts.
  *
  * Requires: the backend running on :8000, and "http://localhost:5173" added to
  * api.py's CORS allow_origins (otherwise the browser blocks the response).
@@ -12,7 +15,7 @@ import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 
 import { DareWidget } from "../src";
-import { SAMPLE } from "./sample";
+import { QUERY, ANSWER, CHUNKS } from "./inputs";
 
 const page: React.CSSProperties = {
   maxWidth: 1120,
@@ -32,7 +35,7 @@ createRoot(document.getElementById("root")!).render(
       </p>
 
       <div style={{ fontSize: 13, color: "#656d76", marginBottom: 4 }}>
-        <b>Q:</b> {SAMPLE.query}
+        <b>Q:</b> {QUERY}
       </div>
       <div
         style={{
@@ -44,19 +47,14 @@ createRoot(document.getElementById("root")!).render(
           background: "#fff",
         }}
       >
-        {SAMPLE.response}
+        {ANSWER}
       </div>
 
       <DareWidget
         apiUrl="http://localhost:8000"
-        query={SAMPLE.query}
-        answer={SAMPLE.response}
-        chunks={SAMPLE.whole_chunk_attributions.map((c) => ({
-          content: c.chunk_text,
-          chunk_id: c.chunk_id,
-          document_id: c.doc_id,
-          score: c.retrieval_score,
-        }))}
+        query={QUERY}
+        answer={ANSWER}
+        chunks={CHUNKS}
       />
     </div>
   </StrictMode>,
