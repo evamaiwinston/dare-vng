@@ -54,7 +54,7 @@ app = FastAPI(title="DARE Attribution API")
 # silently wide open — fill in the real origin(s) once that's settled.
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[],
+    allow_origins=["http://localhost:5173"],
     allow_methods=["POST"],
     allow_headers=["Content-Type"],
 )
