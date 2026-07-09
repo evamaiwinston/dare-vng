@@ -54,11 +54,19 @@ function shadeStyle(rel: UnitRelative): CSSProperties {
   return { background: `rgba(${hue}, ${alpha.toFixed(3)})` };
 }
 
-/** Human label for a unit's lane, used in the tooltip and drawer. */
+/** Human label for a unit's lane, used in the tooltip. */
 function laneLabel(lane: UnitRelative["dominant_lane"]): string {
   if (lane === "instruction") return "instruction-driven";
   if (lane === "context") return "context-driven";
   return "not attributed to context";
+}
+
+/** The batch report's three-band strength word, from a unit's within-record
+ *  relative_strength (∈ [0, 1]). Mirrors render.py's 0.66 / 0.33 cutoffs. */
+function strengthWord(relativeStrength: number): string {
+  if (relativeStrength >= 0.66) return "strongly attributed";
+  if (relativeStrength >= 0.33) return "moderately attributed";
+  return "weakly attributed";
 }
 
 // ---------------------------------------------------------------------------
@@ -164,37 +172,30 @@ interface WholeChunksProps {
  * chunk_text is shown (the chunk-level "whole excerpt, not a fragment" decision).
  */
 function WholeChunks({ chunks }: WholeChunksProps) {
-  const positive = chunks.filter((c) => c.positive_mass > 0);
-  const total = positive.reduce((sum, c) => sum + c.positive_mass, 0);
+  // Influential chunks (positive attribution), ranked by influence — tag + full
+  // text only, no bars or numbers (the raw magnitudes are noisy and not the point
+  // in the overview; the click-through drawer carries the per-sentence detail).
+  const influential = chunks
+    .filter((c) => c.positive_mass > 0)
+    .sort((a, b) => b.positive_mass - a.positive_mass);
 
   return (
     <div className="chunks">
       <h4>Chunks that influenced this answer</h4>
-      {total === 0 ? (
+      {influential.length === 0 ? (
         <p className="drawer-empty">No retrieved chunk positively influenced this answer.</p>
       ) : (
-        positive.map((c, i) => {
-          const pct = Math.round((100 * c.positive_mass) / total);
-          return (
-            <div className="chunk" key={c.chunk_id ?? i}>
-              <div className="chunk-head">
-                <span className="chunk-doc">
-                  {docLabel(c.doc_id)}
-                  {c.chunk_id ? <span className="chunk-id"> · #{c.chunk_id.slice(0, 6)}</span> : null}
-                </span>
-                <span className="chunk-share">{pct}%</span>
-              </div>
-              {/* part-to-whole: fill width = this chunk's share of total positive mass */}
-              <div className="chunk-track">
-                <span style={{ width: `${((100 * c.positive_mass) / total).toFixed(1)}%` }} />
-              </div>
-              <div className="chunk-text">{c.chunk_text}</div>
-              <div className="chunk-meta">
-                {pct}% of grounding · positive_mass {c.positive_mass.toFixed(1)}
-              </div>
+        influential.map((c, i) => (
+          <div className="chunk" key={c.chunk_id ?? i}>
+            <div className="chunk-head">
+              <span className="chunk-doc">
+                {docLabel(c.doc_id)}
+                {c.chunk_id ? <span className="chunk-id"> · #{c.chunk_id.slice(0, 6)}</span> : null}
+              </span>
             </div>
-          );
-        })
+            <div className="chunk-text">{c.chunk_text}</div>
+          </div>
+        ))
       )}
     </div>
   );
@@ -207,6 +208,9 @@ function WholeChunks({ chunks }: WholeChunksProps) {
 interface UnitDrawerProps {
   unit: UnitSummary;
   rel: UnitRelative;
+  /** Largest support-or-against across the whole record, so the diverging bar is
+   *  scaled the same for every unit (matches tools/render.py). */
+  scale: number;
   onClose: () => void;
 }
 
@@ -221,24 +225,32 @@ interface UnitDrawerProps {
  * "competing sources"), neutral (≈0, omitted). Each source carries its provenance
  * and its full parent chunk_text on demand.
  */
-function UnitDrawer({ unit, rel, onClose }: UnitDrawerProps) {
-  const [showNegatives, setShowNegatives] = useState(false);
+function UnitDrawer({ unit, rel, scale, onClose }: UnitDrawerProps) {
   const [openChunks, setOpenChunks] = useState<Set<number>>(() => new Set());
 
-  // context lane (retrieved chunks) vs instruction lane (folded system prompt)
-  const sources = unit.source_attributions.filter((s) => s.origin !== "instruction");
-  const positives = sources.filter((s) => s.score > 0).sort((a, b) => b.score - a.score);
-  const negatives = sources.filter((s) => s.score < 0).sort((a, b) => a.score - b.score);
-  const topScore = positives.length ? positives[0].score : 1;
+  // Diverging support/against bar widths, scaled to the largest of either across
+  // ALL units in this record (`scale`) — same as render.py's drawer.
+  const supW = (100 * Math.min(rel.support / scale, 1)).toFixed(1);
+  const agW = (100 * Math.min(rel.against / scale, 1)).toFixed(1);
 
-  const instrRows = unit.instruction_attributions
-    .filter((s) => s.score > 0)
-    .sort((a, b) => b.score - a.score);
+  // Every source fragment (context + folded instruction, positive AND negative),
+  // ranked by attribution strength (|score|) — the batch report's ± heatmap rows.
+  const sources = [...unit.source_attributions]
+    .filter((s) => s.score !== 0)
+    .sort((a, b) => Math.abs(b.score) - Math.abs(a.score))
+    .slice(0, 8);
+  const maxAbs = sources.length ? Math.abs(sources[0].score) : 1;
 
-  // chunk_id -> full chunk_text, for the on-demand "see full chunk".
-  const chunkText = new Map<string | null, string>();
-  for (const c of unit.chunk_attributions) chunkText.set(c.chunk_id, c.chunk_text);
+  // Hue by kind: green = context support, red = against, amber = instruction.
+  const srcHue = (s: SourceAttribution) =>
+    s.origin === "instruction" ? "var(--ins)" : s.score < 0 ? "var(--neg)" : "var(--grn)";
+  const srcTag = (s: SourceAttribution) =>
+    s.origin === "instruction"
+      ? "synthesis instruction"
+      : docLabel(s.doc_id) + (s.chunk_id ? " · #" + s.chunk_id.slice(0, 6) : "");
 
+  // The chunks this sentence used, for the collapsible full-text section (no bars).
+  const usedChunks = unit.chunk_attributions;
   const toggleChunk = (i: number) =>
     setOpenChunks((prev) => {
       const next = new Set(prev);
@@ -247,94 +259,75 @@ function UnitDrawer({ unit, rel, onClose }: UnitDrawerProps) {
       return next;
     });
 
-  const provenance = (s: SourceAttribution) => (
-    <span className="src-doc">
-      {docLabel(s.doc_id)}
-      {s.chunk_id ? <span className="chunk-id"> · #{s.chunk_id.slice(0, 6)}</span> : null}
-    </span>
-  );
-
   return (
     <div className="drawer">
       <div className="drawer-top">
-        <div className="drawer-quote">"{unit.text.trim()}"</div>
         <button className="drawer-close" onClick={onClose} title="Back to overall" aria-label="Back to overall">
           ✕
         </button>
       </div>
-      <div className="drawer-strength">
-        <b>{laneLabel(rel.dominant_lane)}</b> · support {rel.support.toFixed(1)}
-        {rel.against > 0 ? ` · against ${rel.against.toFixed(1)}` : ""}
-      </div>
-
-      {/* instruction lane — the folded synthesis prompt's causal effect on this unit */}
-      {rel.instruction_mass > 0 && (
-        <div className="instr-lane">
-          <h5>Synthesis instruction</h5>
-          <div className="src">
-            <div className="src-head">
-              <span className="src-doc">instruction prompt</span>
-              <span className="src-score" style={{ color: "#8a6d2b" }}>
-                {rel.instruction_mass.toFixed(1)}
-              </span>
-            </div>
-            <div className="src-text">
-              {instrRows.length ? instrRows[0].source_text : "(synthesis prompt directive)"}
-            </div>
+      {/* strength block: value + band word, then the support (green) / against
+          (red) diverging bar — mirrors the batch report (tools/render.py). The
+          selected sentence is already highlighted on the left, so it isn't
+          reprinted here. */}
+      <div className="strength">
+        <div className="sval">
+          {rel.support.toFixed(2)}
+          <span className="sw">{strengthWord(rel.relative_strength)}</span>
+          {rel.dominant_lane === "instruction" && (
+            <span className="sval-instr">driven by instruction</span>
+          )}
+        </div>
+        <div className="dv">
+          <div className="dv-l">
+            <span style={{ width: `${agW}%` }} />
+          </div>
+          <div className="dv-r">
+            <span style={{ width: `${supW}%` }} />
           </div>
         </div>
-      )}
+        <div className="dv-lab">
+          <span>◀ against {rel.against.toFixed(2)}</span>
+          <span>support {rel.support.toFixed(2)} ▶</span>
+        </div>
+      </div>
 
-      {positives.length === 0 ? (
-        <p className="drawer-empty">No sources attributed to context for this sentence.</p>
+      {sources.length === 0 ? (
+        <p className="drawer-empty">Nothing moved this sentence — it came from the model's own priors.</p>
       ) : (
         <>
-          <h5>Sources that drove this sentence</h5>
-          {positives.map((s, i) => (
-            <div className="src" key={i}>
-              <div className="src-head">
-                {provenance(s)}
-                <span className="src-score">{s.score.toFixed(1)}</span>
+          <h5>Sources, ranked by attribution strength</h5>
+          {sources.map((s, i) => {
+            const hue = srcHue(s);
+            const alpha = 0.1 + 0.72 * Math.min(Math.abs(s.score) / maxAbs, 1);
+            return (
+              <div className="src-row" key={i} style={{ background: `rgba(${hue}, ${alpha.toFixed(2)})` }}>
+                <div className="src-row-head">
+                  <span className="src-tag">{srcTag(s)}</span>
+                  <span className="src-num" style={{ color: `rgb(${hue})` }}>
+                    {s.score >= 0 ? "+" : ""}
+                    {s.score.toFixed(1)}
+                  </span>
+                </div>
+                <div className="src-row-text">{s.source_text}</div>
               </div>
-              {/* bar relative to the strongest source in THIS unit (within-unit is fine here) */}
-              <div className="chunk-track">
-                <span style={{ width: `${((100 * s.score) / topScore).toFixed(1)}%` }} />
-              </div>
-              <div className="src-text">{s.source_text}</div>
-              <button className="src-more" onClick={() => toggleChunk(i)}>
-                {openChunks.has(i) ? "hide full chunk" : "see full chunk"}
-              </button>
-              {openChunks.has(i) && <div className="chunk-text">{chunkText.get(s.chunk_id) ?? s.source_text}</div>}
-            </div>
-          ))}
-          <p className="src-count">
-            {positives.length} of {sources.length} fragments drove this sentence
-          </p>
+            );
+          })}
         </>
       )}
 
-      {negatives.length > 0 && (
-        <div className="competing">
-          <button className="competing-toggle" onClick={() => setShowNegatives((v) => !v)}>
-            {showNegatives ? "▾" : "▸"} {negatives.length} competing source{negatives.length === 1 ? "" : "s"} (−)
-          </button>
-          {showNegatives && (
-            <>
-              <p className="competing-note">
-                Negative scores are competing or near-duplicate (collinear) fragments — not drivers of this
-                sentence.
-              </p>
-              {negatives.map((s, i) => (
-                <div className="src competing-src" key={i}>
-                  <div className="src-head">
-                    {provenance(s)}
-                    <span className="src-score neg">{s.score.toFixed(1)}</span>
-                  </div>
-                  <div className="src-text">{s.source_text}</div>
-                </div>
-              ))}
-            </>
-          )}
+      {usedChunks.length > 0 && (
+        <div className="fullchunks">
+          <h5>Source chunks — full text</h5>
+          {usedChunks.map((c, i) => (
+            <div className="fc" key={c.chunk_id ?? i}>
+              <button className="fc-toggle" onClick={() => toggleChunk(i)}>
+                {openChunks.has(i) ? "▾" : "▸"} {docLabel(c.doc_id)}
+                {c.chunk_id ? <span className="chunk-id"> · #{c.chunk_id.slice(0, 6)}</span> : null}
+              </button>
+              {openChunks.has(i) && <div className="chunk-text">{c.chunk_text}</div>}
+            </div>
+          ))}
         </div>
       )}
     </div>
@@ -360,6 +353,10 @@ export function AttributionView({ summary }: AttributionViewProps) {
   const [selected, setSelected] = useState<number | null>(null);
   const { response, units, relative, whole_chunk_attributions } = summary;
 
+  // Largest support-or-against across the record, so the drawer's diverging bar is
+  // scaled consistently for every unit (matches tools/render.py).
+  const scale = Math.max(1e-9, ...relative.flatMap((u) => [u.support, u.against]));
+
   // Guard a stale index (defensive — units is stable per summary in practice).
   const selectedUnit = selected != null && selected < units.length ? units[selected] : null;
 
@@ -376,7 +373,7 @@ export function AttributionView({ summary }: AttributionViewProps) {
       </div>
       <div className="view-right">
         {selectedUnit && selected != null ? (
-          <UnitDrawer unit={selectedUnit} rel={relative[selected]} onClose={() => setSelected(null)} />
+          <UnitDrawer unit={selectedUnit} rel={relative[selected]} scale={scale} onClose={() => setSelected(null)} />
         ) : (
           <WholeChunks chunks={whole_chunk_attributions} />
         )}

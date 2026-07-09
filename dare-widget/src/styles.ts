@@ -6,18 +6,25 @@
  * selectors are plain, un-prefixed class names — there's no global namespace to
  * collide with. `:host` targets the widget's own host element in the host page.
  *
+ * The palette mirrors the batch report (tools/render.py) so the widget and the
+ * report read as the same dark surface.
  */
 
 export const STYLES = `
 :host {
-  /* Design tokens. --grn is the single accent hue; its alpha is applied inline
+  /* Design tokens — the batch report's dark palette (tools/render.py :root).
+     --grn/--ins/--neg are rgb TRIPLES; their alpha is applied inline
      (score-driven) by AttributionView, or via the fixed chrome rules below. */
-  --grn: 34, 160, 94;
-  --ink: #1f2328;
-  --muted: #656d76;
-  --line: #d0d7de;
-  --bg: #ffffff;
-  --panel: #f6f8fa;
+  --grn: 126, 224, 192;   /* green = context lane / support */
+  --ins: 242, 200, 121;   /* amber = instruction lane */
+  --neg: 240, 138, 138;   /* red   = against */
+  --ink: #e7e9f3;
+  --muted: #9aa0bd;
+  --line: #2a2f4a;
+  --accent: #6ea8fe;
+  --bg: #0f1220;
+  --panel: #171a2b;
+  --track: #0a0c16;       /* inset groove behind bars */
   --radius: 10px;
 
   all: initial;                 /* hard reset: don't inherit host page fonts/colours */
@@ -74,7 +81,7 @@ export const STYLES = `
   padding: 8px 14px;
   cursor: pointer;
 }
-.trigger:hover { background: #eef1f4; }
+.trigger:hover { background: #20263f; }
 .trigger:disabled { opacity: 0.6; cursor: default; }
 
 .status {
@@ -94,9 +101,9 @@ export const STYLES = `
 @keyframes dare-spin { to { transform: rotate(360deg); } }
 
 .error {
-  border: 1px solid #ffc1c0;
-  background: #fff5f5;
-  color: #b3261e;
+  border: 1px solid rgba(var(--neg), 0.5);
+  background: rgba(var(--neg), 0.12);
+  color: rgb(var(--neg));
   border-radius: 8px;
   padding: 10px 12px;
   font-size: 13px;
@@ -105,8 +112,9 @@ export const STYLES = `
   margin-top: 8px;
   font: inherit;
   font-size: 12px;
-  border: 1px solid #ffc1c0;
-  background: #fff;
+  border: 1px solid rgba(var(--neg), 0.5);
+  background: transparent;
+  color: rgb(var(--neg));
   border-radius: 6px;
   padding: 4px 10px;
   cursor: pointer;
@@ -122,12 +130,6 @@ export const STYLES = `
   color: var(--muted);
 }
 .chunk-doc { color: var(--ink); font-size: 12.5px; word-break: break-word; }
-.chunk-share { font-variant-numeric: tabular-nums; font-weight: 700; white-space: nowrap; }
-
-/* --- Instruction lane (drawer) ------------------------------------------ */
-/* The folded synthesis prompt's lane, amber to echo the in-answer shading. */
-.instr-lane { margin-bottom: 12px; padding-left: 8px; border-left: 3px solid rgba(242, 200, 121, 0.9); }
-.instr-lane h5 { margin-top: 0; }
 
 /* --- Annotated answer ---------------------------------------------------- */
 
@@ -136,6 +138,7 @@ export const STYLES = `
   word-break: break-word;
   font-size: 15px;
   line-height: 2;
+  color: #f4f6ff;
   border-top: 1px solid var(--line);
   padding-top: 12px;
 }
@@ -148,24 +151,14 @@ export const STYLES = `
   cursor: pointer;
   transition: outline-color 0.1s;
 }
-.unit:hover  { outline: 2px solid rgba(var(--grn), 0.9); }
-.unit.selected { outline: 2px solid rgba(var(--grn), 0.9); }
+.unit:hover  { outline: 2px solid var(--accent); }
+.unit.selected { outline: 2px solid var(--accent); }
 .unit.unattributed { border-bottom: 2px dashed var(--muted); }
-
-.hint { margin-top: 8px; font-size: 12px; color: var(--muted); }
 
 /* --- Drill-in drawer (opens inline below the answer) --------------------- */
 
 /* the drawer has no box of its own — it lives inside .view-right, which is the panel */
 .drawer { min-width: 0; }
-.drawer-quote {
-  font-size: 14px;
-  font-style: italic;
-  color: var(--ink);
-  margin-bottom: 6px;
-}
-.drawer-strength { font-size: 12.5px; color: var(--muted); margin-bottom: 12px; }
-.drawer-strength b { color: var(--ink); }
 .drawer h5 {
   margin: 0 0 8px;
   font-size: 11.5px;
@@ -175,8 +168,40 @@ export const STYLES = `
   color: var(--muted);
 }
 
-/* one grounding chunk: label + strength number, a bar whose WIDTH is set inline
-   from positive_mass, then the full verbatim chunk_text and its metadata. */
+/* --- Strength block (matches the batch report's drawer) ------------------ */
+.strength {
+  background: var(--bg);
+  border: 1px solid var(--line);
+  border-radius: 11px;
+  padding: 12px 14px;
+  margin-bottom: 14px;
+}
+.sval { font-size: 24px; font-weight: 800; font-variant-numeric: tabular-nums; color: var(--ink); line-height: 1.2; }
+.sval .sw { font-size: 13px; font-weight: 700; margin-left: 6px; color: var(--muted); }
+.sval-instr { display: inline-block; margin-left: 8px; font-size: 11px; font-weight: 700; color: rgb(var(--ins)); border: 1px solid rgba(var(--ins), 0.5); border-radius: 999px; padding: 1px 8px; vertical-align: middle; }
+.dv { display: flex; height: 14px; background: var(--track); border-radius: 5px; overflow: hidden; margin-top: 10px; }
+.dv-l { flex: 1; display: flex; justify-content: flex-end; }
+.dv-r { flex: 1; display: flex; justify-content: flex-start; border-left: 1px solid var(--line); }
+.dv-l span { height: 100%; background: rgba(var(--neg), 0.8); }
+.dv-r span { height: 100%; background: rgba(var(--grn), 0.85); }
+.dv-lab { display: flex; justify-content: space-between; font-size: 11.5px; color: var(--muted); margin-top: 4px; }
+
+/* per-sentence source rows — color-coded ± heat boxes (green support / red
+   against / amber instruction), opacity by |score|; matches the batch report. */
+.src-row { border-radius: 8px; padding: 7px 9px; margin: 7px 0; border: 1px solid var(--line); }
+.src-row-head { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; font-size: 12px; }
+.src-tag { color: var(--ink); font-weight: 600; word-break: break-word; }
+.src-num { font-variant-numeric: tabular-nums; font-weight: 800; white-space: nowrap; }
+.src-row-text { margin-top: 5px; font-size: 12.5px; color: var(--ink); white-space: pre-wrap; word-break: break-word; }
+
+/* collapsible full source chunks at the drawer bottom — no bars, just readable text */
+.fullchunks { margin-top: 14px; border-top: 1px dashed var(--line); padding-top: 10px; }
+.fc { margin: 6px 0; }
+.fc-toggle { font: inherit; font-size: 12.5px; color: var(--ink); background: none; border: none; padding: 0; cursor: pointer; text-align: left; }
+.fc-toggle:hover { color: #fff; }
+
+/* one influential chunk in the overview / a source chunk's full text: just its
+   tag (doc + id) and the full verbatim chunk_text — no bars or numbers. */
 .chunk { margin: 10px 0; }
 .chunk-head {
   display: flex;
@@ -187,14 +212,11 @@ export const STYLES = `
   margin-bottom: 4px;
 }
 .chunk-id { font-family: ui-monospace, Menlo, Consolas, monospace; color: var(--muted); }
-.chunk-mass { font-variant-numeric: tabular-nums; font-weight: 700; }
-.chunk-track { height: 8px; background: #fff; border: 1px solid var(--line); border-radius: 4px; overflow: hidden; }
-.chunk-track span { display: block; height: 100%; background: rgba(var(--grn), 0.85); }
 .chunk-text {
   margin-top: 6px;
   font-size: 12.5px;
   color: var(--ink);
-  background: #fff;
+  background: var(--track);
   border: 1px solid var(--line);
   border-radius: 6px;
   padding: 6px 8px;
@@ -203,31 +225,13 @@ export const STYLES = `
   white-space: pre-wrap;
   word-break: break-word;
 }
-.chunk-meta { margin-top: 4px; font-size: 11.5px; color: var(--muted); }
-
 .drawer-empty { font-size: 13px; color: var(--muted); }
 
-/* drawer header row: quote + ✕ back-to-overall */
-.drawer-top { display: flex; justify-content: space-between; align-items: flex-start; gap: 8px; }
+/* drawer header row: just the ✕ back-to-overall (the sentence is already
+   highlighted on the left, so it isn't reprinted here). */
+.drawer-top { display: flex; justify-content: flex-end; align-items: flex-start; gap: 8px; margin-bottom: 6px; }
 .drawer-close { border: none; background: transparent; color: var(--muted); font-size: 16px; line-height: 1; cursor: pointer; padding: 2px 4px; border-radius: 4px; }
 .drawer-close:hover { background: var(--panel); color: var(--ink); }
-
-/* one source fragment row (the per-unit drill-down) */
-.src { margin: 10px 0; }
-.src-head { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; font-size: 12.5px; margin-bottom: 4px; }
-.src-doc { color: var(--ink); word-break: break-word; }
-.src-score { font-variant-numeric: tabular-nums; font-weight: 700; white-space: nowrap; }
-.src-score.neg { color: #b3261e; }
-.src-text { margin-top: 6px; font-size: 12.5px; color: var(--ink); background: #fff; border: 1px solid var(--line); border-radius: 6px; padding: 6px 8px; white-space: pre-wrap; word-break: break-word; }
-.src-more { margin-top: 4px; font: inherit; font-size: 11.5px; color: rgb(var(--grn)); background: none; border: none; padding: 0; cursor: pointer; text-decoration: underline; }
-.src-count { margin-top: 10px; font-size: 11.5px; color: var(--muted); }
-
-/* collapsed "competing sources" (negatives) */
-.competing { margin-top: 12px; border-top: 1px dashed var(--line); padding-top: 8px; }
-.competing-toggle { font: inherit; font-size: 12px; color: var(--muted); background: none; border: none; padding: 0; cursor: pointer; }
-.competing-toggle:hover { color: var(--ink); }
-.competing-note { font-size: 11.5px; color: var(--muted); margin: 6px 0; }
-.competing-src { opacity: 0.85; }
 
 /* header shown once loaded: title + ✕ to collapse back to the trigger */
 .wm-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
