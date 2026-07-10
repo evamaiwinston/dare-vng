@@ -18,6 +18,7 @@ from __future__ import annotations
 
 import argparse
 import dataclasses
+import hashlib
 import json
 import statistics
 import time
@@ -149,13 +150,19 @@ def aggregate(results: list[dict]) -> dict:
     }
 
 
-def write_report(results: list[dict], report: dict, out_dir: str | Path = "runs") -> Path:
+def write_report(results: list[dict], report: dict, out_dir: str | Path = "runs",
+                 meta: dict | None = None) -> Path:
     """Write results.json + report.json + summary.md to runs/batch_<timestamp>/.
 
     The markdown centerpiece is the per-unit attribution in RESPONSE ORDER: each
     answer unit with its context / instruction mass and the chunk it grounded in
     (id + retrieval score + text), so mis-grounding surfaces as data. Magnitude is
     reported, never ranked into a verdict.
+
+    ``meta`` (optional) is the run's provenance — the config that produced this
+    run (model, instruction folded, ablations, ...). Written as ``metadata.json``
+    with the run timestamp injected, so the dir name and the recorded timestamp
+    always agree and no renderer has to guess how the numbers were made.
     """
     stamp = time.strftime("%Y%m%d_%H%M%S", time.localtime())
     run_dir = Path(out_dir) / f"batch_{stamp}"
@@ -169,6 +176,9 @@ def write_report(results: list[dict], report: dict, out_dir: str | Path = "runs"
 
     (run_dir / "results.json").write_text(json.dumps(results, cls=_DataclassEncoder, indent=2, ensure_ascii=False))
     (run_dir / "report.json").write_text(json.dumps(report, indent=2, ensure_ascii=False))
+    if meta is not None:
+        (run_dir / "metadata.json").write_text(
+            json.dumps({"timestamp": stamp, **meta}, indent=2, ensure_ascii=False))
 
     def cell(text, n=90):
         """One-line, length-capped cell for tables/quotes."""
@@ -238,6 +248,9 @@ def main():
     ap.add_argument("--max-workers", type=int, default=3, help="Records attributed concurrently.")
     ap.add_argument("--num-ablations", type=int, default=32)
     ap.add_argument("--no-cache", action="store_true", help="Bypass the on-disk logprob cache.")
+    ap.add_argument("--cache-path", default="./.cache/logprobs.sqlite",
+                    help="SQLite logprob cache file. Point at a fresh path (e.g. .cache/fullrun.sqlite) "
+                         "for a clean, single-epoch, archivable run instead of the shared default.")
     ap.add_argument("--instruction", action="store_true",
                     help="Fold the static SYNTHESIS_SYSTEM prompt into the ablation set (origin=instruction). "
                          "Changes the prompt -> invalidates the context-only cache, makes real API calls.")
@@ -250,9 +263,10 @@ def main():
         from dare.prompts import SYNTHESIS_SYSTEM
         instruction = SYNTHESIS_SYSTEM
 
+    settings = Settings.from_env()
     records = load_corpus(args.corpus)
     base = OpenAICompatProvider()
-    provider = base if args.no_cache else CachingProvider(base)
+    provider = base if args.no_cache else CachingProvider(base, path=args.cache_path)
 
     embedder = None
     if args.signals:
@@ -265,7 +279,27 @@ def main():
         instruction=instruction, embedder=embedder,
     )
     report = aggregate(results)
-    run_dir = write_report(results, report)
+    # Run provenance — the config that produced this run, so results.json is
+    # self-describing (which prompt was folded, which model, how many ablations).
+    # instruction_folded + instruction_sha are the load-bearing fields for the
+    # attribution's defense: they prove *which* system prompt was in the ablation set.
+    meta = {
+        "corpus": args.corpus,
+        "limit": args.limit,
+        "num_ablations": args.num_ablations,
+        "instruction_folded": bool(args.instruction),
+        "instruction_sha": hashlib.sha256(instruction.encode()).hexdigest()[:12] if instruction else None,
+        "signals": bool(args.signals),
+        "no_cache": args.no_cache,
+        "cache_path": None if args.no_cache else args.cache_path,
+        "max_workers": args.max_workers,
+        "model": settings.model,
+        "lasso_alpha": settings.lasso_alpha,
+        "embed_model": settings.embed_model if args.signals else None,
+        "records_ok": report["ok"],
+        "records_error": report["errors"],
+    }
+    run_dir = write_report(results, report, meta=meta)
 
     print("\n" + json.dumps(report, indent=2, ensure_ascii=False))
     if hasattr(provider, "hits"):

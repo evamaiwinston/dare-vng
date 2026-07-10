@@ -159,6 +159,17 @@ function docLabel(docId: string | null): string {
   return base.length > 44 ? base.slice(0, 44) + "…" : base;
 }
 
+/** The chunk's section title = the first markdown heading line of its text
+ *  (e.g. "### Điều 17. Tạm ứng lương" → "Điều 17. Tạm ứng lương"), else the first
+ *  non-empty line. Returns null for empty text so callers can fall back to the id.
+ *  Every corpus chunk starts with a heading, so this is the primary chunk label. */
+function chunkTitle(text: string): string | null {
+  const first = text.split("\n").map((l) => l.trim()).find((l) => l.length > 0);
+  if (!first) return null;
+  const heading = first.match(/^#{1,6}\s+(.*)$/);
+  return (heading ? heading[1] : first).trim();
+}
+
 interface WholeChunksProps {
   chunks: ChunkAttribution[];
 }
@@ -188,10 +199,7 @@ function WholeChunks({ chunks }: WholeChunksProps) {
         influential.map((c, i) => (
           <div className="chunk" key={c.chunk_id ?? i}>
             <div className="chunk-head">
-              <span className="chunk-doc">
-                {docLabel(c.doc_id)}
-                {c.chunk_id ? <span className="chunk-id"> · #{c.chunk_id.slice(0, 6)}</span> : null}
-              </span>
+              <span className="chunk-doc">{chunkTitle(c.chunk_text) ?? docLabel(c.doc_id)}</span>
             </div>
             <div className="chunk-text">{c.chunk_text}</div>
           </div>
@@ -244,10 +252,14 @@ function UnitDrawer({ unit, rel, scale, onClose }: UnitDrawerProps) {
   // Hue by kind: green = context support, red = against, amber = instruction.
   const srcHue = (s: SourceAttribution) =>
     s.origin === "instruction" ? "var(--ins)" : s.score < 0 ? "var(--neg)" : "var(--grn)";
-  const srcTag = (s: SourceAttribution) =>
-    s.origin === "instruction"
-      ? "synthesis instruction"
-      : docLabel(s.doc_id) + (s.chunk_id ? " · #" + s.chunk_id.slice(0, 6) : "");
+  // chunk_id -> full chunk_text, so a source row can be tagged with its section
+  // heading (the markdown "### ..." title) instead of an opaque id.
+  const chunkTextById = new Map(unit.chunk_attributions.map((c) => [c.chunk_id, c.chunk_text]));
+  const srcTag = (s: SourceAttribution) => {
+    if (s.origin === "instruction") return "system instruction";
+    const text = chunkTextById.get(s.chunk_id);
+    return (text && chunkTitle(text)) || docLabel(s.doc_id) + (s.chunk_id ? " · #" + s.chunk_id.slice(0, 6) : "");
+  };
 
   // The chunks this sentence used, for the collapsible full-text section (no bars).
   const usedChunks = unit.chunk_attributions;
@@ -322,8 +334,7 @@ function UnitDrawer({ unit, rel, scale, onClose }: UnitDrawerProps) {
           {usedChunks.map((c, i) => (
             <div className="fc" key={c.chunk_id ?? i}>
               <button className="fc-toggle" onClick={() => toggleChunk(i)}>
-                {openChunks.has(i) ? "▾" : "▸"} {docLabel(c.doc_id)}
-                {c.chunk_id ? <span className="chunk-id"> · #{c.chunk_id.slice(0, 6)}</span> : null}
+                {openChunks.has(i) ? "▾" : "▸"} {chunkTitle(c.chunk_text) ?? docLabel(c.doc_id)}
               </button>
               {openChunks.has(i) && <div className="chunk-text">{c.chunk_text}</div>}
             </div>

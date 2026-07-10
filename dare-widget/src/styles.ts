@@ -211,7 +211,6 @@ export const STYLES = `
   font-size: 12.5px;
   margin-bottom: 4px;
 }
-.chunk-id { font-family: ui-monospace, Menlo, Consolas, monospace; color: var(--muted); }
 .chunk-text {
   margin-top: 6px;
   font-size: 12.5px;

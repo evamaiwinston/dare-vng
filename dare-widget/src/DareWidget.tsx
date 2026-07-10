@@ -79,7 +79,7 @@ export function DareWidget({ apiUrl, query, answer, chunks }: DareWidgetProps) {
         {status === "loading" && (
           <div className="status">
             <span className="spinner" />
-            Attributing this answer to its sources… this can take a little while.
+            Attributing this answer to its sources…
           </div>
         )}
 
