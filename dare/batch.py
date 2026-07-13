@@ -273,11 +273,13 @@ def main():
         from dare.providers import LocalEmbeddingProvider
         embedder = LocalEmbeddingProvider()
 
+    t0 = time.perf_counter()
     results = run_batch(
         records, provider=provider,
         limit=args.limit, max_workers=args.max_workers, num_ablations=args.num_ablations,
         instruction=instruction, embedder=embedder,
     )
+    elapsed = time.perf_counter() - t0
     report = aggregate(results)
     # Run provenance — the config that produced this run, so results.json is
     # self-describing (which prompt was folded, which model, how many ablations).
@@ -298,10 +300,13 @@ def main():
         "embed_model": settings.embed_model if args.signals else None,
         "records_ok": report["ok"],
         "records_error": report["errors"],
+        "duration_seconds": round(elapsed, 1),
     }
     run_dir = write_report(results, report, meta=meta)
 
     print("\n" + json.dumps(report, indent=2, ensure_ascii=False))
+    per_rec = elapsed / max(report["ok"], 1)
+    print(f"batch: {report['ok']} records in {elapsed:.1f}s ({per_rec:.1f}s/record)")
     if hasattr(provider, "hits"):
         print(f"cache: {provider.hits} hits, {provider.misses} misses")
     print("report ->", run_dir)
