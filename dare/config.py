@@ -4,7 +4,7 @@ See .env.example
 
 from __future__ import annotations
 
-import oss
+import os
 from dataclasses import dataclass
 from pathlib import Path
 
