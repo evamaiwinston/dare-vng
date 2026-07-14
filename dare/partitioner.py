@@ -1,19 +1,13 @@
 """Custom ContextCite partitioner for markdown RAG context.
 
-Splits a context string into attribution "sources" with markdown-aware rules:
+Splits a context string into attribution "sources" by markdown structure:
 
-* Headers (lines starting with ``#``) are dropped entirely -- they never become
-  a source and are stripped from the separators between sources, so they do not
-  appear in any ablated context.
-* Each list item (``-``/``*``/``+`` bullet or ``1.``/``1)`` numbered item),
-  together with its indented continuation lines, is its own source.
+* Seperated by headers (lines starting with ``#``), headers are dropped from ablation sources
+* Each list item (``-``/``*``/``+`` bullet or ``1.``/``1)`` numbered item) is its own source.
 * A markdown table (a run of ``|``-delimited rows containing a ``---`` delimiter
-  row) stays intact as a single atomic source.
-* Any remaining plain text is split into sentences (one source per sentence)
-  using the same nltk sentence tokenizer ContextCite uses by default.
-
-Implements ``BaseContextPartitioner`` so it can be passed straight to
-``ContextCiter(..., partitioner=MarkdownContextPartitioner(context))``.
+  row) stays intact as a single atomic source
+* Any remaining plain text is split into sentences
+  using nltk sentence tokenizer (ContextCite default).
 """
 
 from __future__ import annotations
@@ -30,11 +24,14 @@ from context_cite.context_partitioner import BaseContextPartitioner
 # A markdown ATX header line: optional leading whitespace, 1-6 '#', then a space
 # or end of line (so a bare "####" still counts, but "#hashtag" does not).
 _HEADER_RE = re.compile(r"^[ \t]*#{1,6}(?:\s|$)")
+
 # Strip header lines (incl. their trailing newline) out of separator text.
 _HEADER_LINE_RE = re.compile(r"(?m)^[ \t]*#{1,6}(?:\s[^\n]*)?\n?")
-# A list marker at the start of a line: bullet (-, *, +) or numbered (1. / 1)).
+
+# List marker at the start of a line: bullet (-, *, +) or numbered (1. / 1)).
 _LIST_RE = re.compile(r"^[ \t]*(?:[-*+]|\d+[.)])\s+")
-# A table delimiter row, e.g. "| --- | :--: |" or "|---|---|".
+
+# Table delimiter row, e.g. "| --- | :--: |" or "|---|---|".
 _TABLE_DELIM_RE = re.compile(r"^[ \t]*\|?[ \t:|-]*-{2,}[ \t:|-]*\|?[ \t]*$")
 
 
@@ -60,11 +57,7 @@ def _strip_headers(text: str) -> str:
 
 
 def _sentence_spans(text: str) -> List[tuple[int, int]]:
-    """Return (start, end) char offsets of each sentence within ``text``.
-
-    Mirrors context_cite.utils.split_text: offsets are recovered by scanning
-    forward with ``str.find`` so the spans line up with the original text.
-    """
+    """Return (start, end) char offsets of each sentence within ``text``."""
     spans: List[tuple[int, int]] = []
     cursor = 0
     for sentence in nltk.sent_tokenize(text):
@@ -77,10 +70,8 @@ def _sentence_spans(text: str) -> List[tuple[int, int]]:
     return spans
 
 
-# -- markdown unit splitting (shared) ----------------------------------------
-# Used both for context -> sources and for splitting a response into target
-# units, so an answer (which also carries tables/bullets) is segmented the same
-# way the context is.
+
+# Used for splitting context -> sources and for splitting response -> units
 
 def _line_spans(text: str) -> List[tuple[int, int, str]]:
     """(content_start, content_end, raw_line) per line. content_end excludes the
@@ -197,7 +188,7 @@ class MarkdownContextPartitioner(BaseContextPartitioner):
         self._parts: Optional[List[str]] = None
         self._separators: Optional[List[str]] = None
 
-    # -- splitting -----------------------------------------------------------
+    # splitting
 
     def split_context(self) -> None:
         spans = markdown_unit_spans(self.context)
@@ -212,7 +203,7 @@ class MarkdownContextPartitioner(BaseContextPartitioner):
         self._parts = parts
         self._separators = separators
 
-    # -- cached views --------------------------------------------------------
+    # cached views
 
     @property
     def parts(self) -> List[str]:
@@ -226,7 +217,7 @@ class MarkdownContextPartitioner(BaseContextPartitioner):
             self.split_context()
         return self._separators  # type: ignore[return-value]
 
-    # -- BaseContextPartitioner API -----------------------------------------
+    # BaseContextPartitioner API 
 
     @property
     def num_sources(self) -> int:

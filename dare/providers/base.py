@@ -1,10 +1,6 @@
-"""LogprobProvider — the one thing the attribution engine needs from an LLM.
-
-Attribution fundamentally needs per-token log-probabilities of a *fixed*
-response under a given user prompt: masking context and re-scoring the same
-response is what reveals which sources the response depended on. Any backend
-that can return those token logprobs satisfies this protocol, and the engine
-never calls an LLM any other way — so swapping endpoints is swapping a provider.
+"""LogprobProvider — attribution needs per-token log-probabilities of a response
+for a given user prompt. Any backend that can return token logprobs satisfies this
+protocol (api endpoint, caching).
 """
 
 from __future__ import annotations
@@ -17,11 +13,11 @@ class LogprobProvider(Protocol):
     def score_response(
         self, user_content: str, response_text: str
     ) -> list[tuple[str, float]]:
-        """Return ``[(token, logprob), ...]`` for the tokens of ``response_text``
-        scored as the assistant reply to ``user_content``.
+        """Return shape `[(token, logprob), ...]` for the tokens of
+        response_text, scored in the context of user_content.
 
-        Tokens are the provider's own tokenization; the caller aligns them onto
-        its tokenizer boundaries. Only the response tokens are returned (prompt
-        tokens are dropped).
+        Tokenization is by provider, 
+        _align_to_shell_tokens() in attribution.py aligns them to original char position. 
+        Only the response tokens are returned, prompt tokens are dropped.
         """
         ...

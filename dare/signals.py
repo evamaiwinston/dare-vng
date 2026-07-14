@@ -1,9 +1,6 @@
-"""signals.py — secondary signals over an attribution summary.
+"""signals.py — 
 
-Currently one signal: **query↔chunk cosine**. Attribution already says which
-chunk a unit leaned on; this asks whether that chunk is even on-topic for the
-question. Low cosine ⇒ the unit grounded in something off-topic. Pure over a
-``RecordSummary`` plus an injected embedder — the embedder is the only I/O.
+Currently just query<->chunk cosine signal - is the unit's grounding chunk on-topic for the query?
 """
 
 from __future__ import annotations
@@ -28,7 +25,7 @@ class RecordSignals:
 
 
 def cosine(a, b) -> float:
-    """Cosine similarity of two vectors, in [-1, 1]. 0.0 if either is zero-length."""
+    """Cosine similarity of two vectors, in [-1, 1]"""
     a = np.asarray(a, dtype=np.float64)
     b = np.asarray(b, dtype=np.float64)
     na = float(np.linalg.norm(a))
@@ -42,9 +39,7 @@ def _grounding_text(unit) -> tuple[str | None, str | None]:
     """(chunk_id, whole-chunk text) of the unit's top positive-mass chunk, else (None, None).
 
     Whole chunk = every partitioned source row sharing the top chunk's ``chunk_id``,
-    joined — a more stable topical signal for the query↔chunk cosine than a lone table
-    row or form step, which is too sparse to embed meaningfully. Falls back to the
-    chunk's verbatim ``chunk_text`` if no rows are recoverable.
+    joined — more stable signal for the query<->chunk cosine. 
     """
     if not unit.chunk_attributions:
         return None, None
@@ -59,13 +54,7 @@ def _grounding_text(unit) -> tuple[str | None, str | None]:
 
 
 def compute_signals(summary: RecordSummary, *, embedder) -> RecordSignals:
-    """Attach query↔chunk cosine to each unit of a ``RecordSummary``.
-
-    Embeds the query once and each unit's grounding-chunk text (deduped) as
-    passages, then computes ``cosine(query, chunk)`` per unit. Units with no
-    positive-mass grounding chunk get ``None``. ``embedder`` is any object with
-    ``embed_query`` / ``embed_passage`` methods.
-    """
+    """Attach query<->chunk cosine to each unit of a ``RecordSummary``"""
     query_vec = embedder.embed_query([summary.query])[0]
 
     per_unit = [_grounding_text(u) for u in summary.units]

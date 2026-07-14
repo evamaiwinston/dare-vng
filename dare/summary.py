@@ -1,34 +1,11 @@
-"""Descriptive attribution summary — turns raw scores into a report-ready structure.
+"""Turns raw output from attribution into structure for report.
+ 
+Splits attributions by origin, context vs instruction
+Rolls context-origin rows up to chunk granularity by positive mass, keeps raw rows alongside.
 
-A pure function over ``attribute_by_sentence``'s output. It does NOT classify:
-no DEPENDENT/INDEPENDENT verdict, no thresholds, no boilerplate filtering. A report
-states what happened; any thresholding is a separate, data-driven step later.
-
-It does three things:
-  (a) splits attributions by ``origin`` — context (retrieved chunks) vs instruction
-      (the folded-in system prompt) — and reports each its own way, because they
-      answer different questions and must never be merged (instruction is not a chunk);
-  (b) rolls context-origin rows up to CHUNK granularity by positive mass, so the
-      "which retrieved document grounded this" magnitude is reported correctly;
-  (c) keeps the raw source rows alongside, so nothing is hidden.
-
-Granularity vocabulary (locked — mirrors LOG terminology, never conflate):
-  source = one partitioned piece of a chunk — what ContextCite ablates and fits. Raw Lasso rows.
-  chunk  = one retrieved document excerpt (chunk_id) — its sources rolled back up.
-  origin = "context" (from a retrieved chunk) | "instruction" (from the system prompt).
-Field names always carry the granularity (`source_attributions` / `chunk_attributions`),
-and the two have distinct types (`SourceAttribution` / `ChunkAttribution`).
-
-Why roll up to chunk for the report: ContextCite splits each chunk into however many
-sources the partitioner cuts, so a chunk's contribution is spread across its pieces.
-Comparing a fragmented chunk's top piece against an unfragmented chunk's single score is
-not like-for-like and can name the wrong document as the primary source. Summing positive
-mass per chunk puts them on equal footing. ``net_score`` / ``n_negative_sources`` are
-reported too, so collinearity and genuine competing sources surface as numbers.
-
-Why split on origin and not chunk_id: instruction rows have chunk_id=None — but so do
-context sources that failed to map. Splitting on origin keeps those apart; splitting on
-chunk_id would lump instruction mass in with unmapped context as phantom chunks.
+Granularity clarification:
+  chunk  = one retrieved document excerpt 
+  source = one partitioned piece of a chunk
 """
 
 from __future__ import annotations
@@ -49,8 +26,7 @@ def _positive_mass(rows: list[SourceAttribution]) -> float:
 
 
 def _split_by_origin(rows: list[SourceAttribution]) -> tuple[list[SourceAttribution], list[SourceAttribution]]:
-    """(context_rows, instruction_rows). Split on origin, never chunk_id — both
-    instruction and unmapped-context are chunk_id=None."""
+    """(context_rows, instruction_rows)"""
     ctx   = [r for r in rows if r.origin != "instruction"]
     instr = [r for r in rows if r.origin == "instruction"]
     return ctx, instr
@@ -60,16 +36,8 @@ def aggregate_by_chunk(
     context_rows: list[SourceAttribution],
     chunk_texts: dict[str | None, str] | None = None,
 ) -> list[ChunkAttribution]:
-    """Roll context-origin source rows up to chunk granularity, ranked by positive_mass desc.
-
-    Expects CONTEXT rows only (caller splits off instruction first). Groups by
-    ``chunk_id`` and reports, per chunk: positive_mass (Σ positive), net_score (Σ all),
-    source counts, and — from the ``chunk_texts`` (``chunk_id -> full content``) map
-    built off the original sources — the whole chunk that was fed into attribution.
-    ALL chunks are kept — including net-zero/negative ones (competing sources). Context
-    rows are always chunk-mapped in practice (verified 0/522 unmapped on the cached
-    corpus); a stray unmapped row (chunk_id=None) would collapse into a single
-    None-keyed entry — still surfaced, never dropped.
+    """Group context source rows by chunk_id, sum their positive scores.
+    Returns ChunkAttributions ranked by positive mass, descending.
     """
     chunk_texts = chunk_texts or {}
     grouped: dict[str | None, list[SourceAttribution]] = {}
@@ -105,18 +73,7 @@ def summarize_record(
     units: list[UnitAttribution],
     chunks: list[Chunk] | None = None,
 ) -> RecordSummary:
-    """Build a descriptive RecordSummary from one record's attribution output.
-
-    ``whole`` and ``units`` are exactly ``attribute_by_sentence``'s ``whole`` and
-    ``units`` (source-level). ``chunks`` is the original ``Chunk`` list that was fed
-    into attribution — passed so each chunk can carry its verbatim full text
-    (``ChunkAttribution.chunk_text``) instead of a truncated top-row excerpt. Omitting
-    it degrades chunk_text to the strongest segment (back-compat for callers without
-    the sources on hand). Attributions are split by origin: context → chunk rollup,
-    instruction → kept as raw directive rows. Units stay in response order. When no
-    instruction was folded in, the instruction lanes are simply empty/zero, so the same
-    function reads both context-only and instruction runs.
-    """
+    """Descriptive RecordSummary from one record's attribution output."""
     # chunk_id -> verbatim retrieved content, so every rollup shows the whole chunk.
     chunk_texts = {c.chunk_id: c.content for c in (chunks or []) if c.chunk_id}
 
@@ -149,18 +106,13 @@ def summarize_record(
 
 
 def relativize_record(summary: RecordSummary) -> list[UnitRelative]:
-    """Per-record RELATIVE measurement, one ``UnitRelative`` per unit in response order.
+    """Each unit's support against strongest unit in the same record. Relative measurement lands in [0,1].
+    One ``UnitRelative`` per unit in response order.
 
-    Each unit's ``support`` (Σ positive mass, both lanes) is normalized against the
-    record's strongest unit, so ``relative_strength`` lands in ``[0, 1]`` with the
-    strongest unit at 1.0. Normalization is WITHIN the record only — strengths are NOT
-    comparable across records. ``dominant_lane`` names what drove the unit: "instruction"
-    when the instruction lane matches or beats the strongest single chunk, else "context";
-    "none" for a unit with no positive support.
-
-    Pure and presentation-free: this is the structured measurement a renderer turns into
-    ink (opacity from ``relative_strength``) and hue (from ``dominant_lane``). A record
-    with no positive mass yields all-zero strengths — no division by zero.
+    support = summed positive mass, both origin lanes 
+    
+    Normalization is within record only — strengths are NOT
+    comparable across records. ``dominant_lane`` names what drove the unit, instruction or context
     """
     supports = [u.context_mass + u.instruction_mass for u in summary.units]
     max_support = max(supports, default=0.0) or 1.0   # floor so an all-zero record can't /0

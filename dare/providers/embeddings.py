@@ -1,15 +1,6 @@
-"""LocalEmbeddingProvider — text → vector via a local sentence-embedding model.
+"""LocalEmbeddingProvider — for query<->chunk cosine signals for batch report.
 
-Runs an open multilingual embedder (default ``intfloat/multilingual-e5-base``)
-locally through ``transformers`` — no API, no key, nothing leaves the machine.
-Chosen because the hosted ``nv-embedqa`` embedder was non-discriminative on
-Vietnamese (0010's wrong-chunk grounding scored the same as correct answers); a
-Vietnamese-capable local model separates on-topic from off-topic grounding cleanly.
-
-e5 is asymmetric — it expects a ``"query:"`` / ``"passage:"`` prefix — so the two
-methods name that intent and contain the prefix detail. That's the whole surface
-``signals.py`` depends on, so swapping to a hosted/company embedder later is just
-another class with the same ``embed_query`` / ``embed_passage`` methods.
+Runs intfloat/mulitlingual-e5-base, expects query: / passage: prefixes
 """
 
 from __future__ import annotations
@@ -22,7 +13,7 @@ from dare.config import Settings
 
 
 class LocalEmbeddingProvider:
-    """Embeds text with a local HF sentence-embedding model. Model loads lazily."""
+    """Embeds text with local HF sentence-embedding model, no API. Model loads lazily."""
 
     _BATCH = 16   # keep peak memory modest on CPU
 

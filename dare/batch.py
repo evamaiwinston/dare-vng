@@ -41,17 +41,19 @@ def attribute_record(
     instruction: str | None = None,
     embedder=None,
 ) -> dict:
-    """Attribute one record into a descriptive `RecordSummary`.
+    """Attribute one RAGRecord and return its RecordSummary.
 
-    Runs one ablation pass, then rolls the per-source Lasso rows up into a
-    ``RecordSummary`` — context attributions rolled to chunk granularity,
-    instruction mass split into its own lane, units kept in response order. When
-    ``instruction`` is given, the static generation prompt is folded into the
-    ablation set (``origin='instruction'``) so its causal effect is measured in
-    the same pass at no extra API cost.
+    Args:
+        rec: Record to attribute.
+        provider: LogprobProvider (typically a CachingProvider).
+        num_ablations: Number of context masks to run.
+        settings: Settings override; defaults to env.
+        instruction: System prompt to fold in as an instruction lane.
+        embedder: Optional embedder for query <-> chunk cosine signals.
 
-    Returns a dict carrying the summary plus flat record-level scalars for cheap
-    console / rollup access. Descriptive only — no labels, no thresholds.
+    Returns:
+        dict with summary, flat context/instruction mass scalars, and
+        optionally signals if embedder is provided.
     """
     query = resolve_query(rec.query, rec.payload)
     res = attribute_by_sentence(
@@ -84,9 +86,21 @@ def run_batch(
     instruction: str | None = None,
     embedder=None,
 ) -> list[dict]:
-    """Attribute `records` (filtered to the attributable ones, capped at `limit`),
-    running up to `max_workers` concurrently. Per-record failures are captured,
-    not raised, so one bad record never sinks the batch."""
+    """Run attribution over a corpus of RAGRecords.
+
+    Args:
+        records: Full corpus; non-attributable records are filtered out.
+        provider: LogprobProvider for all records.
+        limit: Cap on records to run (default None = all).
+        max_workers: Records attributed concurrently (default 3).
+        num_ablations: Context masks per record.
+        settings: Settings override; defaults to env.
+        instruction: System prompt to fold in as an instruction lane.
+        embedder: Optional embedder for query <-> chunk cosine signals.
+
+    Returns:
+        list[dict] in input order. Failed records include an "error" key.
+    """
     recs = [r for r in records if r.attributable]
     if limit:
         recs = recs[:limit]
@@ -110,11 +124,11 @@ def run_batch(
 
 
 def aggregate(results: list[dict]) -> dict:
-    """Roll a batch up into corpus-level facts: counts + the per-unit attribution
-    distribution (mean/median/spread of context mass, instruction-lane incidence).
+    """Compute corpus-level distribution stats from a completed batch.
 
-    Descriptive only — no ranking, no verdicts. Records stay in input order; any
-    ordered view is the renderer's convenience, never a judgment encoded here.
+    Returns:
+        dict with record counts, error ids, avg sources, and per-unit
+        context mass distribution (mean, median, sd, instruction incidence).
     """
     ok = [r for r in results if "error" not in r]
     errs = [r for r in results if "error" in r]
@@ -152,17 +166,19 @@ def aggregate(results: list[dict]) -> dict:
 
 def write_report(results: list[dict], report: dict, out_dir: str | Path = "runs",
                  meta: dict | None = None) -> Path:
-    """Write results.json + report.json + summary.md to runs/batch_<timestamp>/.
+    """Write batch results to runs/batch_<timestamp>/.
 
-    The markdown centerpiece is the per-unit attribution in RESPONSE ORDER: each
-    answer unit with its context / instruction mass and the chunk it grounded in
-    (id + retrieval score + text), so mis-grounding surfaces as data. Magnitude is
-    reported, never ranked into a verdict.
+    Outputs results.json, report.json, summary.md, and optionally metadata.json.
 
-    ``meta`` (optional) is the run's provenance — the config that produced this
-    run (model, instruction folded, ablations, ...). Written as ``metadata.json``
-    with the run timestamp injected, so the dir name and the recorded timestamp
-    always agree and no renderer has to guess how the numbers were made.
+    Args:
+        results: list[dict] from run_batch.
+        report: Aggregated stats dict from aggregate().
+        out_dir: Parent directory for run folders (default "runs").
+        meta: Run provenance dict (model, ablations, instruction sha, etc.);
+            written as metadata.json with the run timestamp injected.
+
+    Returns:
+        Path to the created run directory.
     """
     stamp = time.strftime("%Y%m%d_%H%M%S", time.localtime())
     run_dir = Path(out_dir) / f"batch_{stamp}"

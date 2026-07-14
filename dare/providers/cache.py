@@ -1,15 +1,10 @@
-"""CachingProvider — wrap a LogprobProvider, persist its calls, replay them.
+"""CachingProvider — wrap a LogprobProvider to replay existing calls. 
+(Ablation masks are deterministic. Save costs during testing by caching.)
 
-ContextCite's ablation masks are deterministic, so the same record produces the
-exact same ``(user_content, response_text)`` calls every run. Caching them means
-you pay the LLM cost once, then rerun attribution / diagnosis / reports for free
-and instantly. Keyed on a hash of ``(model, user_content, response_text)``;
-backed by sqlite so it's safe under the batch runner's thread pool.
+    provider = CachingProvider(OpenAICompatProvider()) 
 
-    from dare.providers import OpenAICompatProvider
-    from dare.providers.cache import CachingProvider
-    provider = CachingProvider(OpenAICompatProvider())   # populate on first run, replay after
-"""
+Keyed on a hash of ``(model, user_content, response_text)``; 
+backed by sqlite so it's safe under the batch runner's thread pool."""
 
 from __future__ import annotations
 
@@ -23,7 +18,6 @@ from dare.providers.base import LogprobProvider
 
 
 class CachingProvider:
-    """A LogprobProvider that memoizes `inner.score_response` to a sqlite file."""
 
     def __init__(
         self,
@@ -32,7 +26,7 @@ class CachingProvider:
         model_tag: str | None = None,
     ):
         self.inner = inner
-        # Namespacing the key by model keeps caches from different endpoints apart.
+        # Namespacing key by model - sort different endpoints because logprobs can vary across models
         self.model_tag = model_tag or getattr(getattr(inner, "settings", None), "model", "") or ""
         self.path = Path(path)
         self.path.parent.mkdir(parents=True, exist_ok=True)
@@ -58,9 +52,8 @@ class CachingProvider:
             self.hits += 1
             return [tuple(x) for x in json.loads(row[0])]
 
-        # Miss: call the real provider OUTSIDE the lock so concurrent network
-        # calls aren't serialized. A rare double-miss on the same key just scores
-        # twice — harmless, since the result is deterministic.
+        # Miss: call provider (outside the lock to allow concurrent calls) 
+        # Double miss case is rare and won't effect logprob results bc calls are deterministic 
         self.misses += 1
         out = self.inner.score_response(user_content, response_text)
         with self._lock:

@@ -81,17 +81,14 @@ def attribute(req: AttributeRequest) -> dict:
     if not req.chunks:
         raise HTTPException(status_code=400, detail="at least one chunk is required")
 
-    # Order preserved exactly as received — position is the order the model
-    # saw the chunks, which is fidelity-critical (see dare.schema.Chunk).
     chunks = [
         Chunk(
             content=c.content,
-            position=i,
             chunk_id=c.chunk_id,
             doc_id=c.document_id,
             score=c.score,
         )
-        for i, c in enumerate(req.chunks)
+        for c in req.chunks
     ]
 
     try:

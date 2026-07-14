@@ -1,18 +1,9 @@
-"""
-Context attribution pipeline using ContextCite + a logprob provider.
+"""Context attribution pipeline using ContextCite + logprob provider.
 
-The LLM calls now go through a `LogprobProvider` (default: the OpenAI-compatible
-`prompt_logprobs` endpoint); runtime config lives in a `Settings` object instead
-of module globals. Both default to a process-wide `SETTINGS`, so the simple
-usage is unchanged:
+Primary entry point (batch report or widget API):
 
-    from dare.attribution import attribute_response, fetch_backend, prepare_inputs
-
-    data = fetch_backend("Nhân viên VNG được nghỉ phép bao nhiêu ngày mỗi năm?")
-    context, response = prepare_inputs(data)
-    df = attribute_response(context, query, response)
-
-Pass `settings=` / `provider=` to override the endpoint, throttle, or backend.
+    from dare.attribution import attribute_by_sentence
+    result = attribute_by_sentence(query, response, chunks)
 """
 
 import json
@@ -57,27 +48,19 @@ def _patched_color_scale(val, max_val):
 
 _cc_utils._color_scale = _patched_color_scale
 
-# --- Config / logging --------------------------------------------------------
-# Process-wide default Settings (reads .env once at import, exactly as the old
-# module-level globals did). High-level functions fall back to it; pass an
-# explicit `settings=` to override per call.
+# Config / logging
 
 logger = logging.getLogger(__name__)
 
 SETTINGS = Settings.from_env()
 
-# --- Tokenizer ---------------------------------------------------------------
+# Tokenizer 
 
 def make_tokenizer(shell_tokenizer: str | None = None):
     """Structural tokenizer shell for ContextCiter, loaded from SHELL_TOKENIZER.
 
-    Any HF fast tokenizer works: it must provide encode/decode, token_to_chars,
-    pad/eos, and .pad(). Default "gpt2"; set SHELL_TOKENIZER (via Settings) to
-    the model's own tokenizer repo (e.g. the Qwen HF id) so local tokenization
-    matches the API's — making response-token alignment ~1:1 and avoiding GPT-2
-    byte-splitting of non-English text. The chat_template matches the ChatML
-    format the LLM endpoint expects. Actual log-probabilities come from the API,
-    not the shell tokenizer's weights.
+    The chat_template matches the ChatML format the LLM endpoint expects. 
+    Actual log-probabilities come from the API, not the shell tokenizer's weights.
     """
     tok = AutoTokenizer.from_pretrained(shell_tokenizer or SETTINGS.shell_tokenizer)
     if tok.pad_token is None:
@@ -91,7 +74,7 @@ def make_tokenizer(shell_tokenizer: str | None = None):
     )
     return tok
 
-# --- Engine glue -------------------------------------------------------------
+# Engine
 
 def _extract_user_content(prompt_text: str) -> str:
     start = prompt_text.find("<|im_start|>user\n")
@@ -108,8 +91,7 @@ def _align_to_shell_tokens(
     shell_response_ids: list[int],
     tokenizer,
 ) -> list[float]:
-    """Align the API's per-token logprobs onto the shell tokenizer's token
-    boundaries (the shell tokenizer is SHELL_TOKENIZER — e.g. Qwen — not GPT-2)."""
+    """Align API's per-token logprobs onto the shell tokenizer's token boundaries."""
     n = len(shell_response_ids)
     if not api_tokens:
         return [-5.0] * n
@@ -138,43 +120,19 @@ def _align_to_shell_tokens(
             result.append(min(api_spans, key=lambda x: abs((x[0] + x[1]) / 2 - mid))[2])
     return result
 
-# --- APIModel ----------------------------------------------------------------
+# APIModel — shim for ContextCiter model interface:
 #
-# Satisfies the interface ContextCiter uses:
+#   model.device                                torch.device("cpu")
+#   model.generate(input_ids, ...)              LongTensor [1, full_seq_len]
+#   model(input_ids, attention_mask, labels)    obj with .logits [bs, seq, V]
 #
-#   model.device                               → torch.device("cpu")
-#   model.generate(input_ids, ...)             → LongTensor [1, full_seq_len]
-#   model(input_ids, attention_mask, labels)   → obj with .logits [bs, seq, V]
+# generate(): response is already known, append its encoded tokens.
 #
-# generate():
-#   We already have RESPONSE from the backend, so no live generation call.
-#   We append encoded RESPONSE tokens to the prompt.
-#
-# __call__():
-#   For each ablated batch item:
-#   1. Decode prompt / response from input_ids / labels via GPT-2.
-#   2. Parse the ChatML prompt to extract user_content (masked context + query).
-#   3. Ask the provider to score the response (prompt_logprobs=1).
-#   4. Align API token logprobs onto the shell tokenizer's token boundaries.
-#   5. Build fake logits so _compute_logit_probs returns the aligned values:
-#
-#      logits[b, j, label_id] = logit_prob + log(V-1),  all others = 0
-#      → softmax-based loss recovers logit_prob exactly.
-#
-#      ContextCite speaks in LOGIT-probabilities log(p/(1-p)), not log-probs:
-#      aggregate_logit_probs applies logsigmoid, which inverts the logit
-#      transform back to log p. So we convert the API logprob (alp = log p) to
-#      logit_prob = alp - log(1-p) here before encoding it. Feeding raw log p
-#      would make logsigmoid mangle it (≈10x signal compression), which lets the
-#      Lasso shrink the true source away.
-#
-#   Only the response tail of the logits is ever read downstream
-#   (_get_response_logit_probs slices output.logits[:, -(R+1):-1]), so we
-#   allocate just [bs, R+1, V] rather than the full [bs, seq_len, V]. The prompt
-#   rows were only ever zero-filled and discarded; skipping them makes the
-#   allocation independent of context length (the old full-width tensor grew
-#   with MAX_CONTEXT_CHARS and was ~95% wasted). R is the response token count,
-#   constant across ablations and batch items since the response is fixed.
+# __call__(): ContextCite uses logit-probabilities log(p/(1-p))
+#   aggregate_logit_probs applies logsigmoid, inverting back to log p.
+#   Convert the API logprob (alp = log p) to logit_prob = alp - log(1-p) before
+#   encoding it. Raw log p would make logsigmoid mangle it (~10x signal compression).
+#   Lasso needs properly scaled probs
 
 class APIModel:
 
@@ -215,7 +173,7 @@ class APIModel:
 
         def score_row(b: int) -> None:
             """Score ablation row b and write ITS slot logits[b]. Index-addressed,
-            so it's safe to run rows concurrently — no cross-row shared state."""
+            so it's safe to run rows concurrently."""
             ids = input_ids[b].tolist()
             lbs = labels[b].tolist()
 
@@ -249,7 +207,7 @@ class APIModel:
 
         return SimpleNamespace(logits=logits)
 
-# --- Data helpers ------------------------------------------------------------
+# Data helpers
 
 def fetch_backend(query: str, settings: Settings | None = None) -> dict:
     """Call the backend RAG API and return the raw response dict."""
@@ -271,13 +229,7 @@ def load_mock(mock_path: str | Path) -> dict:
 
 
 def resolve_query(query: str | None, data: dict | None = None) -> str:
-    """Return the query to attribute, or raise if there is none.
-
-    Resolution order: an explicit ``query`` (from the CLI or the UI box) wins;
-    otherwise the mock/RAG ``data``'s own ``query`` field is used. There is no
-    placeholder fallback — a run with no query is an error: it is logged and
-    refused, never silently run against a stand-in question.
-    """
+    """Return the query string, preferring explicit query over data["query"]. Raises if neither is set."""
     candidate = (query or (data or {}).get("query") or "").strip()
     if not candidate:
         logger.error(
@@ -323,7 +275,7 @@ def prepare_inputs(data: dict, settings: Settings | None = None) -> tuple[str, s
     print(f"Chunks: {len(context_parts)}/{len(chunks)} | Context: {ctx_chars} chars | Response: {len(response)} chars")
     return context, response
 
-# --- High-level entry point --------------------------------------------------
+# High level entry point
 
 def _build_citer(
     context: str,
@@ -337,10 +289,7 @@ def _build_citer(
     settings: Settings | None = None,
     max_workers: int = 1,
 ) -> ContextCiter:
-    """Construct a ContextCiter wired to a logprob provider. Shared by the
-    whole-response and per-unit attribution paths so setup never diverges. The
-    ablation pass is lazy — it runs on the first attribution query and is cached,
-    so further queries against the returned object cost no LLM calls."""
+    """Construct a ContextCiter wired to the logprob provider. The ablation pass is lazy — cached on first query, so re-slicing units costs no extra LLM calls."""
     settings = settings or SETTINGS
     provider = provider or OpenAICompatProvider(settings)
     tokenizer = make_tokenizer(settings.shell_tokenizer)
@@ -396,7 +345,7 @@ def attribute_response(
     )
 
 
-# --- Per-unit (per-sentence) attribution -------------------------------------
+#  Per-unit (per-sentence) attribution
 
 # The separator that assembles chunk contents (and the folded instruction) into
 # one context string. MUST match the join below in _assemble_context so the
@@ -407,15 +356,7 @@ _INSTRUCTION = object()
 
 
 def _assemble_context(chunks: list[Chunk], instruction: str | None) -> tuple[str, list[tuple[int, int, object]]]:
-    """Build the ablation context AND every segment's ``(start, end, owner)`` range
-    from one source of truth, so each partitioned part's provenance is known by
-    construction — no reverse-mapping a part back to a chunk by matching text.
-
-    ``owner`` is the retrieved ``Chunk`` for a chunk, or ``_INSTRUCTION`` for the
-    folded system prompt. The assembled string is byte-identical to the previous
-    ``chunks_to_context`` (plus instruction prepend), so the context the model is
-    scored against — and therefore the attribution — is unchanged.
-    """
+    """Build the ablation context string and each segment's (start, end, owner) range in one pass, so provenance is attached by position — not by text matching."""
     segments: list[tuple[object, str]] = []
     if instruction:                                   # folded instruction leads the context
         segments.append((_INSTRUCTION, instruction))
@@ -432,22 +373,13 @@ def _assemble_context(chunks: list[Chunk], instruction: str | None) -> tuple[str
 
 
 def _owner_at(pos: int, ranges: list[tuple[int, int, object]]) -> object | None:
-    """The chunk/instruction whose character range contains ``pos``. Ranges
-    partition the assembled context, so a segment's start offset resolves to
-    exactly one owner — collision-free even when two chunks share identical text.
-    Returns ``None`` for the (unexpected) unmapped case, surfaced not dropped."""
+    """Return the Chunk or _INSTRUCTION sentinel whose char range contains pos, or None if unmapped."""
     return next((owner for start, end, owner in ranges if start <= pos < end), None)
 
 
 def _attribution_rows(scores, spans: list[tuple[int, int]], context: str,
                       ranges: list[tuple[int, int, object]]) -> list[SourceAttribution]:
-    """Turn the per-source score array (``get_attributions(as_dataframe=False)`` —
-    element i is the score of source i) into SourceAttribution rows, each carrying
-    the provenance of the chunk it *physically* came from, resolved by character
-    position (not by matching text, so byte-identical chunk content can't be
-    mis-assigned). Instruction-lane parts are tagged ``origin="instruction"``.
-    Sorted by attribution score.
-    """
+    """Convert a per-source score array into SourceAttribution rows, resolving each source's owning chunk by character position. Sorted by score desc."""
     rows = []
     for score, (start, end) in zip(scores, spans):
         owner = _owner_at(start, ranges)
@@ -480,31 +412,30 @@ def attribute_by_sentence(
     instruction: str | None = None,
     max_workers: int = 1,
 ) -> dict:
-    """Attribute each response *unit* (sentence / bullet / list item / table) from
-    a single ablation pass, mapping every attribution back to its Chunk.
+    """Attribute each response unit (sentence / bullet / table) against its source chunks.
 
-    If ``instruction`` is given (the verbatim generation system prompt), it is
-    folded into the ablation set so its causal effect is measured in the SAME pass
-    (no extra calls); those rows come back tagged ``origin="instruction"``. Note
-    this changes the ablation prompt, so it invalidates the existing logprob cache
-    and yields different (more faithful) magnitudes than the context-only run.
+    Runs one ablation pass via ContextCite and maps every Lasso score back to its
+    originating Chunk by character position.
 
-    The ablation pass runs once; each unit is a free re-slice of the cached
-    logit-probs (no extra LLM calls). Response units are split markdown-aware
-    (the same splitter as the context), so tables/bullets in the answer stay
-    intact rather than being chopped by naive sentence tokenization.
+    Args:
+        query: The user question being answered.
+        response: The LLM response to attribute.
+        chunks: Retrieved context chunks fed into generation.
+        num_ablations: Number of random context masks to run.
+        ablation_keep_prob: Fraction of sources kept per mask.
+        batch_size: Ablation masks per API call (raised to max_workers if left at 1).
+        provider: LogprobProvider to use; defaults to OpenAICompatProvider from env.
+        settings: Settings override; defaults to env.
+        instruction: System prompt to fold into the ablation set. Adds an
+            instruction lane to results (origin="instruction") at no extra API cost,
+            but invalidates the context-only logprob cache.
+        max_workers: Concurrent ablation calls (default 1 = serial, same results).
 
-    ``max_workers`` > 1 runs the ablation calls concurrently (default 1 = serial,
-    unchanged results). Because ContextCite feeds masks in batches of
-    ``batch_size``, concurrency only bites when a batch holds >1 row — so when the
-    caller leaves ``batch_size`` at its default of 1, it's raised to ``max_workers``
-    here (an explicit ``batch_size`` is respected). Scoring is deterministic
-    (temperature 0), so this changes wall-clock only, not the attributions.
-
-    Returns ``{response, whole, units}`` where ``whole`` and each
-    ``units[i]["attributions"]`` is a list of rows
-    ``{score, source_text, chunk_id, doc_id, retrieval_score, origin}``. No
-    causal dependence verdict is made here — that's the diagnosis layer's job.
+    Returns:
+        dict with keys:
+            response: The response string as scored by ContextCite.
+            whole: list[SourceAttribution] for the full response.
+            units: list[UnitAttribution], one per markdown unit, in response order.
     """
     # Concurrency needs >1 mask per batch to overlap; lift the default-1 batch to
     # match the worker count so the ThreadPoolExecutor in APIModel has rows to fan out.

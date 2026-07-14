@@ -1,11 +1,9 @@
 """OpenAI-compatible prompt_logprobs provider.
 
-Scores a fixed response with one chat-completions call using
-``prompt_logprobs=1`` (the vLLM / NVIDIA NIM extension), then slices out the
-response tokens. This is the default `LogprobProvider`; it owns the throttle /
-retry policy and the ChatML response-span parsing. The numbers it returns are
-the actual attribution signal — the throttle/retry around the call are
-operational only and change none of them.
+Scores fixed response probability with one chat-completions call
+``prompt_logprobs=1`` (vLLM - or other OpenAI compatible - extension).
+
+Default `LogprobProvider` + owns throttle/retry policy
 """
 
 from __future__ import annotations
@@ -24,11 +22,8 @@ _ASSISTANT_HEADER = "<|im_start|>assistant\n"
 
 
 def actual_tokens(raw_logprobs: list) -> list[tuple[str, float | None]]:
-    """Decode prompt_logprobs entries into ``[(token, logprob|None), ...]``.
-
-    Each entry is either None (a position with no logprob, e.g. the leading
-    special token) or a dict of candidates; with >1 candidate the actual prompt
-    token is the one of highest rank.
+    """Keeping only the top ranked candidate returned (actual token). 
+    Returns None where the API assigns no probability.
     """
     result = []
     for entry in raw_logprobs:
@@ -44,23 +39,7 @@ def actual_tokens(raw_logprobs: list) -> list[tuple[str, float | None]]:
 
 
 def response_span(full_txt: str, response_text: str) -> tuple[int, int]:
-    """(start, end) char offsets of the response within the decoded prompt.
-
-    The endpoint templates the messages as ChatML, so the response is the
-    content of the assistant turn:
-
-        ...<|im_start|>assistant\\n{RESPONSE}<|im_end|>...<|im_start|>assistant\\n
-
-    (a trailing generation-prompt header with no content may follow). When those
-    markers are present we bound the response by the first *closed* assistant
-    turn rather than matching ``response_text`` directly — the server normalizes
-    whitespace in the content (markdown-table / bullet newlines collapse to
-    spaces), which breaks an exact substring match.
-
-    Falls back to the original text search when the stream carries no ChatML
-    markers, so a different model/endpoint keeps the prior behavior. Raises
-    ValueError if neither locates the response.
-    """
+    """Gets (start, end) char offsets of RAG response within full decoded token sequence."""
     search = 0
     while True:
         h = full_txt.find(_ASSISTANT_HEADER, search)
@@ -68,9 +47,9 @@ def response_span(full_txt: str, response_text: str) -> tuple[int, int]:
             break
         s = h + len(_ASSISTANT_HEADER)
         e = full_txt.find("<|im_end|>", s)
-        if e > s:                       # a closed assistant turn with content
+        if e > s:                       # closed assistant turn with content (ChatML format)
             return s, e
-        search = s                      # empty/generation-prompt turn — keep looking
+        search = s                      # or fall back to text search
 
     start = full_txt.rfind(response_text)
     if start == -1:
@@ -88,11 +67,11 @@ class OpenAICompatProvider:
 
     def __init__(self, settings: Settings | None = None):
         self.settings = settings or Settings.from_env()
-        self._call_count = 0           # monotonic, so log lines correlate
-        self._estimate_tok = None      # lazy GPT-2 tokenizer, size estimates only
+        self._call_count = 0         
+        self._estimate_tok = None      # for size estimates only
 
     def _estimate_tokens(self, text: str) -> int:
-        """Rough token count for logging only (GPT-2 BPE; over-counts non-English)."""
+        """Rough token counting for testing and size estimates for local-model-mini."""
         if self._estimate_tok is None:
             self._estimate_tok = GPT2TokenizerFast.from_pretrained("gpt2")
         return len(self._estimate_tok.encode(text, add_special_tokens=False))
