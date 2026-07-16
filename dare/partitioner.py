@@ -34,6 +34,10 @@ _LIST_RE = re.compile(r"^[ \t]*(?:[-*+]|\d+[.)])\s+")
 # Table delimiter row, e.g. "| --- | :--: |" or "|---|---|".
 _TABLE_DELIM_RE = re.compile(r"^[ \t]*\|?[ \t:|-]*-{2,}[ \t:|-]*\|?[ \t]*$")
 
+# Everything that isn't real content: markdown syntax, digits, punctuation, whitespace.
+# A span that strips down to ~nothing under this is a degenerate fragment, not a unit.
+_DEGENERATE_STRIP_RE = re.compile(r"[\*\#\-\.\d\s:()]")
+
 
 def _is_header(line: str) -> bool:
     return bool(_HEADER_RE.match(line))
@@ -144,6 +148,41 @@ def _consume_paragraph(text, lines, i, spans) -> int:
     return i
 
 
+def _is_degenerate(span_text: str) -> bool:
+    """True if a span carries no real content once markdown syntax, digits, and
+    punctuation are stripped -- e.g. a bare "*" bullet, or "**1." / "**TP." left
+    behind when nltk's sentence tokenizer mis-reads a bold-wrapped numbered label
+    or abbreviation (a "1." or "TP." followed by a capital letter looks like a
+    sentence boundary to it) and splits it off from the content it belongs to.
+    """
+    return len(_DEGENERATE_STRIP_RE.sub("", span_text)) <= 2
+
+
+def _merge_degenerate_spans(text: str, spans: List[tuple[int, int]]) -> List[tuple[int, int]]:
+    """Fold degenerate spans (see ``_is_degenerate``) into an adjacent real span,
+    so a stray marker/abbreviation fragment never becomes its own unit or source.
+    Merges forward into the next span; a run of degenerate spans with nothing
+    after it (end of text) merges backward into the previous span instead.
+    """
+    out: List[tuple[int, int]] = []
+    pending_start: Optional[int] = None  # start of a degenerate run awaiting a real span to attach to
+    for start, end in spans:
+        if pending_start is not None:
+            start = pending_start
+        if _is_degenerate(text[start:end]):
+            pending_start = start
+            continue
+        pending_start = None
+        out.append((start, end))
+    if pending_start is not None:
+        if out:
+            prev_start, _ = out[-1]
+            out[-1] = (prev_start, spans[-1][1])
+        else:
+            out.append((pending_start, spans[-1][1]))
+    return out
+
+
 def markdown_unit_spans(text: str) -> List[tuple[int, int]]:
     """(start, end) char offsets of every markdown unit in ``text``.
 
@@ -177,7 +216,7 @@ def markdown_unit_spans(text: str) -> List[tuple[int, int]]:
             continue
 
         i = _consume_paragraph(text, lines, i, spans)
-    return spans
+    return _merge_degenerate_spans(text, spans)
 
 
 class MarkdownContextPartitioner(BaseContextPartitioner):
