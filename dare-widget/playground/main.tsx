@@ -8,8 +8,9 @@
  *     UI development and demos, and whenever the model endpoint is unavailable.
  *
  *   USE_MOCK = false → LIVE. POSTs the real qa-0164 record in its VIETNAMESE
- *     original (playground/inputs.ts) to the backend on :8000, so attribution
- *     runs on the real text. Requires: uvicorn dare.api:app on :8000, and
+ *     original (playground/inputs.ts) to the backend on :7860, so attribution
+ *     runs on the real text. Requires: the dare-api container running (see
+ *     docker-compose.yml) or uvicorn dare.api:app on :7860, and
  *     "http://localhost:5173" in api.py's CORS allow_origins.
  */
 
@@ -22,7 +23,7 @@ import { SAMPLE } from "./sample";
 
 // ── Toggle ────────────────────────────────────────────────────────────────
 const USE_MOCK = true; // true = offline mock (SAMPLE), false = live backend
-const API_URL = "http://localhost:8000";
+const API_URL = "http://localhost:7860";
 
 // Active inputs: the bundled SAMPLE (English) offline, the real Vietnamese
 // record live. In mock mode the intercepted fetch ignores the body, so these

@@ -41,15 +41,27 @@ const LANE_HUE: Record<string, string> = {
   instruction: "242, 200, 121", // amber
 };
 
+/** Red — same hue as the drawer's "against" bar/rows, for a context-driven unit
+ *  whose negative pull outweighs its own support. */
+const AGAINST_HUE = "240, 138, 138";
+
 /**
- * A unit's fill: hue by dominant lane, opacity by its per-record relative
- * strength — linear 0.06 → 0.91 in `relative_strength` (the same curve as
+ * A unit's fill: hue by dominant lane — green for context, amber for
+ * instruction — except a context-driven unit whose `against` outweighs its
+ * own `support` shades red instead (net-contradicted, even though context is
+ * still the strongest positive lane). All three hues use the same opacity
+ * gradient — linear 0.06 → 0.91 in `relative_strength` (the same curve as
  * render.py's `0.06 + 0.85 * strength`). A "none" lane (no positive support)
  * gets no fill; the dashed `unattributed` underline stands in instead.
  */
 function shadeStyle(rel: UnitRelative): CSSProperties {
-  const hue = LANE_HUE[rel.dominant_lane];
-  if (!hue || rel.relative_strength <= 0) return {};
+  if (rel.dominant_lane === "none" || rel.relative_strength <= 0) return {};
+  const hue =
+    rel.dominant_lane === "instruction"
+      ? LANE_HUE.instruction
+      : rel.against > rel.support
+        ? AGAINST_HUE
+        : LANE_HUE.context;
   const alpha = 0.06 + 0.85 * rel.relative_strength;
   return { background: `rgba(${hue}, ${alpha.toFixed(3)})` };
 }
