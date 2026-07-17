@@ -1,0 +1,21 @@
+# Keeps the build context small AND is a safety net: even though the
+# Dockerfile only COPYs dare/ + pyproject.toml, this stops secrets/data from
+# ever being sent to the docker daemon in the first place, in case the
+# Dockerfile changes later and someone adds a broader COPY.
+.git
+.env
+.env.*
+!.env.example
+venv/
+node_modules/
+dare-widget/
+runs/
+data/
+mock_data/
+translations.json
+*.html
+__pycache__/
+*.pyc
+.cache/
+.pytest_cache/
+.DS_Store
