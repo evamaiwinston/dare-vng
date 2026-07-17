@@ -43,6 +43,8 @@ This builds and starts the API on `http://localhost:7860`
 Data comes from RAG call: user question, generated answer, and retrieved chunks. 
 Render answer as normal and drop `<DareWidget>` under it with values passed as props. 
 
+ Find where query, answer, and chunks already live. This is host-specific
+
 ```tsx
 import { DareWidget } from "dare-widget";
 
